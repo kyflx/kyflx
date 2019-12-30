@@ -1,5 +1,5 @@
 import { Command, VorteMessage } from "@vortekore/lib";
-import Communicator from "../../plugins/Music";
+import Verta from "../../plugins/Music";
 
 export default class extends Command {
   public constructor() {
@@ -11,7 +11,7 @@ export default class extends Command {
   }
 
   public async run(message: VorteMessage) {
-    const music = <Communicator> this.bot.plugins.get("music")
+    const music = <Verta> this.bot.plugins.get("music")
     await music.getPing();
 
     const start = Date.now();

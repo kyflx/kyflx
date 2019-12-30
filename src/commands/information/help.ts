@@ -1,6 +1,6 @@
 import ms = require("ms");
 import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
-import Communicator from "../../plugins/Music";
+import Verta from "../../plugins/Music";
 
 export default class extends Command {
   public constructor() {
@@ -33,7 +33,7 @@ export default class extends Command {
       }
       helpEmbed.addField(
         "Music",
-        (<Communicator>this.bot.plugins.get("music")).commands
+        (<Verta>this.bot.plugins.get("music")).commands
           .map(c => `\`${c.name}\``)
           .join(", "),
         true
