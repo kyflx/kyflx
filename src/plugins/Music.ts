@@ -1,6 +1,6 @@
-import { ClientPlugin, Command, ICommandOptions } from "@vortekore/lib";
-import WebSocket from "ws";
 import Logger from "@ayana/logger";
+import { ClientPlugin, Config, ICommandOptions } from "@vortekore/lib";
+import WebSocket from "ws";
 
 export default class Communicator extends ClientPlugin {
   public name: string = "music";
@@ -12,7 +12,7 @@ export default class Communicator extends ClientPlugin {
   private ws: WebSocket;
 
   public onReady() {
-    this.ws = new WebSocket("ws://localhost:4269", {
+    this.ws = new WebSocket(`ws://${Config.get("node_host", false)}:4269`, {
       headers: {
         Authorization: this.client.token
       }
