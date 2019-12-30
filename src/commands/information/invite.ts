@@ -1,4 +1,4 @@
-import { Command, VorteMessage } from "../../lib";
+import { Command, VorteMessage } from "@vortekore/lib";
 
 export default class extends Command {
   constructor() {
@@ -7,8 +7,8 @@ export default class extends Command {
       cooldown: 0
     });
   }
-  
+
   async run(message: VorteMessage) {
-    message.sem("Use this link to invite the bot: <http://bit.ly/2EmfskO>")
+    return message.sem("Use this link to invite the bot: <http://bit.ly/2EmfskO>");
   }
 }

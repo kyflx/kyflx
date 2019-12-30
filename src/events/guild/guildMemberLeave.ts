@@ -1,6 +1,6 @@
 import { GuildMember, TextChannel } from "discord.js";
-import { Event } from "../../lib";
 import { formatString } from "../../util";
+import { Event } from "@vortekore/lib";
 
 export default class extends Event {
   public constructor() {
@@ -15,9 +15,9 @@ export default class extends Event {
     const channel = guild.logs.memberJoined;
     if (!channel) return;
 
-    const welcomeChannel = (member.guild.channels.get(channel) as TextChannel);
+    const welcomeChannel = member.guild.channels.get(channel) as TextChannel;
     if (!welcomeChannel) return;
 
     welcomeChannel.send(formatString(guild.farewellMessage, member));
-  };
+  }
 }

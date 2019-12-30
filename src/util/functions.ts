@@ -1,15 +1,5 @@
 import { GuildMember, Message } from "discord.js";
-import { TrackInfo } from "discord.js-andesite";
 import fetch, { RequestInit } from "node-fetch";
-import { VortePlayer } from "../lib";
-
-
-export function findRole(message: Message, role: string) {
-  return message.mentions.roles.first() || message.guild!.roles.find((r) => {
-    const name = r.name.toLowerCase()
-    return name === role || name.toLowerCase().startsWith(role);
-  })
-};
 
 export function formatString(message: string, member: GuildMember) {
   const obj = {
@@ -21,6 +11,13 @@ export function formatString(message: string, member: GuildMember) {
   const string = message.replace(new RegExp(Object.keys(obj).join("|")), (m) => obj[m as "{{mention}}"])
   return string;
 }
+
+export function findRole(message: Message, role: string) {
+  return message.mentions.roles.first() || message.guild!.roles.find((r) => {
+    const name = r.name.toLowerCase()
+    return name === role || name.toLowerCase().startsWith(role);
+  })
+};
 
 export async function findMember(message: Message, toFind: string) {
   let member;
@@ -102,38 +99,10 @@ export function shuffle<T extends any[]>(array: T): T {
   return array;
 }
 
-export function progressBar(percent: number, length = 8) {
-  let str = "";
-  for (let i = 0; i < length; i++) {
-    if (i == Math.round(percent * length)) str += "\uD83D\uDD18";
-    else str += "▬";
-  }
-  return str;
-}
 export function formatNumber(n: number) {
   if (n < 1e3) return n;
   if (n >= 1e3) return +(n / 1e3).toFixed(1) + "K";
 };
-export function getVolumeIcon(volume: number) {
-  if (volume == 0) return "\uD83D\uDD07";
-  else if (volume < 33) return "\uD83D\uDD08";
-  else if (volume < 67) return "\uD83D\uDD09";
-  else return "\uD83D\uDD0A";
-}
-
-export function formatTime(duration: number) {
-  const minutes = Math.floor(duration / 60000);
-  const seconds = ((duration % 60000) / 1000).toFixed(0);
-  // @ts-ignore
-  return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-}
-
-export function playerEmbed(player: VortePlayer, current: TrackInfo) {
-  return (player.paused ? "\u23F8" : "\u25B6") + " " +
-    progressBar(player.position / current.info.length) +
-    `\`[${formatTime(player.position)}/${formatTime(current.info.length)}]\`` +
-    getVolumeIcon(player.volume);
-}
 
 export function isPromise(value: any): boolean {
   return value

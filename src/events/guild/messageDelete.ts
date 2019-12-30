@@ -1,5 +1,5 @@
 import { TextChannel, Util } from "discord.js";
-import { Event, VorteEmbed, VorteMessage } from "../../lib";
+import { Event, VorteMessage, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Event {
   public constructor() {

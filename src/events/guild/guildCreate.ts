@@ -1,5 +1,5 @@
 import { Guild, MessageEmbed, TextChannel } from "discord.js";
-import { Event } from "../../lib";
+import { Event } from "@vortekore/lib";
 
 export default class extends Event {
   public constructor() {

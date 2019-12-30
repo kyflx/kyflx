@@ -1,4 +1,4 @@
-import { Command, VorteMessage } from "../../lib";
+import { Command, VorteMessage } from "@vortekore/lib";
 
 export default class extends Command {
 	public constructor() {

@@ -1,5 +1,4 @@
-import { VorteMessage } from "../../lib";
-import { Command } from "../../lib/classes/Command";
+import { Command, VorteMessage } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
@@ -15,22 +14,29 @@ export default class extends Command {
   }
 
   public async run(message: VorteMessage, args: string[]) {
-    if (!args[0]) return message.sem("Please provide a number.", { type: "error" });
+    if (!args[0])
+      return message.sem("Please provide a number.", { type: "error" });
 
-    const member = message.mentions.users!.first() || message.guild!.members.find(x => x.displayName === args[0] || x.id === args[0]);
+    const member =
+      message.mentions.users!.first() ||
+      message.guild!.members.find(
+        x => x.displayName === args[0] || x.id === args[0]
+      );
     if (member) {
       const num = parseInt(args[1]);
-      message.channel.messages.fetch({
-        limit: num
-      }).then(async messages => {
-        messages = messages.filter(m => m.author.id === member!.id)
-        await message.channel.bulkDelete(messages);
-        message.sem(`Successfully deleted ${num} messages.`);
-      });
+      message.channel.messages
+        .fetch({
+          limit: num
+        })
+        .then(async messages => {
+          messages = messages.filter(m => m.author.id === member!.id);
+          await message.channel.bulkDelete(messages);
+          message.sem(`Successfully deleted ${num} messages.`);
+        });
     } else {
       const num = parseInt(args[0]);
       await message.channel.bulkDelete(num);
       message.sem(`Successfully deleted ${num} messages.`);
-    };
+    }
   }
-};
+}

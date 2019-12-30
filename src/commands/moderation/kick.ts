@@ -1,5 +1,5 @@
 import { TextChannel } from "discord.js";
-import { Command, VorteEmbed, VorteMessage } from "../../lib";
+import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Command {
   constructor() {
@@ -10,19 +10,24 @@ export default class extends Command {
       userPermissions: ["KICK_MEMBERS"],
       channel: "guild",
       usage: "<member> [reason]"
-    })
+    });
   }
   public async run(message: VorteMessage, [mem, ...reason]: any) {
     if (message.deletable) await message.delete();
 
     if (!mem) return message.sem("Please provide a user to ban");
-    const member = message.mentions.members!.first() || message.guild!.members.find((r: { displayName: string; }) => {
-      return r.displayName === mem;
-    }) || message.guild!.members.get(mem);
+    const member =
+      message.mentions.members!.first() ||
+      message.guild!.members.find((r: { displayName: string }) => {
+        return r.displayName === mem;
+      }) ||
+      message.guild!.members.get(mem);
 
     if (!member) return message.channel.send("Couldn't find that user!");
-    if (message.author.id === member.user.id) return message.sem("You can't ban yourself");
-    if (message.member!.roles.highest <= member.roles.highest) return message.sem("The user has higher role than you.")
+    if (message.author.id === member.user.id)
+      return message.sem("You can't ban yourself");
+    if (message.member!.roles.highest <= member.roles.highest)
+      return message.sem("The user has higher role than you.");
 
     reason = reason[0] ? reason.join(" ") : "No Reason";
 
@@ -43,15 +48,24 @@ export default class extends Command {
 
     if (!message._guild!.logs.channel || !message._guild!.logs.kick) return;
 
-    const logChannel = member.guild.channels.get(message._guild!.logs.channel) as TextChannel;
+    const logChannel = member.guild.channels.get(
+      message._guild!.logs.channel
+    ) as TextChannel;
     logChannel.send(
-      new VorteEmbed(message).baseEmbed().setTimestamp()
-        .setAuthor(`Moderation: Channel Lockdown (Case ID: ${_case.id})`, message.author.displayAvatarURL())
-        .setDescription([
-          `**>** Staff: ${message.author.tag} (${message.author.id})`,
-          `**>** Kicked: ${member.user.tag} (${member.user.id})`,
-          `**>** Reason: ${reason ? reason : "No reason"}`
-        ].join("\n"))
+      new VorteEmbed(message)
+        .baseEmbed()
+        .setTimestamp()
+        .setAuthor(
+          `Moderation: Channel Lockdown (Case ID: ${_case.id})`,
+          message.author.displayAvatarURL()
+        )
+        .setDescription(
+          [
+            `**>** Staff: ${message.author.tag} (${message.author.id})`,
+            `**>** Kicked: ${member.user.tag} (${member.user.id})`,
+            `**>** Reason: ${reason ? reason : "No reason"}`
+          ].join("\n")
+        )
     );
   }
-};
+}

@@ -13,19 +13,19 @@ VorteKore is a multipurpose bot with easy to use commands such as Music, Moderat
 To see the full list of commands either join the support server or invite the bot to your server [here](https://discordapp.com/api/oauth2/authorize?client_id=634766962378932224&scope=bot&permissions=8)
 
 - Moderation
-	- Ban
-	- Kick
-	- Warn
+  - Ban
+  - Kick
+  - Warn
 - Music
-	- Play 
-	- Pause
-	- Repeat
-	- Queue
+  - Play
+  - Pause
+  - Repeat
+  - Queue
 - Information
-	-	Help
-	- Ping
+  -	Help
+  - Ping
   - Botinfo
-	- Invite
+  - Invite
 
 # Collaborators
 
@@ -35,4 +35,4 @@ To see the full list of commands either join the support server or invite the bo
 
 # Aknowledgements
 
-[Hoshi by 1Computer1](https://github.com/1Computer1/Hoshi) for the starboard!
+None!

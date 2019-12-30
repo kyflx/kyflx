@@ -1,4 +1,4 @@
-import { Event, VorteMessage, Command } from "../../lib";
+import { Event, VorteMessage, Command } from "@vortekore/lib";
 
 export default class CommandBlocked extends Event {
 	public constructor() {

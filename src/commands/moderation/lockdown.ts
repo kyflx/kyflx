@@ -1,7 +1,6 @@
-
 import { GuildChannel, TextChannel } from "discord.js";
-import { Command, VorteEmbed, VorteMessage } from "../../lib";
 import ms = require("ms");
+import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
@@ -21,13 +20,16 @@ export default class extends Command {
   public async run(message: VorteMessage, args: string[]) {
     const chan = message.channel as GuildChannel;
 
-    if (!args[0]) return message.sem("Please provide a reason to lockdown this channel.", { type: "error" });
-    if (['release', 'unlock', 'remove'].includes(args[0])) {
+    if (!args[0])
+      return message.sem("Please provide a reason to lockdown this channel.", {
+        type: "error"
+      });
+    if (["release", "unlock", "remove"].includes(args[0])) {
       chan.overwritePermissions({
         permissionOverwrites: [
           {
             id: message.guild!.id,
-            allow: ['SEND_MESSAGES']
+            allow: ["SEND_MESSAGES"]
           }
         ]
       });
@@ -40,7 +42,7 @@ export default class extends Command {
         permissionOverwrites: [
           {
             id: message.guild!.id,
-            deny: ['SEND_MESSAGES']
+            deny: ["SEND_MESSAGES"]
           }
         ],
         reason: reason ? reason : `No reason provided - ${message.author.tag}`
@@ -50,14 +52,13 @@ export default class extends Command {
           permissionOverwrites: [
             {
               id: message.guild!.id,
-              allow: ['SEND_MESSAGES']
+              allow: ["SEND_MESSAGES"]
             }
           ],
           reason: reason ? reason : `No reason provided - ${message.author.tag}`
         });
         message.sem("Successfully unlocked the channel.");
       }, time);
-
 
       const _case = await this.bot.database.newCase(message.guild!.id, {
         type: "lockdown",
@@ -66,17 +67,29 @@ export default class extends Command {
         moderator: message.author.id
       });
 
-      if (!message._guild!.logs.channel || !message._guild!.logs.lockdown) return;
+      if (!message._guild!.logs.channel || !message._guild!.logs.lockdown)
+        return;
 
-      const logChannel = message.guild!.channels.get(message._guild!.logs.channel) as TextChannel;
-      logChannel.send(new VorteEmbed(message).baseEmbed()
-        .setAuthor(`Moderation: Channel Lockdown (Case ID: ${_case.id})`, message.author.displayAvatarURL())
-        .setDescription([
-          `**>** Staff: ${message.author.tag} (${message.author.id})`,
-          `**>** Channel: ${chan} (${chan.id})`,
-          `**>** Reason: ${reason === undefined ? `No reason provided` : reason}`
-        ].join("\n"))
+      const logChannel = message.guild!.channels.get(
+        message._guild!.logs.channel
+      ) as TextChannel;
+      logChannel.send(
+        new VorteEmbed(message)
+          .baseEmbed()
+          .setAuthor(
+            `Moderation: Channel Lockdown (Case ID: ${_case.id})`,
+            message.author.displayAvatarURL()
+          )
+          .setDescription(
+            [
+              `**>** Staff: ${message.author.tag} (${message.author.id})`,
+              `**>** Channel: ${chan} (${chan.id})`,
+              `**>** Reason: ${
+                reason === undefined ? `No reason provided` : reason
+              }`
+            ].join("\n")
+          )
       );
     }
   }
-};
+}

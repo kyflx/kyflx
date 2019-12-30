@@ -1,5 +1,5 @@
 import { Message, TextChannel } from "discord.js";
-import { Event, VorteEmbed, VorteMessage } from "../../lib";
+import { Event, VorteMessage, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Event {
   public constructor() {
@@ -10,7 +10,7 @@ export default class extends Event {
   }
 
   async run(oldmsg: VorteMessage, newmsg: VorteMessage, bot = this.bot) {
-    const guild = await this.bot.database.getGuild(oldmsg.guild!.id)
+    const guild = await this.bot.database.getGuild(oldmsg.guild!.id);
     if (!guild.logs.channel && !guild.logs.edtmsg) return;
 
     const oldcon = oldmsg.cleanContent.toString().slice(0, 900);
@@ -23,14 +23,16 @@ export default class extends Event {
       new VorteEmbed(newmsg)
         .baseEmbed()
         .setTitle(`Event: Message Update`)
-        .setDescription([
-          `**Channel**: ${newmsg.channel} (${newmsg.channel.id})`,
-          `**Link**: ${newmsg.url}`,
-          `**Author**: ${newmsg.author.tag} (${newmsg.author.id})`
-        ].join("\n"))
+        .setDescription(
+          [
+            `**Channel**: ${newmsg.channel} (${newmsg.channel.id})`,
+            `**Link**: ${newmsg.url}`,
+            `**Author**: ${newmsg.author.tag} (${newmsg.author.id})`
+          ].join("\n")
+        )
         .addField(`Old Message:`, oldcon)
         .addField(`New Message`, newcon)
         .setTimestamp()
-    )
-  };
+    );
+  }
 }

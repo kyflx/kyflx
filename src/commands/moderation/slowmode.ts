@@ -1,14 +1,14 @@
 import { GuildChannel, TextChannel } from "discord.js";
-import { VorteEmbed, VorteMessage } from "../../lib";
-import { Command } from "../../lib/classes/Command";
 import ms = require("ms");
+import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
     super("slowmode", {
       category: "Moderation",
       cooldown: 3000,
-      usage: "To remove the slowmode: !slowmode <remove|release|rel>\nTo add the slowmode: !slowmode <time> (reason)",
+      usage:
+        "To remove the slowmode: !slowmode <remove|release|rel>\nTo add the slowmode: !slowmode <time> (reason)",
       channel: "guild",
       userPermissions: ["MANAGE_MESSAGES"]
     });
@@ -18,7 +18,7 @@ export default class extends Command {
     const chan = message.channel as GuildChannel;
 
     if (["remove" || "release" || "rel"].includes(args[0])) {
-      message.sem("Succesffully removed the slowmode")
+      message.sem("Succesffully removed the slowmode");
       return chan.edit({
         rateLimitPerUser: 0
       });
@@ -38,23 +38,28 @@ export default class extends Command {
         moderator: message.author.id
       });
 
-      if (!message._guild!.logs.channel || !message._guild!.logs.slowmode) return;
+      if (!message._guild!.logs.channel || !message._guild!.logs.slowmode)
+        return;
 
-      const logChannel = message.guild!.channels.get(message._guild!.logs.channel) as TextChannel;
+      const logChannel = message.guild!.channels.get(
+        message._guild!.logs.channel
+      ) as TextChannel;
       logChannel.send(
         new VorteEmbed(message)
           .baseEmbed()
           .setTitle(`Moderation: Slowmode (Case ID: ${_case.id})`)
-          .setDescription([
-            `**Moderator**: ${message.author.tag} (${message.author.id})`,
-            `**Channel**: ${chan.name} (${chan.id})`,
-            `**Reason**: ${reason}`,
-            `**Cooldown**: ${ms(sec)}`
-          ].join("\n"))
+          .setDescription(
+            [
+              `**Moderator**: ${message.author.tag} (${message.author.id})`,
+              `**Channel**: ${chan.name} (${chan.id})`,
+              `**Reason**: ${reason}`,
+              `**Cooldown**: ${ms(sec)}`
+            ].join("\n")
+          )
           .setTimestamp()
-      )
+      );
     } else {
-      return message.sem("Please provide a number, and a reason.")
+      return message.sem("Please provide a number, and a reason.");
     }
-  } 
-};
+  }
+}

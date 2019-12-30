@@ -1,5 +1,5 @@
 import { Guild, MessageEmbed, TextChannel } from "discord.js";
-import { Event } from "../../lib";
+import { Event, GuildEntity } from "@vortekore/lib";
 
 export default class extends Event {
   public constructor() {
@@ -10,7 +10,7 @@ export default class extends Event {
   }
 
   async run(guild: Guild) {
-    await this.bot.database.guilds!.findOneAndDelete({ where: { guildId: guild.id } });
+    await GuildEntity.delete({ guildId: guild.id });
     
     const logs = <TextChannel> await this.bot.channels.fetch("613827877015650304");
     return logs.send(new MessageEmbed({ thumbnail: guild.iconURL() ? { url: guild.iconURL()! } : {} })

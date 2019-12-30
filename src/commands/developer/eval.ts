@@ -1,5 +1,5 @@
-import { Command, VorteEmbed, VorteMessage } from "../../lib";
 import { isPromise } from "../../util";
+import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
@@ -22,7 +22,7 @@ export default class extends Command {
       const ctype = typeof code;
       if (typeof code !== "string") {
         code = require("util").inspect(code, {
-          depth: 0,
+          depth: 0
         });
       }
       embed = new VorteEmbed(message)
@@ -32,8 +32,7 @@ export default class extends Command {
         .addField("Output", `\`\`\`js\n${code}\`\`\``)
         .addField("Type", `\`\`\`js\n${ctype}\`\`\``);
       message.channel.send(embed);
-    }
-    catch (e) {
+    } catch (e) {
       embed = new VorteEmbed(message)
         .baseEmbed()
         .setTitle("Error")
@@ -43,4 +42,4 @@ export default class extends Command {
       message.channel.send(embed);
     }
   }
-};
+}
