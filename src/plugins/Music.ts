@@ -1,4 +1,4 @@
-import { ClientPlugin } from "@vortekore/lib";
+import { ClientPlugin, Command, ICommandOptions } from "@vortekore/lib";
 import WebSocket from "ws";
 import Logger from "@ayana/logger";
 
@@ -6,6 +6,7 @@ export default class Communicator extends ClientPlugin {
   public name: string = "music";
   public players: string[] = [];
   public ping: number = 0;
+  public commands: (ICommandOptions & { name: string })[] = []
 
   private logger: Logger = Logger.get(Communicator);
   private ws: WebSocket;
@@ -30,6 +31,7 @@ export default class Communicator extends ClientPlugin {
         case "metadata":
           this.players.concat(...data.d.players);
           this.ping = data.d.ping;
+          this.commands.push(...data.d.commands);
           break;
         case "players":
           this.players.concat(...data.d);
