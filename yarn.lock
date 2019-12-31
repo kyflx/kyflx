@@ -90,8 +90,8 @@
     "@types/node" "*"
 
 "@vortekore/lib@vortekore/lib":
-  version "1.0.3"
-  resolved "https://codeload.github.com/vortekore/lib/tar.gz/4a78079942417fe3aaf7eabadf2c3dde4958e59f"
+  version "1.0.4"
+  resolved "https://codeload.github.com/vortekore/lib/tar.gz/cbc4ef0917d29ba6f6faaf9b88774419b89c08fb"
   dependencies:
     "@ayana/logger" "^2.1.1"
     discord.js discordjs/discord.js

@@ -1,5 +1,5 @@
 <div style="align-items: center;">
-	<img height="156px" style="border-radius:100%;" src="public/img/logo.png" alt="logo">
+	<img height="156px" style="border-radius:100%;" src="images/logo.png" alt="logo">
 	<h1>VorteKore</h1>
 	<blockquote> <a href="https://discordapp.com/api/oauth2/authorize?client_id=634766962378932224&scope=bot&permissions=8">Invite</a> &bullet; <a href="https://discordapp.com/invite/asjkfp8">Support</a> &bullet; <a href="#">Commands (coming soon)</a> </blockquote>
 </div>

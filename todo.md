@@ -1,37 +1,69 @@
-# VorteKore-TS to-do list
+# to-do list
 
 A list of things we should do or things we should be doing *cough cough @ChaosPhoe cough cough*  
 
-| Names |                   URLs                    |
-| :---- | :---------------------------------------: |
-| Chaos |  [Github](https://github.com/chaosphoe)   |
-| 2D    | [Github](https://github.com/lolwastedjs/) |
+| Names |                   URLs                   |
+| :---- | :--------------------------------------: |
+| Chaos |  [Github](https://github.com/chaosphoe)  |
+| 2D    | [Github](https://github.com/lolwastedjs) |
 
 - [ ] Fix database stuff
   - [ ] Fix broken setup command.
 - [ ] Work on commands.
   - [ ] Moderation
     - [x] Clean up current code (2D)
+    - [ ] Rewrite
     - [ ] More commands?
       - [ ] !softban <@member> [reason]
       - [ ] !warns <@member>
       - [ ] !tempban <@member> [reason]
   - [ ] Fun
-    - [x] rps (rock paper scissors)
-    - [x] 8ball (yes... 8ball it's the easiest shit ever)
+    - [x] rps (rock paper scissors) (Chaos)
+    - [x] 8ball (yes... 8ball it's the easiest shit ever) (Chaos)
     - [ ] trivia?
+    - [ ] Mafia?
   - [ ] Image
     - [x] Meme (2D)
     - [x] Dog (2D)
     - [x] Cat (2D)
-    - [x] Fox
+    - [x] Fox (2D)
     - [ ] Panda?
     - [ ] Birb
+  - [ ] Settings
+    - [ ] Configuration (shows the guilds current config)
+    - [x] Prefix (2D)
+    - [ ] Embed Color
+    - [ ] Logs
+    - [ ] Welcome Channel & Message
+    - [ ] Farewell Channel & Message
+    - [ ] Auto Role
+  - [ ] Utility
+    - [x] Embed
+    - [x] Feedback (2D)
+    - [x] Image (Chaos)
+    - [ ] Poll
+  - [ ] ~~Economy~~ Sim
+    - [x] Leaderboard (Chaos & 2D)
+    - [x] Profile (Chaos & 2D)
+    - [ ] Bank
+    - [ ] Rob
+    - [ ] Crime
+    - [ ] Work
+    - [ ] Jobs
+    - [ ] Transfer
+    - [ ] Wallet
+    - [ ] Shop
+    - [ ] Posts? (basically instagram but on discord)
 - [ ] Bot List stuff
   - [x] DBL
     - [x] Statistics
     - [x] Vote Webhooks (2D)
-  - add more bot lists *soon™️*
+  - [ ] d.boats
+    - [ ] Statistics
+    - [ ] Vote Webhooks
+  - [ ] botlist.space
+    - [ ] Statistics
+    - [ ] Vote Webhooks
 
 VorteKore 2019 - 2020
 [ChaosPhoe](https://github.com/chaosphoe) &bull; [LolWastedJS](https://github.com/lolwastedjs) &bull; [Johna3212](https://github.com/johna3212)

@@ -33,16 +33,6 @@ export async function findMember(message: Message, toFind: string) {
   return member;
 }
 
-export const get = async <T>(url: string, options?: RequestInit): Promise<{ data?: T, error?: Error }> => {
-  return new Promise(resolve => {
-    return fetch(url, options)
-      .then(
-        async res => resolve({ data: await res.json() }),
-        error => resolve({ error })
-      );
-  });
-}
-
 export function _formatTime(ms: number) {
   let day, hour, minute, seconds;
   seconds = Math.floor(ms / 1000);

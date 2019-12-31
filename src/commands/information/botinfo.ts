@@ -1,13 +1,12 @@
 import ms from "ms";
-import { get } from "../../util";
-import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { Command, VorteMessage, VorteEmbed, get } from "@vortekore/lib";
+import Verta from "../../plugins/Music";
 
 export default class extends Command {
   public constructor() {
     super("botinfo", {
       aliases: ["status"],
-      category: "Information",
-      cooldown: 0
+      category: "Information"
     });
   }
 
@@ -30,23 +29,24 @@ export default class extends Command {
   }
 
   private buildStats() {
-    let time = ms(this.bot.uptime!, { long: true }),
-      fieldValue = "";
+    let time = ms(this.bot.uptime!, { long: true });
+    let fieldValue = "";
     fieldValue += `**Guild Count**: ${this.bot.guilds.size}\n`;
-    fieldValue += `**Total Users**: ${this.bot.users.size}\n`;
-    fieldValue += `**Total Commands**: ${this.bot.commands.size}\n`;
+    fieldValue += `*Total Users**: ${this.bot.users.size}\n`;
+    fieldValue += `**Total Commands**: ${this.bot.commands.size +
+      (<Verta>(<any>this.bot).music).commands.length}\n`;
     fieldValue += `**Uptime:** ${time}\n`;
-    fieldValue += `\n[Invite](http://bit.ly/VorteKore) • [Repository](https://github.com/ChaosPhoe/VorteKore-TS) • [Vote](https://top.gg/bot/634766962378932224)`;
+    fieldValue += `\n[Invite](http://bit.ly/VorteKore) • [Repository](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`;
     return fieldValue;
   }
 
   private async getCommits() {
     let commits = await get<GithubCommits.RootCommit[]>(
-        "https://api.github.com/repos/ChaosPhoe/VorteKore-TS/commits"
+        "https://api.github.com/repos/VorteKore/Core/commits"
       ),
       str = "";
     if (!commits.data) {
-      console.error(commits.error);
+      this.logger.error(commits.error); 
       return false;
     }
 

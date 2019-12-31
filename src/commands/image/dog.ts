@@ -1,5 +1,4 @@
-import { get } from "../../util";
-import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { Command, VorteMessage, VorteEmbed, get } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
@@ -17,7 +16,7 @@ export default class extends Command {
       "https://www.imgur.com/r/dog/hot.json"
     );
     if (!data) {
-      console.error(error);
+      this.logger.error(error);
       return message.sem(`Sorry, we ran into an error :(`, { type: "error" });
     }
 
