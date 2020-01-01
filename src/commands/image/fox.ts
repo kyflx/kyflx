@@ -13,7 +13,7 @@ export default class extends Command {
 
   public async run(message: VorteMessage) {
     const { data, error } = await get<RedditTopJSON.RootObject>(
-      "https://www.reddit.com/r/foxes.json"
+      "https://www.reddit.com/r/foxes.json?limit=100"
     );
     if (!data) {
       this.logger.error(error);

@@ -27,8 +27,10 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
     - [x] Dog (2D)
     - [x] Cat (2D)
     - [x] Fox (2D)
-    - [ ] Panda?
-    - [ ] Birb
+    - [x] Panda (2D)
+    - [x] Birb (2D)
+    - [x] Lizard
+    - [ ] Duck
   - [ ] Settings
     - [ ] Configuration (shows the guilds current config)
     - [x] Prefix (2D)

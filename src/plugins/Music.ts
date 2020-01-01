@@ -1,5 +1,10 @@
 import Logger from "@ayana/logger";
-import { ClientPlugin, Config, ICommandOptions } from "@vortekore/lib";
+import {
+  ClientPlugin,
+  Config,
+  ICommandOptions,
+  GuildEntity
+} from "@vortekore/lib";
 import WebSocket from "ws";
 import ms from "ms";
 
@@ -13,11 +18,7 @@ export default class Verta extends ClientPlugin {
   private ws: WebSocket;
 
   public onReady() {
-    this.ws = new WebSocket(`ws://${Config.get("node_host", false)}:4269`, {
-      headers: {
-        Authorization: this.client.token
-      }
-    });
+    this.ws = new WebSocket(`ws://${Config.get("node_host", false)}:4269`);
 
     this.ws.on("close", (code, reason) => {
       this.ws.close(4011);
@@ -66,6 +67,15 @@ export default class Verta extends ClientPlugin {
           op: "ping"
         })
       )
+    );
+  }
+
+  public updateGuild(entity: GuildEntity) {
+    this.ws.send(
+      JSON.stringify({
+        op: "guild-update",
+        d: entity
+      })
     );
   }
 

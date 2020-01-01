@@ -32,7 +32,7 @@ export default class extends Command {
     let time = ms(this.bot.uptime!, { long: true });
     let fieldValue = "";
     fieldValue += `**Guild Count**: ${this.bot.guilds.size}\n`;
-    fieldValue += `*Total Users**: ${this.bot.users.size}\n`;
+    fieldValue += `**Total Users**: ${this.bot.users.size}\n`;
     fieldValue += `**Total Commands**: ${this.bot.commands.size +
       (<Verta>(<any>this.bot).music).commands.length}\n`;
     fieldValue += `**Uptime:** ${time}\n`;

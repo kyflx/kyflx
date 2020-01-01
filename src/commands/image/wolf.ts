@@ -2,20 +2,20 @@ import { Command, VorteMessage, VorteEmbed, get } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
-    super("meme", {
+    super("wolf", {
       category: "Image",
-      aliases: ["joke"],
+      aliases: ["wolves"],
       cooldown: 3000,
-      description: "Provides a meme",
+      description: "Provides a picture of a wolf from r/wolves",
       example: "!meme"
     });
   }
 
   public async run(message: VorteMessage) {
     const { data, error } = await get<RedditTopJSON.RootObject>(
-      "https://www.reddit.com/r/dankmemes/top.json?limit=100"
+      "https://www.reddit.com/r/wolves.json?limit=100"
     );
-    if (!data || error) {
+    if (!data) {
       this.logger.error(error);
       return message.sem(`Sorry, we ran into an error :(`, { type: "error" });
     }

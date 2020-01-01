@@ -13,7 +13,7 @@ export default class extends Command {
 
   public async run(message: VorteMessage) {
     const { data, error } = await get<RedditTopJSON.RootObject>(
-      "https://www.reddit.com/r/cats.json"
+      "https://www.reddit.com/r/cats.json?limit=100"
     );
     if (!data) {
       this.logger.error(error);

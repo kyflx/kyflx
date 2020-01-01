@@ -8,7 +8,8 @@ export default class extends Command {
       usage: "[prefix]",
       channel: "guild",
       userPermissions: ["MANAGE_GUILD"],
-      category: "Settings"
+      category: "Settings",
+      disabled: true
     });
   }
 
