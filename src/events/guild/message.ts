@@ -29,7 +29,7 @@ export default class extends Event {
                   message.sem(
                     `Congrats 🎉! You're now level ${message.profile.level}`
                   );
-              } catch (e) {}
+              } catch (e) { }
             }
           }
           message.profile.save();

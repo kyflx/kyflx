@@ -30,9 +30,9 @@ export default class extends Command {
         const user = this.bot.users.get(userId);
         return user ? total + user.username.length : total;
       }, 0);
-      str += `${++index}. ${(user ? user.username : "Unknown").padEnd} : ${
+      str += `${++index}. ${(user ? user.username : "Unknown")} : ${
         member.level
-      } [${member.xp}]\n`;
+        } [${member.xp}]\n`;
     }
     str += `Page : ${page}`;
 

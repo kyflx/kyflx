@@ -42,20 +42,24 @@ export default class extends Command {
           where: { guildId: message.guild!.id }
         });
         users = users.sort((a, b) => b.xp - a.xp);
-        const rank = users.findIndex(user => user.userId === message.author.id);
+        const rank = users.findIndex(user => user.userId === message.author.id) + 1;
 
         const canvas = createCanvas(500, 200);
         const ctx = canvas.getContext("2d");
         const xpNeed = 2 * (75 * level);
         const image = await loadImage(join(process.cwd(), "images/rank-card.png"));
+        const pfp = await loadImage(message.author.displayAvatarURL().replace(".webp", ".png"));
         const lineLength = Math.round((xp / xpNeed) * 458);
 
         ctx.lineWidth = 20;
-        ctx.font = "20px Impact";
+        ctx.font = "18px Impact";
         ctx.fillStyle = "#00000";
 
+        pfp.width = 310;
+        pfp.height = 310;
+        ctx.drawImage(pfp, 186, 36)
         ctx.drawImage(image, 0, 0);
-        ctx.fillText(message.author.username, 30, 85);
+        ctx.fillText(message.author.username, 33, 85);
         ctx.fillText(`[${formatNumber(level)}]`, 102, 155);
         ctx.fillText(`[${formatNumber(xp)}/${formatNumber(xpNeed)}]`, 400, 155);
         ctx.fillText(`#${formatNumber(rank)}`, 370, 60);
