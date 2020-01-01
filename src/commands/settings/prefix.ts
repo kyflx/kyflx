@@ -48,6 +48,7 @@ export default class extends Command {
 
         guild.prefixes.push(prefix);
         await guild.save();
+        (this.bot as any).music.updateGuild(guild);
         message.sem(
           `Successfully added \`${prefix}\` to the list of prefixes!`
         );
@@ -66,6 +67,7 @@ export default class extends Command {
         guild.prefixes.splice(index, 1);
 
         await guild.save();
+        (this.bot as any).music.updateGuild(guild);
         message.sem(
           `Successfully removed \`${prefix}\` from the list of prefixes.${
             guild.prefixes.length > 0

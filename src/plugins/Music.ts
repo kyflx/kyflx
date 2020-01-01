@@ -41,7 +41,7 @@ export default class Verta extends ClientPlugin {
           this.players = this.players.concat(...data.d.players);
           break;
         case "players":
-          this.players.concat(...data.d);
+          this.players = this.players.concat(...data.d);
           break;
         case "pong":
           this.ping = data.d.ping;
@@ -73,7 +73,7 @@ export default class Verta extends ClientPlugin {
   public updateGuild(entity: GuildEntity) {
     this.ws.send(
       JSON.stringify({
-        op: "guild-update",
+        op: "update-guild",
         d: entity
       })
     );
