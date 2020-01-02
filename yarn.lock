@@ -91,10 +91,11 @@
 
 "@vortekore/lib@vortekore/lib":
   version "1.0.4"
-  uid "22bef05cb70f6d3a6ef89cb468902732c6dd1685"
-  resolved "https://codeload.github.com/vortekore/lib/tar.gz/22bef05cb70f6d3a6ef89cb468902732c6dd1685"
+  uid "719084ebd3b2480065e3fc5005d69d42065f2feb"
+  resolved "https://codeload.github.com/vortekore/lib/tar.gz/719084ebd3b2480065e3fc5005d69d42065f2feb"
   dependencies:
     "@ayana/logger" "^2.1.1"
+    discord-akairo "^8.0.0-beta.8"
     discord.js discordjs/discord.js
     typeorm "^0.2.22"
 
@@ -414,6 +415,11 @@ diff@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.1.tgz#0c667cb467ebbb5cea7f14f135cc2dba7780a8ff"
   integrity sha512-s2+XdvhPCOF01LRQBC8hf4vhbVmI2CGS5aZnxLJlT5FtdhPCDFq80q++zK2KlrVorVDdL5BOGZ/VfLrVtYNF+Q==
+
+discord-akairo@^8.0.0-beta.8:
+  version "8.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/discord-akairo/-/discord-akairo-8.0.0-beta.8.tgz#664c1f4fb819ec1d057ed7a36d2e38a68f53367b"
+  integrity sha512-aT64C1vvntCoSV/i/yAVAHrYyz1Y+5IAWagUaDsrv8M2zKmakcOvT62Iqhz5oK89k8UgVU23aIsLiq01U1bJDQ==
 
 discord.js@discordjs/discord.js, "discord.js@github:discordjs/discord.js":
   version "12.0.0-dev"
