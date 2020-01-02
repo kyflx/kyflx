@@ -1,32 +1,44 @@
 import { TextChannel } from "discord.js";
-import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { Command, VorteEmbed } from "@vortekore/lib";
+import { GuildMember, Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("ban", {
-      category: "Moderation",
+      aliases: [ "ban" ],
       channel: "guild",
-      description: "Bans a member from the server",
-      example: "!ban @2D not cool",
-      usage: "<@member> [reason]",
+      description: {
+        content: "Bans a member from the server",
+        examples: ["v!ban @2D not cool"],
+        usage: "<@member> [reason]"
+      },
       userPermissions: ["BAN_MEMBERS"],
-      botPermissions: ["BAN_MEMBERS"]
+      clientPermissions: ["BAN_MEMBERS"],
+      args: [
+        {
+          id: "member",
+          prompt: {
+            start: "Please provide a member to ban."
+          },
+          type: "member"
+        },
+        {
+          id: "reason",
+          prompt: {
+            start: "Please provide a reason for this ban."
+          },
+          match: "rest"
+        }
+      ]
     });
   }
 
-  public async run(message: VorteMessage, [mem, ...reason]: any) {
+  public async exec(
+    message: Message,
+    { member, reason }: { member: GuildMember; reason: string }
+  ) {
     if (message.deletable) await message.delete();
 
-    if (!mem) return message.sem("Please provide a user to ban");
-
-    const member =
-      message.mentions.members!.first() ||
-      message.guild!.members.find((r: { displayName: string }) => {
-        return r.displayName === mem;
-      }) ||
-      message.guild!.members.get(mem);
-
-    if (!member) return message.channel.send("Couldn't find that user!");
     if (message.author.id === member.user.id)
       return message.sem("You can't ban yourself", { type: "error" });
     if (message.member!.roles.highest <= member.roles.highest)
@@ -34,17 +46,15 @@ export default class extends Command {
         type: "error"
       });
 
-    reason = reason[0] ? reason.join(" ") : "No reason";
-
     try {
       await member!.ban({ reason: reason });
       message.sem("Succesfully banned the user.");
     } catch (error) {
-      console.error(`ban command`, error);
+      this.logger.error(`ban command`, error);
       return message.sem(`Sorry, we ran into an error.`, { type: "error" });
     }
 
-    const _case = await this.bot.database.newCase(message.guild!.id, {
+    const _case = await this.client.database.newCase(message.guild!.id, {
       type: "ban",
       subject: member.id,
       reason,
@@ -60,12 +70,13 @@ export default class extends Command {
       new VorteEmbed(message)
         .baseEmbed()
         .setTimestamp()
-        .setTitle(`Moderation: Member Ban [Case ID: ${_case.id}] `)
+        .setAuthor(`Ban [Case ID: ${_case.id}] `)
+        .setThumbnail(this.client.user.displayAvatarURL())
         .setDescription(
           [
-            `**>** Staff: ${message.author.tag} (${message.author.id})`,
-            `**>** Banned: ${member.user.tag} (${member.user.id})`,
-            `**>** Reason: ${reason}`
+            `**Staff**: ${message.author.tag} (${message.author.id})`,
+            `**Banned**: ${member.user.tag} (${member.user.id})`,
+            `**Reason**: ${reason}`
           ].join("\n")
         )
     );

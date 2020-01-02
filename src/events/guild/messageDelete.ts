@@ -1,16 +1,16 @@
-import { TextChannel, Util } from "discord.js";
-import { Event, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { TextChannel, Util, Message } from "discord.js";
+import { Listener, VorteEmbed } from "@vortekore/lib";
 
-export default class extends Event {
+export default class extends Listener {
   public constructor() {
     super("message-deleted", {
-      category: "guild",
-      event: "messageDelete"
+      event: "messageDelete",
+      emitter: "client"
     });
   }
 
-  async run(message: VorteMessage) {
-    const guild = await this.bot.database.getGuild(message.guild!.id)
+  async exec(message: Message) {
+    const guild = await this.client.findOrCreateGuild(message.guild!.id)
     const { logs: { dltmsg, channel } } = guild;
     if (!dltmsg) return;
 

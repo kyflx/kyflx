@@ -1,30 +1,29 @@
-import { Collection, VoiceChannel } from "discord.js";
 import DBLAPI = require("dblapi.js");
-import { Event, CaseEntity } from "@vortekore/lib";
+import { CaseEntity, Listener } from "@vortekore/lib";
 
-export default class extends Event {
+export default class extends Listener {
   public constructor() {
     super("bot-ready", {
-      category: "client",
-      event: "ready"
+      event: "ready",
+      emitter: "client"
     });
   }
 
-  async run(bot = this.bot) {
+  async exec(bot = this.client) {
     await bot.database.onReady();
     await bot.plugins.forEach(plugin => plugin.onReady());
     await bot.logger.info(`${bot.user!.username} is ready to rumble!`);
 
     bot.user!.setPresence({
       activity: {
-        name: "VorteKore | !help",
+        name: "VorteKore | v!help",
         type: "STREAMING",
         url: "https://api.chaosphoe.xyz/rick"
       }
     });
 
     if (process.env.NODE_ENV!.ignoreCase("production")) {
-      new DBLAPI(process.env.DBL_TOKEN!, this.bot);
+      new DBLAPI(process.env.DBL_TOKEN!, this.client);
     }
 
     setInterval(async () => {

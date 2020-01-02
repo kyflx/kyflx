@@ -4,24 +4,25 @@ import { formatNumber } from "../../util";
 import { join } from "path";
 import {
   Command,
-  VorteMessage,
   ProfileEntity,
   VorteEmbed
 } from "@vortekore/lib";
+import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("profile", {
       aliases: ["profile", "me"],
-      description: "Displays your profile in an embed.",
-      channel: "guild",
-      usage: "[action] <value>",
-      example: "!profile set bio I'm cool!",
-      category: "Economy"
+      description: {
+        content: "Displays your profile in an embed.",
+        usage: "[action] <value>",
+        example: ["v!profile set bio I'm cool!"],
+      },
+      channel: "guild"
     });
   }
 
-  public async run(message: VorteMessage, args: string[]) {
+  public async exec(message: Message, args: string[]) {
     switch (args[0]) {
       case "set":
         switch (args[1]) {

@@ -1,32 +1,42 @@
 import { TextChannel } from "discord.js";
-import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { Command, VorteEmbed } from "@vortekore/lib";
+import { GuildMember, Message } from "discord.js";
 
 export default class extends Command {
   constructor() {
     super("warn", {
-      category: "Moderation",
-      cooldown: 5000,
-      description: "Warns a member",
-      usage: "<@member> [reason]",
-      example: "!warn @Johna3212#1708 not following rules",
+      description: {
+        content: "Warns a member",
+        usage: "<@member> [reason]",
+        examples: ["v!warn @Johna3212#1708 not following rules"]
+      },
       channel: "guild",
-      userPermissions: ["MANAGE_GUILD"]
+      aliases: [ "warn" ],
+      userPermissions: ["MANAGE_GUILD"],
+      args: [
+        {
+          id: "member",
+          prompt: {
+            start: "Please provide a member to warn."
+          },
+          type: "member"
+        },
+        {
+          id: "reason",
+          prompt: {
+            start: "Please provide a reason for this warn."
+          },
+          match: "rest"
+        }
+      ]
     });
   }
 
-  public async run(message: VorteMessage, args: string[]) {
-    if (!(args[0] && args[1]))
-      return message.sem("Please provide a user to warn, and a reason.");
-    const member =
-      message.mentions.members!.first() ||
-      message.guild!.members.find(
-        r => r.displayName === args[0] || r.id === args[0]
-      );
-    const reason = args.slice(1).join(" ");
-
-    if (!member) return message.sem("Couldn't find that user!");
-
-    const _case = await this.bot.database.newCase(message.guild!.id, {
+  public async exec(
+    message: Message,
+    { member, reason }: { member: GuildMember; reason: string }
+  ) {
+    const _case = await this.client.database.newCase(message.guild!.id, {
       type: "slowmode",
       subject: member.id,
       reason,
@@ -43,7 +53,8 @@ export default class extends Command {
     logChannel.send(
       new VorteEmbed(message)
         .baseEmbed()
-        .setTitle(`Moderation: Warn [Case ID: ${_case.id}]`)
+        .setAuthor(`Warn [Case ID: ${_case.id}]`)
+        .setThumbnail(this.client.user.displayAvatarURL())
         .setDescription(
           [
             `**Moderator**: ${message.author.tag} (${message.author.id})`,

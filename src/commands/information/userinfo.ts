@@ -1,6 +1,5 @@
-import { findMember } from "../../util";
-import { GuildMember } from "discord.js";
-import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { Command, VorteEmbed } from "@vortekore/lib";
+import { GuildMember, Message } from "discord.js";
 
 const Presence = {
   dnd: "Do Not Disturb",
@@ -12,18 +11,24 @@ const Presence = {
 export default class extends Command {
   public constructor() {
     super("userinfo", {
-      category: "Information",
-      cooldown: 5000,
-      aliases: ["whois", "ui"],
-      description: "!ui @user",
-      channel: "guild"
+      aliases: ["userinfo", "whois", "ui"],
+      description: {
+        content: "Shows info on a member",
+        usage: "[@member]",
+        examples: ["v!ui 396096412116320258", "v!ui", "v!ui @2D#5773"]
+      },
+      channel: "guild",
+      args: [
+        {
+          id: "member",
+          type: "member",
+          default: (message: Message) => message.member
+        }
+      ]
     });
   }
 
-  public async run(message: VorteMessage, [mem]: [string]) {
-    const member = mem ? await findMember(message, mem) : message.member;
-    if (!member) return message.channel.send(`Unable to find that member!`);
-
+  public async exec(message: Message, { member }: { member: GuildMember }) {
     const infoEmbed = new VorteEmbed(message)
       .baseEmbed()
       .setDescription(

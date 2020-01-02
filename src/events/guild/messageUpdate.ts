@@ -1,16 +1,16 @@
-import { Message, TextChannel } from "discord.js";
-import { Event, VorteMessage, VorteEmbed } from "@vortekore/lib";
+import { Listener, VorteEmbed } from "@vortekore/lib";
+import { TextChannel, Message } from "discord.js";
 
-export default class extends Event {
+export default class extends Listener {
   public constructor() {
-    super("message-deleted", {
-      category: "guild",
-      event: "messageDelete"
+    super("message-updated", {
+      event: "messageDelete",
+      emitter: "client"
     });
   }
 
-  async run(oldmsg: VorteMessage, newmsg: VorteMessage, bot = this.bot) {
-    const guild = await this.bot.database.getGuild(oldmsg.guild!.id);
+  public async exec(oldmsg: Message, newmsg: Message) {
+    const guild = await this.client.findOrCreateGuild(oldmsg.guild!.id);
     if (!guild.logs.channel && !guild.logs.edtmsg) return;
 
     const oldcon = oldmsg.cleanContent.toString().slice(0, 900);

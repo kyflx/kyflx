@@ -1,17 +1,17 @@
 import { GuildMember, TextChannel } from "discord.js";
-import { Event } from "@vortekore/lib";
+import { Listener } from "@vortekore/lib";
 import { formatString } from "../../util";
 
-export default class extends Event {
+export default class extends Listener {
   public constructor() {
     super("new-member", {
-      category: "guild",
-      event: "guildMemberAdd"
+      event: "guildMemberAdd",
+      emitter: "client"
     });
   }
 
-  async run(member: GuildMember) {
-    const guild = await this.bot.database.getGuild(member.guild.id);
+  async exec(member: GuildMember) {
+    const guild = await this.client.findOrCreateGuild(member.guild.id);
     const channel = guild.logs.memberJoined;
     if (!channel) return;
 

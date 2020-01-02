@@ -1,24 +1,47 @@
 import Logger from "@ayana/logger";
-import {
-  ClientPlugin,
-  Config,
-  ICommandOptions,
-  GuildEntity
-} from "@vortekore/lib";
-import WebSocket from "ws";
+import { ClientPlugin, Command, Config } from "@vortekore/lib";
 import ms from "ms";
+import WebSocket from "ws";
 
+declare module "discord-akairo" {
+  interface AkairoClient {
+    music: Verta;
+  }
+}
+
+interface Heap {
+  init: number;
+  used: number;
+  committed: number;
+  max: number;
+}
+interface NonHeap {
+  init: number;
+  used: number;
+  committed: number;
+  max: number;
+}
+
+interface Memory {
+  pendingFinalization: number;
+  heap: Heap;
+  nonHeap: NonHeap;
+}
 export default class Verta extends ClientPlugin {
   public name: string = "music";
   public players: string[] = [];
   public ping: number = 0;
-  public commands: (ICommandOptions & { name: string })[] = [];
+  public commands: Command[] = [];
+  public stats: {
+    verta: NodeJS.MemoryUsage;
+    node: Memory;
+  };
 
   private logger: Logger = Logger.get(Verta);
   private ws: WebSocket;
 
   public onReady() {
-    this.ws = new WebSocket(`ws://${Config.get("node_host", false)}:4269`);
+    this.ws = new WebSocket(`ws://${Config.get("node_host")}:4269`);
 
     this.ws.on("close", (code, reason) => {
       this.ws.close(4011);
@@ -39,12 +62,20 @@ export default class Verta extends ClientPlugin {
           this.ping = data.d.ping;
           this.commands = this.commands.concat(...data.d.commands);
           this.players = this.players.concat(...data.d.players);
+          this.stats = {
+            node: data.d.nodeUsage,
+            verta: data.d.memoryUsage
+          }
           break;
         case "players":
           this.players = this.players.concat(...data.d);
           break;
-        case "pong":
-          this.ping = data.d.ping;
+        case "stats":
+          this.ping = data.d.ping
+          this.stats = {
+            node: data.d.nodeUsage,
+            verta: data.d.memoryUsage
+          }
           break;
       }
     });
@@ -59,22 +90,11 @@ export default class Verta extends ClientPlugin {
     );
   }
 
-  public getPing(): Promise<void> {
-    if (!this.ws) throw new Error("Music WS isn't opened");
-    return Promise.resolve(
-      this.ws.send(
-        JSON.stringify({
-          op: "ping"
-        })
-      )
-    );
-  }
-
-  public updateGuild(entity: GuildEntity) {
-    this.ws.send(
+  public getStats(): void {
+    if (!this.ws) throw new Error("Verta WS isn't opened");
+    return this.ws.send(
       JSON.stringify({
-        op: "update-guild",
-        d: entity
+        op: "stats"
       })
     );
   }
@@ -82,6 +102,8 @@ export default class Verta extends ClientPlugin {
   public async queueReconnect(code: number, reason: string) {
     this.logger.info(`[${code}] Reconnecting to Verta: "${reason}"`);
     try {
+      this.ws.removeAllListeners();
+      this.ws = null;
       await this.onReady();
     } catch (e) {
       this.logger.info(e.message);

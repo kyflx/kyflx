@@ -1,21 +1,28 @@
 import { Message } from "discord.js";
-import { VorteEmbed, VorteMessage, Command } from "@vortekore/lib";
+import { VorteEmbed, Command } from "@vortekore/lib";
 
 export default class extends Command {
   constructor() {
     super("emb", {
       aliases: ["embed"],
-      category: "Utility",
-      cooldown: 1000,
-      description: "Creates an embed with provided title and description",
-      usage: "<title> | <description>",
-      example: "!embed Cool guy | I know i am really cool",
-      userPermissions: ["ADMINISTRATOR"]
+      description: {
+        content: "Creates an embed with provided title and description",
+        usage: "<title> | <description>",
+        examples: ["!embed Cool guy | I know i am really cool"]
+      },
+      userPermissions: ["ADMINISTRATOR"],
+      args: [{
+        id: "content", 
+        match: "rest",
+        prompt: {
+          start: "Maybe you should provide some text :thonk:"
+        }
+      }]
     });
   }
 
-  public async run(message: VorteMessage, args: string[]) {
-    const emb = args.join(" ").split(" | ");
+  public async exec(message: Message, { content }: { content: string }) {
+    const emb = content.split("|").map(t => t.trim());
 
     if (!message.deletable)
       return message.channel.send("Dont have permission to delete the message");

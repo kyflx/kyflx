@@ -1,25 +1,28 @@
 import ms from "ms";
-import { Command, VorteMessage, VorteEmbed, get } from "@vortekore/lib";
+import { Command, VorteEmbed, get } from "@vortekore/lib";
 import Verta from "../../plugins/Music";
+import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("botinfo", {
-      aliases: ["status"],
-      category: "Information"
+      aliases: ["botinfo", "status"],
+      description: {
+        content: "Displays info on VorteKore"
+      }
     });
   }
 
-  public async run(message: VorteMessage) {
+  public async exec(message: Message) {
     const emb = new VorteEmbed(message)
       .baseEmbed()
       .setAuthor(
-        `${this.bot.user!.username} Bot Info`,
-        this.bot.user!.displayAvatarURL()
+        `${this.client.user!.username} Bot Info`,
+        this.client.user!.displayAvatarURL()
       )
       .setDescription(
         `Hello, I'm ${
-          this.bot.user!.username
+          this.client.user!.username
         }!, I am a public bot. If you wish to check out the commands I have, please do \`!help\`.`
       )
       .addField("\u200B", this.buildStats());
@@ -29,12 +32,12 @@ export default class extends Command {
   }
 
   private buildStats() {
-    let time = ms(this.bot.uptime!, { long: true });
+    let time = ms(this.client.uptime!, { long: true });
     let fieldValue = "";
-    fieldValue += `**Guild Count**: ${this.bot.guilds.size}\n`;
-    fieldValue += `**Total Users**: ${this.bot.users.size}\n`;
-    fieldValue += `**Total Commands**: ${this.bot.commands.size +
-      (<Verta>(<any>this.bot).music).commands.length}\n`;
+    fieldValue += `**Guild Count**: ${this.client.guilds.size}\n`;
+    fieldValue += `**Total Users**: ${this.client.users.size}\n`;
+    fieldValue += `**Total Commands**: ${this.client.commands.modules.size +
+      (<Verta>(<any>this.client).music).commands.length}\n`;
     fieldValue += `**Uptime:** ${time}\n`;
     fieldValue += `\n[Invite](http://bit.ly/VorteKore) • [Repository](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`;
     return fieldValue;
@@ -46,13 +49,13 @@ export default class extends Command {
       ),
       str = "";
     if (!commits.data) {
-      this.logger.error(commits.error); 
+      this.logger.error(commits.error);
       return false;
     }
 
     for (const { sha, html_url, commit, author } of commits.data
       .filter(c => c.committer.type.ignoreCase("user"))
-      .slice(0, 5))
+      .slice(0, 3))
       str += `[\`${sha.slice(0, 7)}\`](${html_url}) ${commit.message} - ${
         author.login
       }\n`;

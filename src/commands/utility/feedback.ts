@@ -1,29 +1,35 @@
-import { Command, VorteMessage, VorteEmbed } from "@vortekore/lib";
-import { TextChannel } from "discord.js";
+import { Command, VorteEmbed } from "@vortekore/lib";
+import { TextChannel, Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("feedback", {
-      aliases: ["thoughts"],
-      description: "Provide feedback on the bot!",
-      usage: "<thoughts>",
-      example: "!feedback fix stuff; or !feedback amazing music quality!",
-      category: "Utility"
+      aliases: ["feedback", "thoughts"],
+      description: {
+        content: "Provide feedback on the bot!",
+        usage: "<thoughts>",
+        examples: ["!feedback fix stuff", "!feedback amazing music quality!"]
+      },
+      args: [{
+        id: "feedback",
+        match: "rest",
+        prompt: {
+          start: "Maybe you should put something next time."
+        }
+      }]
     });
   }
 
-  public async run(message: VorteMessage, args: string[]) {
-    if (!args.length)
-      return message.sem("You should actually put something the next time ;)");
+  public async exec(message: Message, { feedback }: { feedback: string }) {
     const Feedback = new VorteEmbed(message)
       .baseEmbed()
       .setAuthor(message.author.tag, message.author.displayAvatarURL())
-      .setDescription(args.join(" "))
+      .setDescription(feedback)
       .addField(
         "\u200b",
-        `**Sent From**: ${message.guild ? message.guild.name : "DMs"}`
+        `**Sent From**: ${message.guild ? `${message.guild.name} (${message.guild.id})` : "DMs"} `
       );
-    await (<TextChannel>this.bot.channels.get("631151085150797833")!).send(
+    await (<TextChannel>this.client.channels.get("631151085150797833")!).send(
       Feedback
     );
     return message.sem("Feedback sent! Thanks <3");

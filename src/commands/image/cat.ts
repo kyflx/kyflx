@@ -1,17 +1,17 @@
-import { Command, VorteMessage, VorteEmbed, get } from "@vortekore/lib";
+import { Command, VorteEmbed, get } from "@vortekore/lib";
+import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("cat", {
-      category: "Image",
-      aliases: ["kitty"],
-      cooldown: 3000,
-      description: "Provides a cat pic from r/cats",
-      example: "!meme"
+      aliases: ["cat", "kitty"],
+      description: {
+        content: "Provides a cat pic from r/cats"
+      }
     });
   }
 
-  public async run(message: VorteMessage) {
+  public async exec(message: Message) {
     const { data, error } = await get<RedditTopJSON.RootObject>(
       "https://www.reddit.com/r/cats.json?limit=100"
     );

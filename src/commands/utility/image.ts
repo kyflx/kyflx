@@ -1,26 +1,29 @@
-import { Command, VorteEmbed, VorteMessage } from "@vortekore/lib";
-import { TextChannel } from "discord.js";
+import { Command, VorteEmbed } from "@vortekore/lib";
+import { TextChannel, Message } from "discord.js";
 import fetch from "node-fetch";
 
 export default class extends Command {
   public constructor() {
     super("image", {
-      category: "Utility",
-      cooldown: 5000,
-      description: "Provides you image with provided name",
-      example: "!image cow"
+      aliases: ["image"],
+      description: {
+        content: "Provides you image with provided name",
+        examples: ["!image cow"]
+      },
+      args: [
+        {
+          id: "image",
+          prompt: {
+            start: "Please provide a search query."
+          },
+          match: "rest"
+        }
+      ]
     });
   }
 
-  public async run(message: VorteMessage, [...image]: string[]) {
-    if (!image[0])
-      return message.channel.send(
-        new VorteEmbed(message)
-          .baseEmbed()
-          .setDescription("Please provide a query to search.")
-      );
-
-    let link: any = `https://imgur.com/r/${image.join(" ")}/hot.json`;
+  public async exec(message: Message, { image }: { image: string }) {
+    let link: any = `https://imgur.com/r/${image}/hot.json`;
     const { data } = await fetch(link).then(res => res.json());
     link = data[Math.floor(Math.random() * data.length)];
     if ((message.channel as TextChannel).nsfw && link.nsfw)

@@ -1,21 +1,22 @@
 import { paginate } from "../../util";
-import {
-  Command,
-  VorteMessage,
-  ProfileEntity,
-  VorteEmbed
-} from "@vortekore/lib";
+import { Command, ProfileEntity, VorteEmbed } from "@vortekore/lib";
+import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("leaderboard", {
-      aliases: ["lb"],
-      category: "Economy",
-      cooldown: 500
+      aliases: ["leaderboard", "lb"],
+      args: [
+        {
+          id: "page",
+          default: 1,
+          type: "number"
+        }
+      ]
     });
   }
 
-  public async run(message: VorteMessage, [selected]: any) {
+  public async exec(message: Message, { page: selected }: { page: number }) {
     let members = await ProfileEntity.find({ guildId: message.guild!.id });
     if (!members.length) return message.sem("Nothing to show ¯\\_(ツ)_/¯");
     members = members.sort((a, b) => b.xp - a.xp);
@@ -25,14 +26,10 @@ export default class extends Command {
       index = (page - 1) * 10;
 
     for (const member of items) {
-      const user = this.bot.users.get(member.userId)!;
-      const padding = members.reduce((total, { userId }) => {
-        const user = this.bot.users.get(userId);
-        return user ? total + user.username.length : total;
-      }, 0);
-      str += `${++index}. ${(user ? user.username : "Unknown")} : ${
+      const user = this.client.users.get(member.userId)!;
+      str += `${++index}. ${user ? user.username : "Unknown"} : ${
         member.level
-        } [${member.xp}]\n`;
+      } [${member.xp}]\n`;
     }
     str += `Page : ${page}`;
 

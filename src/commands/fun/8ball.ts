@@ -1,4 +1,5 @@
-import { Command, VorteMessage } from "@vortekore/lib";
+import { Command } from "@vortekore/lib";
+import { Message } from "discord.js";
 
 const answers = [
   "You may rely on it.",
@@ -26,14 +27,25 @@ const answers = [
 export default class extends Command {
   public constructor() {
     super("8ball", {
-      category: "Fun",
-      cooldown: 500
+      aliases: ["8ball", "8b"],
+      description: {
+        content: "The magic 8ball will answer you question."
+      },
+      args: [
+        {
+          id: "question",
+          prompt: {
+            start: "Sooo... There is no question?"
+          },
+          type: "text"
+        }
+      ]
     });
   }
 
-  public async run(message: VorteMessage, [selected]: any) {
-    if (!selected)
-      return message.sem("Sooo... There is no question?", { type: "error" });
-    message.sem(`${answers[Math.floor(Math.random() * answers.length)]}`);
+  public async exec(message: Message, { question }: { question: string }) {
+    message.sem(
+      `**${question}**\n${answers[Math.floor(Math.random() * answers.length)]}`
+    );
   }
 }

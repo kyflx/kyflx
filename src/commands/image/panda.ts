@@ -1,16 +1,17 @@
-import { Command, VorteMessage, VorteEmbed, get } from "@vortekore/lib";
+import { Command, VorteEmbed, get } from "@vortekore/lib";
+import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("panda", {
-      category: "Image",
-      cooldown: 3000,
-      description: "Provides a panda pic from imgur",
-      example: "!meme"
+      aliases: ["panda"],
+      description: {
+        content: "Provides a panda pic from imgur"
+      }
     });
   }
 
-  public async run(message: VorteMessage) {
+  public async exec(message: Message) {
     const { data, error } = await get<ImgurHot.RootObject>(
       "https://www.imgur.com/r/panda/hot.json"
     );

@@ -1,4 +1,5 @@
-import { Command, VorteMessage } from "@vortekore/lib";
+import { Command } from "@vortekore/lib";
+import { Message } from "discord.js";
 
 const faces = [
   "(*^ω^)",
@@ -20,37 +21,48 @@ const faces = [
 export default class extends Command {
   public constructor() {
     super("uwu", {
-      aliases: ["uwuify"],
-      category: "Fun",
-      cooldown: 500
+      aliases: ["uwu", "uwuify"],
+      args: [
+        {
+          id: "content", 
+          match: "rest",
+          prompt: {
+            start: "Provide some text I can uwuify"
+          }
+        }
+      ],
+      description: {
+        content: "Uwuify's your message",
+        usage: "<message>",
+        examples: [ "v!uwu x3 nuzzles pounces on you uwu u so warm!" ]
+      }
     });
   }
 
-  public async run(message: VorteMessage, [...content]: string[]) {
+  public async exec(message: Message, { content }: { content: string }) {
 		if (message.deletable) message.delete();
-    let string = content.join(" ");
-    string = string.replace("th", "d");
-    string = string.replace("Th", "D");
-    string = string.replace(" is", " ish");
-    string = string.replace(" Is", " Ish");
-    string = string.replace(/(?:l|r)/g, "w");
-    string = string.replace(/(?:L|R)/g, "W");
-    string = string.replace(/n([aeiou])/g, "ny$1");
-    string = string.replace(/N([aeiou])/g, "Ny$1");
-    string = string.replace(/N([AEIOU])/g, "Ny$1");
-    string = string.replace(/ove/g, "uv");
-    string = string.replace(
+    content = content.replace("th", "d");
+    content = content.replace("Th", "D");
+    content = content.replace(" is", " ish");
+    content = content.replace(" Is", " Ish");
+    content = content.replace(/(?:l|r)/g, "w");
+    content = content.replace(/(?:L|R)/g, "W");
+    content = content.replace(/n([aeiou])/g, "ny$1");
+    content = content.replace(/N([aeiou])/g, "Ny$1");
+    content = content.replace(/N([AEIOU])/g, "Ny$1");
+    content = content.replace(/ove/g, "uv");
+    content = content.replace(
       "!",
       ` ${faces[Math.floor(Math.random() * faces.length)]} `
     );
-    string = string.replace(
+    content = content.replace(
       ".",
       ` ${faces[Math.floor(Math.random() * faces.length)]} `
     );
-    string = string.replace(
+    content = content.replace(
       ",",
       ` ${faces[Math.floor(Math.random() * faces.length)]} `
     );
-    return message.sem(string);
+    return message.sem(content);
   }
 }

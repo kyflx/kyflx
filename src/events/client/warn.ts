@@ -1,14 +1,14 @@
-import { Event } from "@vortekore/lib";
+import { Listener } from "@vortekore/lib";
 
-export default class extends Event {
+export default class extends Listener {
   public constructor() {
     super("bot-warn", {
-      category: "client",
-      event: "warn"
+      event: "warn",
+      emitter: "client"
     });
   }
 
-  async run(error: Error, bot = this.bot) {
-    return bot.logger.warn(error);
+  async exec(error: Error, bot = this.client) {
+    return this.logger.warn(error);
   };
 }
