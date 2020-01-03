@@ -1,6 +1,6 @@
 import { Command } from "@vortekore/lib";
-import Verta from "../../plugins/Music";
 import { Message } from "discord.js";
+import { VERTA_DEPENDENT } from '../../index';
 
 export default class extends Command {
   public constructor() {
@@ -13,8 +13,7 @@ export default class extends Command {
   }
 
   public async exec(message: Message) {
-    const music = <Verta>this.client.plugins.get("music");
-    await music.getStats();
+    if (VERTA_DEPENDENT) await this.client.music.getStats();
 
     const start = Date.now();
     return new Promise(resolve => {
@@ -26,7 +25,9 @@ export default class extends Command {
               [
                 `**Bot Ping**: ${Math.round(this.client.ws.ping)}ms`,
                 `**API Ping**: ${Math.round(Date.now() - start)}ms`,
-                `**Verta Ping**: ${Math.round(music.ping)}ms`
+                VERTA_DEPENDENT
+                  ? `**Verta Ping**: ${Math.round(this.client.music.ping)}ms`
+                  : ""
               ].join("\n")
             )
           );

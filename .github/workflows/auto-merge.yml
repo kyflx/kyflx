@@ -1,0 +1,12 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Dependabot auto merge
+      uses: ridedott/dependabot-auto-merge-action@v1.0.10

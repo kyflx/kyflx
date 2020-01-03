@@ -4,6 +4,7 @@ import { join } from "path";
 
 config({ path: join(process.cwd(), ".env") });
 
+export const VERTA_DEPENDENT = false;
 const bot = new VorteClient(__dirname);
 
 bot.events.loadAll();

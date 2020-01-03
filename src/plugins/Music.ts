@@ -2,6 +2,7 @@ import Logger from "@ayana/logger";
 import { ClientPlugin, Command, Config } from "@vortekore/lib";
 import ms from "ms";
 import WebSocket from "ws";
+import { VERTA_DEPENDENT } from '../index';
 
 declare module "discord-akairo" {
   interface AkairoClient {
@@ -41,6 +42,7 @@ export default class Verta extends ClientPlugin {
   private ws: WebSocket;
 
   public onReady() {
+    if (!VERTA_DEPENDENT) return;
     this.ws = new WebSocket(`ws://${Config.get("node_host")}:4269`);
 
     this.ws.on("close", (code, reason) => {
@@ -57,7 +59,7 @@ export default class Verta extends ClientPlugin {
         return this.logger.error(error);
       }
 
-      switch (data.op) {
+      switch (data.op) {  
         case "metadata":
           this.ping = data.d.ping;
           this.commands = this.commands.concat(...data.d.commands);
