@@ -89,10 +89,10 @@
   dependencies:
     "@types/node" "*"
 
-"@vortekore/lib":
+"@vortekore/lib@vortekore/lib":
   version "1.0.4"
-  uid "22bef05cb70f6d3a6ef89cb468902732c6dd1685"
-  resolved "https://codeload.github.com/vortekore/lib/tar.gz/22bef05cb70f6d3a6ef89cb468902732c6dd1685"
+  uid dee4378be882fe1c97805d725dd81c0ba5bdf25e
+  resolved "https://codeload.github.com/vortekore/lib/tar.gz/dee4378be882fe1c97805d725dd81c0ba5bdf25e"
   dependencies:
     "@ayana/logger" "^2.1.1"
     discord-akairo "^8.0.0-beta.8"
