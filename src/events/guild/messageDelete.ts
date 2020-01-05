@@ -10,9 +10,13 @@ export default class extends Listener {
   }
 
   async exec(message: Message) {
-    const guild = await this.client.findOrCreateGuild(message.guild!.id)
-    const { logs: { dltmsg, channel } } = guild;
-    if (!dltmsg) return;
+    const guild = await this.client.findOrCreateGuild(message.guild!.id);
+    const {
+      logs: { deleteMessage, channel }
+    } = guild;
+
+    if (message.author.bot) return;
+    if (!deleteMessage) return;
 
     const chan = message.guild!.channels.get(channel) as TextChannel;
 
@@ -20,13 +24,18 @@ export default class extends Listener {
       new VorteEmbed(message)
         .baseEmbed()
         .setTitle(`Event: Message Delete`)
-        .setDescription([
-          `**Channel**: ${message.channel} (${message.channel.id})`,
-          `**Link**: ${message.url}`,
-          `**Author**: ${message.author.tag} (${message.author.id})`
-        ].join("\n"))
-        .addField(`Message Content`, `${Util.escapeMarkdown(message.cleanContent.slice(0, 900))}`)
+        .setDescription(
+          [
+            `**Channel**: ${message.channel} (${message.channel.id})`,
+            `**Link**: ${message.url}`,
+            `**Author**: ${message.author.tag} (${message.author.id})`
+          ].join("\n")
+        )
+        .addField(
+          `Message Content`,
+          `${Util.escapeMarkdown(message.cleanContent.slice(0, 900))}`
+        )
         .setTimestamp()
     );
-  };
+  }
 }

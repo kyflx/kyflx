@@ -1,8 +1,6 @@
 import ms = require("ms");
 import { Command, VorteEmbed } from "@vortekore/lib";
-import { Argument } from "discord-akairo";
 import { Message } from "discord.js";
-import { VERTA_DEPENDENT } from '../../index';
 
 export default class extends Command {
   public constructor() {
@@ -16,31 +14,18 @@ export default class extends Command {
       args: [
         {
           id: "command",
-          type: Argument.validate("string", (_, phrase: string) => {
-            const commands = [
-              ...this.client.commands.modules.values(),
-              ...this.musicCommands
-            ];
-
-            return commands.some(c =>
-              c.aliases.some(a => a.ignoreCase(phrase))
-            );
-          })
+          type: "commandAlias"
         }
       ]
     });
   }
 
-  public get musicCommands(): Command[] {
-    const music = this.client.music;
-    return VERTA_DEPENDENT ? music.commands : [];
-  }
-
-  public async exec(message: Message, { command }: { command: string }) {
+  public async exec(message: Message, { command }: { command: Command }) {
     const helpEmbed = new VorteEmbed(message).baseEmbed();
 
     if (!command) {
       helpEmbed.setAuthor("All Commands", message.author.displayAvatarURL());
+      helpEmbed.setDescription("**Syntax**: <> Required; [] Optional; <[]> Depends on Previous Argument.")
       for (const [name, category] of this.client.commands.categories) {
         if (category.size)
           helpEmbed.addField(
@@ -49,40 +34,27 @@ export default class extends Command {
             true
           );
       }
-      helpEmbed.addField(
-        "Music",
-        !this.musicCommands.length
-          ? "Check back Later"
-          : this.musicCommands.map(c => `\`${c.aliases[0]}\``),
-        true
-      );
     } else {
       let info = "";
-      const cmd =
-        this.handler.findCommand(command) ||
-       this.musicCommands.find(c => c.aliases.some(a => a.ignoreCase(command)));
-
-      const description = cmd.description
-        ? cmd.description
+      const description = command.description
+        ? command.description
         : { usage: "", content: "", examples: [] };
-      info += `**Category**: ${cmd.categoryID}\n`;
+      info += `**Category**: ${command.categoryID}\n`;
       info += `**Description**: ${description.content || "None"}\n`;
       info += `**Cooldown**: ${ms(
-        cmd.cooldown || this.client.commands.defaultCooldown
+        command.cooldown || this.client.commands.defaultCooldown
       )}\n`;
       info += `**Aliases**: ${
-        cmd.aliases.length
-          ? cmd.aliases.map(a => `\`${a}\``).join(", ")
+        command.aliases.length
+          ? command.aliases.map(a => `\`${a}\``).join(", ")
           : "None"
       }\n`;
-      info += `**Examples**: ${description.examples
+      info += `**Examples**: ${(description.examples || [])
         .map((x: string) => `\`${x}\``)
         .join(", ") || "None"}`;
 
       helpEmbed.setAuthor(
-        `${cmd.aliases[0]} ${
-          (cmd.description ? cmd.description : { usage: "" }).usage
-        }`,
+        `${command.aliases[0]} ${description.usage || ""}`,
         message.author.displayAvatarURL()
       );
       helpEmbed.setDescription(info);

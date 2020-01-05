@@ -12,11 +12,14 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
 - [ ] Work on commands.
   - [ ] Moderation
     - [x] Clean up current code (2D)
-    - [ ] Rewrite
+    - [x] Rewrite (2D)
     - [ ] More commands?
-      - [ ] !softban <@member> [reason]
-      - [ ] !warns <@member>
-      - [ ] !tempban <@member> [reason]
+      - [ ] softban <@member> <reason>
+      - [ ] warns <@member>
+      - [ ] tempban <@member> <reason>
+      - [ ] addRole <member> <role> <reason>
+      - [ ] removeRole <member> <role> <reason>
+      - [ ] hackban <member> <reason>
   - [ ] Fun
     - [x] rps (rock paper scissors) (Chaos)
     - [x] 8ball (yes... 8ball it's the easiest shit ever) (Chaos)
@@ -35,7 +38,7 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
     - [ ] Configuration (shows the guilds current config)
     - [x] Prefix (2D)
     - [ ] Embed Color
-    - [ ] Logs
+    - [x] Logs
     - [ ] Welcome Channel & Message
     - [ ] Farewell Channel & Message
     - [ ] Auto Role
@@ -56,6 +59,8 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
     - [ ] Wallet
     - [ ] Shop
     - [ ] Posts? (basically instagram but on discord)
+    - [ ] Daily
+    - [ ] Weekly
 - [ ] Bot List stuff
   - [x] DBL
     - [x] Statistics

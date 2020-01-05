@@ -1,5 +1,4 @@
-import { paginate } from "../../util";
-import { Command, ProfileEntity, VorteEmbed } from "@vortekore/lib";
+import { Command, ProfileEntity, VorteEmbed, paginate } from "@vortekore/lib";
 import { Message } from "discord.js";
 
 export default class extends Command {

@@ -29,12 +29,12 @@ export default class extends Listener {
     setInterval(async () => {
       const cases = await CaseEntity.find({ type: "mute" });
       cases.forEach(async (x: CaseEntity) => {
-        if (x.amount <= Date.now()) {
+        if (x.other.muteTime <= Date.now()) {
           try {
             const guild = bot.guilds.get(x.guildId);
             if (!guild) return CaseEntity.delete({ id: x.id });
 
-            const _guild = await bot.database.getGuild(guild.id);
+            const _guild = await bot.findOrCreateGuild(guild.id);
             if (!_guild.muteRole) return CaseEntity.delete({ id: x.id });
 
             const member =

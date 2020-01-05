@@ -1,7 +1,6 @@
-import ms from "ms";
-import { Command, VorteEmbed, get } from "@vortekore/lib";
-import Verta from "../../plugins/Music";
+import { Command, get, VorteEmbed } from "@vortekore/lib";
 import { Message } from "discord.js";
+import ms from "ms";
 
 export default class extends Command {
   public constructor() {
@@ -36,8 +35,7 @@ export default class extends Command {
     let fieldValue = "";
     fieldValue += `**Guild Count**: ${this.client.guilds.size}\n`;
     fieldValue += `**Total Users**: ${this.client.users.size}\n`;
-    fieldValue += `**Total Commands**: ${this.client.commands.modules.size +
-      (<Verta>(<any>this.client).music).commands.length}\n`;
+    fieldValue += `**Total Commands**: ${this.client.commands.modules.size}\n`
     fieldValue += `**Uptime:** ${time}\n`;
     fieldValue += `\n[Invite](http://bit.ly/VorteKore) • [Repository](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`;
     return fieldValue;

@@ -10,7 +10,7 @@ export default class CommandBlocked extends Listener {
     });
   }
 
-  public async run(message: Message, command: Command, cooldown: number) {
+  public async exec(message: Message, command: Command, cooldown: number) {
     message.sem(
       `Sorry, you have ${ms(Date.now() - cooldown)} left on your cooldown :(`,
       { type: "error" }

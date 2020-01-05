@@ -1,6 +1,7 @@
+import { VorteClient } from "@vortekore/lib";
 import { config } from 'dotenv';
-import { VorteClient, Config } from "@vortekore/lib";
 import { join } from "path";
+import Logger from "@ayana/logger";
 
 config({ path: join(process.cwd(), ".env") });
 
@@ -10,5 +11,5 @@ const bot = new VorteClient(__dirname);
 bot.events.loadAll();
 bot.commands.loadAll();
 
-bot.login(Config.get("token"));
-
+bot.login(bot.config.get("TOKEN"));
+process.on("unhandledRejection", (r, p) => Logger.get("process").error(r.toString()));

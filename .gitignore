@@ -107,3 +107,4 @@ dist
 
 build/
 wip/
+config.json

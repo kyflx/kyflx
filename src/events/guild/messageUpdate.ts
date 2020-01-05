@@ -4,14 +4,15 @@ import { TextChannel, Message } from "discord.js";
 export default class extends Listener {
   public constructor() {
     super("message-updated", {
-      event: "messageDelete",
+      event: "messageUpdate",
       emitter: "client"
     });
   }
 
   public async exec(oldmsg: Message, newmsg: Message) {
+    return;
     const guild = await this.client.findOrCreateGuild(oldmsg.guild!.id);
-    if (!guild.logs.channel && !guild.logs.edtmsg) return;
+    if (!guild.logs.channel && !guild.logs.editMessage) return;
 
     const oldcon = oldmsg.cleanContent.toString().slice(0, 900);
     const newcon = newmsg.cleanContent.toString().slice(0, 900);

@@ -9,7 +9,7 @@ export default class CommandBlocked extends Listener {
     });
   }
 
-  public async run(
+  public async exec(
     message: Message,
     _c: Command,
     clientOrUser: string,
