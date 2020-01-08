@@ -1,0 +1,81 @@
+<%- include("inc/head") %>
+<body>
+  <%- include("inc/navbar") %>
+
+  <div class="hero is-primary is-fullheight-with-navbar">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns is-vcentered">
+          <div class="column is-vcentered is-narrow">
+            <div class="image is-128x128">
+              <img src="img/logo.png" class="is-rounded" />
+            </div>
+          </div>
+          <div class="column has-text-centered-mobile is-6">
+            <h1 class="title">VorteKore</h1>
+            <h2 class="subtitle">
+              A multipurpose discord bot that's easy to use and provides
+              advanced features unlike other bots.
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="hero is-darker">
+    <div class="hero-body">
+      <div class="columns">
+        <div class="column has-text-centered">
+					<span class="icon is-large">
+						<i class="fab fa-3x fa-github-alt"></i>
+					</span>
+					<h1 class="title">Open Source</h1>
+					<h2 class="subtitle"><strong>Anyone</strong> can Contribute</h2>
+				</div>
+				<div class="column has-text-centered">
+					<span class="icon is-large">
+						<i class="fas fa-3x fa-gavel"></i>
+					</span>
+					<h1 class="title">Moderation</h1>
+					<h2 class="subtitle">Allows you to run your server with <strong>ease</strong>.</h2>
+				</div>
+				<div class="column has-text-centered">
+					<span class="icon is-large">
+						<i class="fas fa-3x fa-cog"></i>
+					</span>
+					<h1 class="title">Configurable</h1>
+					<h2 class="subtitle">Most of the features are togglable so  that your server may require.</h2>
+				</div>
+				<div class="column has-text-centered">
+					<span class="icon is-large">
+						<i class="fas fa-3x fa-clock"></i>
+					</span>
+					<h1 class="title">24/7 Uptime</h1>
+					<h2 class="subtitle">Minimal errors allow the bot to be online whenever you need it.</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-body">
+      <div class="columns has-text-centered is-centered">
+        <div class="column is-one-quarter">
+          <h2 class="title">Guilds</h2>
+          <span><%= stats.guilds.toLocaleString(); %></span>
+        </div>
+        <div class="column is-one-quarter">
+          <h2 class="title">Users</h2>
+          <span><%= stats.users.toLocaleString(); %></span>
+        </div>
+        <div class="column is-one-quarter">
+          <h2 class="title">Commands</h2>
+          <span><%= stats.commands.toLocaleString(); %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include("inc/footer") %>
+</body>

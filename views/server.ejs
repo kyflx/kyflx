@@ -1,0 +1,155 @@
+<%- include("inc/head") %>
+<body>
+  <%- include("inc/navbar") %>
+  <div class="container is-fluid">
+    <div class="columns dashboard">
+      <aside class="column is-narrow is-2 aside dashboard-menu">
+        <nav class="menu">
+          <p class="menu-label">
+            General
+          </p>
+          <ul class="menu-list">
+            <li>
+              <a class="is-active" href="/servers/<%= guild.id %>">
+                <span class="icon is-small">
+                  <i class="fas fa-home"></i>
+                </span>
+                &nbsp; Home
+              </a>
+              <a href="/servers/<%= guild.id %>/leaderboard">
+                <span class="icon is-small">
+                  <i class="fas fa-align-justify"></i>
+                </span>
+                &nbsp; Leaderboard
+              </a>
+            </li>
+          </ul>
+          <p class="menu-label">
+            Configuration
+          </p>
+          <ul class="menu-list">
+            <li>
+              <a href="/servers/<%= guild.id %>/welcome-farewell">
+                <span class="icon is-small">
+                  <i class="fas fa-handshake"></i>
+                </span>
+                &nbsp; Welcome & Farewell Settings
+              </a>
+              <a href="/servers/<%= guild.id %>/logging">
+                <span class="icon is-small">
+                  <i class="fas fa-folder-open"></i>
+                </span>
+                &nbsp; Logging
+              </a>
+              <a href="/servers/<%= guild.id %>/economy">
+                <span class="icon is-small">
+                  <i class="fas fa-coins"></i>
+                </span>
+                &nbsp; Economy
+              </a>
+              <a href="/servers/<%= guild.id %>/welcome-farewell">
+                <span class="icon is-small">
+                  <i class="fas fa-terminal"></i>
+                </span>
+                &nbsp; Commands
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="column main">
+        <div class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <figure class="image" style="margin-right: .7em;">
+                <img src="<%= guild.iconURL() %>" class="is-rounded" />
+              </figure>
+              <h1 class="title has-text-primary">
+                <%= guild.name %>
+              </h1>
+            </div>
+          </div>
+          <nav class="breadcrumb is-small" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li class="is-active">
+                <a href="/servers/<%= guild.id %>" aria-current="page">
+                  <%= guild.name %>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <div class="columns is-multiline">
+          <div class="column">
+            <div class="box notification is-discord">
+              <div class="heading">Members</div>
+              <div class="title">Member Count</div>
+              <div class="level">
+                <div class="level-item">
+                  <div class="">
+                    <p class="heading">Users</p>
+                    <h1 class="title is-5">
+                      <%= guild.members.filter(m => !m.user.bot).size %>
+                    </h1>
+                  </div>
+                </div>
+                <div class="level-item">
+                  <div class="">
+                    <p class="heading">Bots</p>
+                    <h1 class="title is-5">
+                      <%= guild.members.filter(m => m.user.bot).size %>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="box notification is-discord">
+              <div class="heading">Channels</div>
+              <div class="title">Channel Count</div>
+              <div class="level">
+                <div class="level-item">
+                  <div class="">
+                    <p class="heading">Text Channels</p>
+                    <h1 class="title is-5">
+                      <%= guild.channels.filter(c => c.type === "text").size %>
+                    </h1>
+                  </div>
+                </div>
+                <div class="level-item">
+                  <div class="">
+                    <p class="heading">Voice Channels</p>
+                    <h1 class="title is-5">
+                      <%= guild.channels.filter(c => c.type === "voice").size %>
+                    </h1>
+                  </div>
+                </div>
+                <div class="level-item">
+                  <div>
+                    <p class="heading">Categories</p>
+                    <h1 class="title is-5">
+                      <%= guild.channels.filter(c => c.type === "category").size
+                      %>
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <div class="box notification is-discord">
+              <div class="heading">Roles</div>
+              <h1 class="title">Role Count</h1>
+              <h2 class="subtitle"><%= guild.roles.size %></h2>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <%- include("inc/footer") %>
+</body>

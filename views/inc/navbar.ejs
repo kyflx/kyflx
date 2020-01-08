@@ -1,0 +1,63 @@
+<nav class="navbar is-dark">
+  <div class="container">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <img 
+          src="/img/logo.png" 
+          style="border-radius:100%;"
+        />
+      </div>
+			
+			<a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+			</a>			
+    </div>
+
+    <div class="navbar-menu" id="navMenu">
+      <div class="navbar-start">
+        <a href="/" class="navbar-item">Home</a>
+        <a href="/about" class="navbar-item">About</a>
+        <a href="/commands" class="navbar-item">Commands</a>
+      </div>
+      <div class="navbar-end">
+        <% if (isAuthenticated) { %>
+        <div class="has-dropdown navbar-item is-hoverable">
+          <a class="navbar-link">
+            <img
+              style="margin-right:.5em;border-radius: 100%;"
+              src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=2048"
+            />
+            <%= user.username %>
+          </a>
+
+          <div class="navbar-dropdown">
+            <a href="/servers" class="navbar-item">
+              <span class="icon has-text-success">
+                <i class="fas fa-users"></i>
+              </span>
+              &nbsp; Servers
+            </a>
+            <hr class="navbar-divider">
+            <a href="/logout" class="navbar-item">
+              <span class="icon has-text-danger"
+                ><i class="fas fa-sign-out-alt"></i>
+              </span>
+              &nbsp; Sign Out
+            </a>
+          </div>
+        </div>  
+        <% } else { %>
+				<a class="navbar-item" href="/login">
+					<span>Sign In</span>
+					<span class="icon has-text-primary">
+						<i class="fas fa-sign-in-alt"></i>
+					</span>
+				</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+<script src="js/main.js"></script>

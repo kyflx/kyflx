@@ -1,22 +1,7 @@
 import { Command, confirm } from "@vortekore/lib";
 import { Message, TextChannel } from "discord.js";
-
-interface GuildLogsMap {
-  deleteMessage: boolean;
-  editMessage: boolean;
-  ban: boolean;
-  kick: boolean;
-  mute: boolean;
-  warn: boolean;
-  lockdown: boolean;
-  slowmode: boolean;
-  roleRemove: boolean;
-  roleAdd: boolean;
-  purge: boolean;
-  channel: string;
-  memberJoined?: string;
-  memberLeave?: string;
-}
+import { Argument } from "discord-akairo";
+import { ArgumentOptions } from "discord-akairo";
 
 const channelKeys = ["channel", "memberJoined", "memberLeave"];
 const logs = [
@@ -37,7 +22,13 @@ export default class extends Command {
       aliases: ["log", "logs"],
       description: {
         content: "Manages the guild logs.",
-        usage: "<action> <[req]>"
+        usage: "<action> <[channel|...logEvents]>",
+        examples: [
+          "v!logs enable ban warn mute",
+          "v!logs disable purge",
+          "v!logs enable purge",
+          "v!logs set #logs"  
+        ]
       },
       channel: "guild",
       userPermissions: ["MANAGE_GUILD"],
@@ -46,8 +37,8 @@ export default class extends Command {
           type: ["set", "enable", "disable", "reset"]
         };
 
-        const corlog = yield (() => {
-          if (!action) return;
+        const corlog = yield ((): ArgumentOptions => {
+          if (!action || action === "reset") return {};
           return action === "set"
             ? {
                 type: "textChannel",
@@ -55,16 +46,15 @@ export default class extends Command {
                   start: "Provide a text channel to use as logs."
                 }
               }
-            : action !== "reset"
-            ? {
+            : {
                 type: logs,
+                match: "separate",
                 prompt: {
-                  start: `Provide a valid log type... The current ones are ${logs
-                    .map(l => `**${l}**`)
+                  start: `Provide some valid log types...\n${logs
+                    .map(l => `\`${l}\``)
                     .join(", ")}`
                 }
-              }
-            : {};
+              };
         })();
 
         return { action, corlog };
@@ -79,7 +69,7 @@ export default class extends Command {
       corlog
     }: {
       action: "reset" | "set" | "enable" | "disable";
-      corlog: TextChannel | string;
+      corlog: TextChannel | string[];
     }
   ) {
     if (!action)
@@ -88,20 +78,18 @@ export default class extends Command {
           message._guild.logs.channel
             ? `<#${message._guild.logs.channel}> \`(${message._guild.logs.channel})\`.`
             : `the void...`
-        }\n **Enabled Events**: ${Object.keys(
-          message._guild.logs
-        )
+        }\n **Enabled Events**: ${Object.keys(message._guild.logs)
           // @ts-ignore
           .filter(k => !channelKeys.includes(k) && message._guild.logs[k])
           .map(key => `\`${key}\``)
           .join(", ") || "Wow nothing"}`
       );
 
-    const confirmation = await confirm(
-      message,
-      `I need confirmation to proceed with the requested action.`
-    );
-    if (!confirmation) return message.sem("Okay, I stopped the request :)");
+    // const confirmation = await confirm(
+    //   message,
+    //   `I need confirmation to proceed with the requested action.`
+    // );
+    // if (!confirmation) return message.sem("Okay, I stopped the request :)");
 
     switch (action) {
       case "reset":
@@ -121,10 +109,12 @@ export default class extends Command {
         break;
       case "disable":
       case "enable":
-        // @ts-ignore
-        message._guild.logs[corlog] = action === "disable" ? false : true;
+        (corlog as string[]).forEach(
+          // @ts-ignore
+          e => (message._guild.logs[e] = action === "disable" ? false : true)
+        );
         message.sem(
-          `Okay, I **${action}d** the **${corlog.toString()}** log event. :)`
+          `Okay, I **${action}d** the ${(corlog as string[]).map(e => `**${e}**`).join(", ")} log events.`
         );
         break;
     }

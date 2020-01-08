@@ -1,0 +1,90 @@
+<%- include("inc/head") %>
+<body>
+  <%- include("inc/navbar") %>
+  <div class="container is-fluid">
+    <div class="columns dashboard">
+      <aside class="column is-narrow is-2 aside dashboard-menu">
+        <nav class="menu">
+          <p class="menu-label">
+            General
+          </p>
+          <ul class="menu-list">
+            <li>
+              <a href="/servers/<%= guild.id %>">
+                <span class="icon is-small">
+                  <i class="fas fa-home"></i>
+                </span>
+                &nbsp; Home
+              </a>
+              <a href="/servers/<%= guild.id %>/leaderboard">
+                <span class="icon is-small">
+                  <i class="fas fa-align-justify"></i>
+                </span>
+                &nbsp; Leaderboard
+              </a>
+            </li>
+          </ul>
+          <p class="menu-label">
+            Configuration
+          </p>
+          <ul class="menu-list">
+            <li>
+              <a href="/servers/<%= guild.id %>/welcome-farewell">
+                <span class="icon is-small">
+                  <i class="fas fa-handshake"></i>
+                </span>
+                &nbsp; Welcome & Farewell Settings
+              </a>
+              <a href="/servers/<%= guild.id %>/logging">
+                <span class="icon is-small">
+                  <i class="fas fa-folder-open"></i>
+                </span>
+                &nbsp; Logging
+              </a>
+              <a class="is-active" href="/servers/<%= guild.id %>/economy">
+                <span class="icon is-small">
+                  <i class="fas fa-coins"></i>
+                </span>
+                &nbsp; Economy
+              </a>
+              <a href="/servers/<%= guild.id %>/commands">
+                <span class="icon is-small">
+                  <i class="fas fa-terminal"></i>
+                </span>
+                &nbsp; Commands
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="column main">
+        <div class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <figure class="image" style="margin-right: .7em;">
+                <img src="<%= guild.iconURL() %>" class="is-rounded" />
+              </figure>
+              <h1 class="title has-text-primary">
+                <%= guild.name %>
+              </h1>
+            </div>
+          </div>
+          <nav class="breadcrumb is-small" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="/">Home</a></li>
+              <li>
+                <a href="/servers/<%= guild.id %>" aria-current="page">
+                  <%= guild.name %>
+                </a>
+              </li>
+							<li class="is-active">
+                <a href="#" aria-current="page">
+									Economy
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+  <%- include("inc/footer") %>
+</body>

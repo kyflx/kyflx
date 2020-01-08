@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+@import "../../node_modules/bulma/sass/utilities/_all.sass";
+
+$family-sans-serif: "Nunito", sans-serif;
+
+$discord: #7289DA;
+$discord-invert: findColorInvert($discord);
+
+$primary: #0c6dcf;
+$primary-invert: findColorInvert($primary);
+
+$darker: #212529;
+$darker-invert: findColorInvert($darker);
+
+$patreon: #f96854;
+$patreon-invert: findColorInvert($patreon);
+
+$colors: mergeColorMaps((
+	"white": ($white, $black), 
+	"black": ($black, $white), 
+	"light": ($light, $light-invert), 
+	"dark": ($dark, $dark-invert), 
+	"primary": ($primary, $primary-invert, $primary-light, $primary-dark), 
+	"link": ($link, $link-invert, $link-light, $link-dark), 
+	"info": ($info, $info-invert, $info-light, $info-dark), 
+	"success": ($success, $success-invert, $success-light, $success-dark), 
+	"warning": ($warning, $warning-invert, $warning-light, $warning-dark), 
+	"danger": ($danger, $danger-invert, $danger-light, $danger-dark)
+), (
+	"darker": ($darker, $darker-invert),
+	"patreon": ($patreon, $patreon-invert),
+	"discord": ($discord, $discord-invert)
+));
+
+@import "../../node_modules/bulma/bulma.sass";
+
+.footer {
+  background-color: $darker;
+  color: #868e96;
+}
+
+.hover-link {
+  color: #ced4da;
+
+  .icon {
+    padding: 0px 3px 0px 3px;
+    opacity: 0;
+  }
+}
+
+.hover-link:hover {
+  color: white;
+  .icon {
+    transition: ease-in-out .25s;
+    opacity: 100%;
+	}
+}
+
+.guild {
+	background-color: $dark;
+	color: $dark-invert;
+}
+
+.guild:hover {
+	transform: scale(1.02);
+	transition: ease-in-out 0.9s;
+}
+
+.dashboard {
+	margin: 20px 0px;
+	height: 100%;
+}

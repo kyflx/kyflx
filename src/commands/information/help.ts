@@ -25,7 +25,9 @@ export default class extends Command {
 
     if (!command) {
       helpEmbed.setAuthor("All Commands", message.author.displayAvatarURL());
-      helpEmbed.setDescription("**Syntax**: <> Required; [] Optional; <[]> Depends on Previous Argument.")
+      helpEmbed.setDescription(
+        "**Syntax**: <> Required; [] Optional; <[]> Depends on Previous Argument."
+      );
       for (const [name, category] of this.client.commands.categories) {
         if (category.size)
           helpEmbed.addField(
@@ -49,15 +51,17 @@ export default class extends Command {
           ? command.aliases.map(a => `\`${a}\``).join(", ")
           : "None"
       }\n`;
-      info += `**Examples**: ${(description.examples || [])
-        .map((x: string) => `\`${x}\``)
-        .join(", ") || "None"}`;
 
       helpEmbed.setAuthor(
         `${command.aliases[0]} ${description.usage || ""}`,
         message.author.displayAvatarURL()
       );
       helpEmbed.setDescription(info);
+      if (description.examples && description.examples.length > 0)
+        helpEmbed.addField(
+          "Examples",
+          description.examples.map((e: string) => `\`${e}\``).join("\n")
+        );
     }
     message.channel.send(helpEmbed);
   }

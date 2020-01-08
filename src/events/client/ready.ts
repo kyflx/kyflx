@@ -1,5 +1,6 @@
 import DBLAPI = require("dblapi.js");
 import { CaseEntity, Listener } from "@vortekore/lib";
+import WebServer from '../../web/server';
 
 export default class extends Listener {
   public constructor() {
@@ -10,9 +11,10 @@ export default class extends Listener {
   }
 
   async exec(bot = this.client) {
+    const server = new WebServer(this.client);
+    
+    await server.init();
     await bot.database.onReady();
-    await bot.plugins.forEach(plugin => plugin.onReady());
-    await bot.logger.info(`${bot.user!.username} is ready to rumble!`);
 
     bot.user!.setPresence({
       activity: {
@@ -51,5 +53,7 @@ export default class extends Listener {
         }
       });
     }, 10000);
+
+    bot.logger.info(`${bot.user!.username} is ready to rumble!`);
   }
 }

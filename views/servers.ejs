@@ -1,0 +1,54 @@
+<%- include("inc/head") %>
+<body>
+  <%- include("inc/navbar") %>
+
+  <div class="hero is-light is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">Welcome back <%= user.username %>!</h1>
+        <h2 class="subtitle">
+          Below is a list of servers you have permission to configure :)
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-body">
+      <div class="container is-fluid">
+        <div class="columns is-multiline">
+          <% guilds.forEach(function (guild) { %>
+          <a
+            class="column is-one-quarter has-shadow"
+            href="<%= guild.joined ? `/servers/${guild.id}` : `${invite}&guild_id=${guild.id}` %>"
+          >
+            <div class="card guild">
+              <div class="card-content">
+                <div class="columns is-vcentered">
+                  <div class="column is-narrow is-vcentered is-paddingless">
+                    <figure class="image is-128x128">
+                      <img src="<%= guild.icon ?
+                      `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`
+                      :
+                      "https://cdn.discordapp.com/embed/avatars/4.png?size=128"
+                      %>" class="is-rounded" />
+                    </figure>
+									</div>
+									<div class="column">
+										<h2 class="subtitle has-text-light is-medium"><%= guild.name %></h1>
+											<div class="tag is-darker has-text-discord">
+												<%= guild.owner ? "Owner" : "Administrator" %>
+											</div>
+									</div>
+                </div>
+              </div>
+            </div>
+          </a>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include("inc/footer") %>
+</body>
