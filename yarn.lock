@@ -207,6 +207,7 @@
 
 "@vortekore/lib@vortekore/lib":
   version "1.0.4"
+  uid "039a7743d10a4ca2c4618718c6607e18e68996b6"
   resolved "https://codeload.github.com/vortekore/lib/tar.gz/039a7743d10a4ca2c4618718c6607e18e68996b6"
   dependencies:
     "@ayana/logger" "^2.1.1"
