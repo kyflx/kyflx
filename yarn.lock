@@ -207,8 +207,8 @@
 
 "@vortekore/lib@vortekore/lib":
   version "1.0.4"
-  uid "039a7743d10a4ca2c4618718c6607e18e68996b6"
-  resolved "https://codeload.github.com/vortekore/lib/tar.gz/039a7743d10a4ca2c4618718c6607e18e68996b6"
+  uid "87636261b5382c7734987054a87492b9293aab83"
+  resolved "https://codeload.github.com/vortekore/lib/tar.gz/87636261b5382c7734987054a87492b9293aab83"
   dependencies:
     "@ayana/logger" "^2.1.1"
     discord-akairo "^8.0.0-beta.8"
