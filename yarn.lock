@@ -633,9 +633,23 @@ discord-akairo@^8.0.0-beta.8:
   resolved "https://registry.yarnpkg.com/discord-akairo/-/discord-akairo-8.0.0-beta.8.tgz#664c1f4fb819ec1d057ed7a36d2e38a68f53367b"
   integrity sha512-aT64C1vvntCoSV/i/yAVAHrYyz1Y+5IAWagUaDsrv8M2zKmakcOvT62Iqhz5oK89k8UgVU23aIsLiq01U1bJDQ==
 
-discord.js@discordjs/discord.js, "discord.js@github:discordjs/discord.js":
+discord.js@discordjs/discord.js:
   version "12.0.0-dev"
   resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/d2ef02906c5618d883b1adfb348fd248a4db616f"
+  dependencies:
+    "@discordjs/collection" "^0.1.1"
+    abort-controller "^3.0.0"
+    form-data "^2.3.3"
+    node-fetch "^2.3.0"
+    prism-media "^1.0.0"
+    setimmediate "^1.0.5"
+    tweetnacl "^1.0.1"
+    ws "^7.2.0"
+
+"discord.js@github:discordjs/discord.js":
+  version "12.0.0-dev"
+  uid "877577badcaa17b0221b75d79c55b6de3eff4e3a"
+  resolved "https://codeload.github.com/discordjs/discord.js/tar.gz/877577badcaa17b0221b75d79c55b6de3eff4e3a"
   dependencies:
     "@discordjs/collection" "^0.1.1"
     abort-controller "^3.0.0"
