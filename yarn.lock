@@ -550,10 +550,10 @@ core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-dblapi.js@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/dblapi.js/-/dblapi.js-2.3.0.tgz#9c600cedc9af0a27c9fd770d85e6c25b71cfa43d"
-  integrity sha512-8uZQMBg1coJsL5SEN1oPj2dgjgfm0DW7FhP8XWnG2V/xcOJnQNM2kCId1g/pyqm8PYH9346olL1IrLJQ6m0wOg==
+dblapi.js@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/dblapi.js/-/dblapi.js-2.3.1.tgz#ce1a3ad84a662ae3c6c8ded561b554a744fd7bf0"
+  integrity sha512-SmaEknbWCPPyPX269hD2EARdkGlMp2PFsgjF8FsnaTLkWagQKtXO+K+aVF6FZqJvRrLIrpjv3y1bhK9KWq+coA==
 
 debug@2.6.9:
   version "2.6.9"
