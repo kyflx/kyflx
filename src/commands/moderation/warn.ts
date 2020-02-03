@@ -66,9 +66,12 @@ export default class extends Command {
         .sem("Okay, your choice!")
         .then(m => m.delete({ timeout: 8000 }));
 
-    const profile = await this.client.findOrCreateProfile(member.id, member.guild.id);
-    ++profile.warns
-  
+    const profile = await this.client.findOrCreateProfile(
+      member.id,
+      member.guild.id
+    );
+    ++profile.warns;
+
     message
       .sem(
         `Warned **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\`. They now have \`${profile.warns}\` warns`
@@ -84,11 +87,10 @@ export default class extends Command {
     await profile.save();
     await _case.save();
     await message._guild.save();
-    if (!message._guild.logs.channel || !message._guild.logs.warn) return;
 
-    const logs = (await message.guild.channels.get(
-      message._guild.logs.channel
-    )) as TextChannel;
+    const { channel, enabled } = message._guild.log("warn", "audit");
+    if (!channel || !enabled) return;
+    const logs = (await message.guild.channels.get(channel)) as TextChannel;
 
     return logs.send(
       new VorteEmbed(message)

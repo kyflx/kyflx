@@ -27,18 +27,18 @@ export default class extends Command {
       .addField("\u200B", this.buildStats());
     const commits = await this.getCommits();
     if (commits) emb.addField("Github Commits", commits);
-    return message.channel.send(emb);
+    return message.util.send(emb);
   }
 
   private buildStats() {
     let time = ms(this.client.uptime!, { long: true });
-    let fieldValue = "";
-    fieldValue += `**Guild Count**: ${this.client.guilds.size}\n`;
-    fieldValue += `**Total Users**: ${this.client.users.size}\n`;
-    fieldValue += `**Total Commands**: ${this.client.commands.modules.size}\n`
-    fieldValue += `**Uptime:** ${time}\n`;
-    fieldValue += `\n[Invite](http://bit.ly/VorteKore) • [Repository](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`;
-    return fieldValue;
+    return [
+      `**Guild Count**: ${this.client.guilds.size}`,
+      `**Total Users**: ${this.client.users.size}`,
+      `**Total Commands**: ${this.client.commands.modules.size}`,
+      `[Invite](http://bit.ly/VorteKore) • [Repository](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`,
+      `**Uptime:** ${time}`
+    ].join("\n");
   }
 
   private async getCommits() {
@@ -54,7 +54,7 @@ export default class extends Command {
     for (const { sha, html_url, commit, author } of commits.data
       .filter(c => c.committer.type.ignoreCase("user"))
       .slice(0, 3))
-      str += `[\`${sha.slice(0, 7)}\`](${html_url}) ${commit.message} - ${
+      str += `[\`${sha.slice(0, 7)}\`](${html_url}) ${commit.message.trunc(50, true)} - ${
         author.login
       }\n`;
 

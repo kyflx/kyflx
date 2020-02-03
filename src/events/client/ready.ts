@@ -1,6 +1,6 @@
 import DBLAPI = require("dblapi.js");
 import { CaseEntity, Listener } from "@vortekore/lib";
-import WebServer from '../../web/server';
+import WebServer from "../../web/server";
 
 export default class extends Listener {
   public constructor() {
@@ -10,33 +10,31 @@ export default class extends Listener {
     });
   }
 
-  async exec(bot = this.client) {
-    const server = new WebServer(this.client);
-    
-    await server.init();
-    await bot.database.onReady();
-
-    bot.user!.setPresence({
+  async exec(client = this.client) {
+    new WebServer(client).init();
+    client.user!.setPresence({
       activity: {
         name: "VorteKore | v!help",
         type: "STREAMING",
-        url: "https://api.chaosphoe.xyz/rick"
+        url: "https://twitch.tv/vortekore"
       }
     });
 
-    if (process.env.NODE_ENV!.ignoreCase("production")) {
-      new DBLAPI(process.env.DBL_TOKEN!, this.client);
+    if (process.env.NODE_ENV === "production") {
+      const dbl = new DBLAPI(process.env.DBL_TOKEN!, this.client);
+      setInterval(() => dbl.postStats(this.client.guilds.size), 120000);
     }
 
     setInterval(async () => {
+      if (!this.client.database.ready) return;
       const cases = await CaseEntity.find({ type: "mute" });
       cases.forEach(async (x: CaseEntity) => {
         if (x.other.muteTime <= Date.now()) {
           try {
-            const guild = bot.guilds.get(x.guildId);
+            const guild = client.guilds.get(x.guildId);
             if (!guild) return CaseEntity.delete({ id: x.id });
 
-            const _guild = await bot.findOrCreateGuild(guild.id);
+            const _guild = await client.findOrCreateGuild(guild.id);
             if (!_guild.muteRole) return CaseEntity.delete({ id: x.id });
 
             const member =
@@ -54,6 +52,6 @@ export default class extends Listener {
       });
     }, 10000);
 
-    bot.logger.info(`${bot.user!.username} is ready to rumble!`);
+    client.logger.info(`${client.user!.username} is ready to rumble!`);
   }
 }

@@ -24,10 +24,10 @@ export default class extends Command {
         content: "Manages the guild logs.",
         usage: "<action> <[channel|...logEvents]>",
         examples: [
-          "v!logs enable ban warn mute",
+          "v!logs enable ban, warn, mute",
           "v!logs disable purge",
           "v!logs enable purge",
-          "v!logs set #logs"  
+          "v!logs set #logs"
         ]
       },
       channel: "guild",
@@ -47,8 +47,8 @@ export default class extends Command {
                 }
               }
             : {
-                type: logs,
-                match: "separate",
+                type: "string",
+                match: "rest",
                 prompt: {
                   start: `Provide some valid log types...\n${logs
                     .map(l => `\`${l}\``)
@@ -69,14 +69,14 @@ export default class extends Command {
       corlog
     }: {
       action: "reset" | "set" | "enable" | "disable";
-      corlog: TextChannel | string[];
+      corlog: TextChannel | string;
     }
   ) {
     if (!action)
       return message.sem(
         `Logs are sent to ${
-          message._guild.logs.channel
-            ? `<#${message._guild.logs.channel}> \`(${message._guild.logs.channel})\`.`
+          message._guild.channels.audit
+            ? `<#${message._guild.channels.audit}> \`(${message._guild.channels.audit})\`.`
             : `the void...`
         }\n **Enabled Events**: ${Object.keys(message._guild.logs)
           // @ts-ignore
@@ -97,24 +97,32 @@ export default class extends Command {
           .filter(k => !channelKeys.includes(k))
           // @ts-ignore
           .forEach(key => (message._guild.logs[key] = false));
-        message._guild.logs.channel = "";
+        message._guild.channels.audit = "";
 
         message.sem("Successfully reset the log settings!");
         break;
       case "set":
-        message._guild.logs.channel = (corlog as TextChannel).id;
+        message._guild.channels.audit = (corlog as TextChannel).id;
         message.sem(
-          `Okay, I set the logs channel to ${corlog} \`(${message._guild.logs.channel})\``
+          `Okay, I set the logs channel to ${corlog} \`(${message._guild.channels.audit})\``
         );
         break;
       case "disable":
       case "enable":
-        (corlog as string[]).forEach(
+        const filtered = corlog
+          .toString()
+          .split(",")
+          .filter(t => logs.includes(t.trim()));
+        if (!filtered.length)
+          return message.sem("Can't do anything about that chief...");
+        filtered.forEach(
           // @ts-ignore
-          e => (message._guild.logs[e] = action === "disable" ? false : true)
+          e => (message._guild.logs[e.trim()] = action === "disable" ? false : true)
         );
         message.sem(
-          `Okay, I **${action}d** the ${(corlog as string[]).map(e => `**${e}**`).join(", ")} log events.`
+          `Okay, I **${action}d** the ${filtered
+            .map(e => `**${e.trim()}**`)
+            .join(", ")} log events.`
         );
         break;
     }

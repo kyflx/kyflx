@@ -1,20 +1,13 @@
 import { Logger } from "@ayana/logger";
 import bodyParser from "body-parser";
-import { NextFunction } from "connect";
 import MongoStore from "connect-mongo";
 import { AkairoClient, AkairoHandler } from "discord-akairo";
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import { join } from "path";
 import { getRouteObject, Route } from "./lib";
-
-declare module "passport-discord" {
-  interface Profile {
-    refreshToken: string;
-  }
-}
 
 export default class WebServer {
   public app: express.Application = express();
@@ -36,7 +29,7 @@ export default class WebServer {
       })
     );
 
-    this.app.set("view engine", "ejs")
+    this.app.set("view engine", "ejs");
 
     this.app.use(
       session({
@@ -59,7 +52,6 @@ export default class WebServer {
           scope: ["identify", "guilds"]
         },
         async (accessToken, refreshToken, profile, done) => {
-          profile.refreshToken = refreshToken;
           return done(null, profile);
         }
       )

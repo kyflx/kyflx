@@ -78,7 +78,7 @@ export default class extends Command {
           .baseEmbed()
           .setImage(`attachment://RankCard-${message.author.username}.png`);
 
-        message.channel.send({ embed, files: [attachment] });
+        message.util.send({ embed, files: [attachment] });
         break;
     }
   }

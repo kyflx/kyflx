@@ -11,13 +11,15 @@ export default class extends Command {
         examples: ["!embed Cool guy | I know i am really cool"]
       },
       userPermissions: ["ADMINISTRATOR"],
-      args: [{
-        id: "content", 
-        match: "rest",
-        prompt: {
-          start: "Maybe you should provide some text :thonk:"
+      args: [
+        {
+          id: "content",
+          match: "rest",
+          prompt: {
+            start: "Maybe you should provide some text :thonk:"
+          }
         }
-      }]
+      ]
     });
   }
 
@@ -25,10 +27,10 @@ export default class extends Command {
     const emb = content.split("|").map(t => t.trim());
 
     if (!message.deletable)
-      return message.channel.send("Dont have permission to delete the message");
+      return message.util.send("Dont have permission to delete the message");
 
     message.delete();
-    message.channel.send(
+    message.util.send(
       new VorteEmbed(message)
         .baseEmbed()
         .setTitle(emb[0])

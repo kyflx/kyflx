@@ -65,18 +65,15 @@ export default class extends Command {
       message,
       `I need confirmation to ban **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\``
     );
+
     if (!confirmed)
-      return message
-        .sem("Okay, your choice!")
-        .then(m => m.delete({ timeout: 8000 }));
+      return message.sem("Okay, your choice!").then(m => m.delete({ timeout: 8000 }));
 
     try {
       await member.ban({ reason });
-      message
-        .sem(
-          `Banned **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\``
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+      message.sem(
+        `Banned **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\``
+      ).then(m => m.delete({ timeout: 8000 }));
     } catch (error) {
       this.logger.error(error, "ban");
       return message
@@ -95,11 +92,10 @@ export default class extends Command {
 
     await _case.save();
     await message._guild.save();
-    if (!message._guild.logs.channel || !message._guild.logs.ban) return;
 
-    const logs = (await message.guild.channels.get(
-      message._guild.logs.channel
-    )) as TextChannel;
+    const { channel, enabled } = message._guild.log("ban", "audit");
+    if (!channel || !enabled) return;
+    const logs = (await message.guild.channels.get(channel)) as TextChannel;
 
     return logs.send(
       new VorteEmbed(message)

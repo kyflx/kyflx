@@ -32,7 +32,7 @@ export default class extends Command {
               type: Argument.range("string", 1, 5)
             };
 
-        return { action, prefix }
+        return { action, prefix };
       }
     });
   }

@@ -11,12 +11,10 @@ export default class extends Listener {
 
   async exec(message: Message) {
     const guild = await this.client.findOrCreateGuild(message.guild!.id);
-    const {
-      logs: { deleteMessage, channel }
-    } = guild;
+    const { enabled, channel } = guild.log("messageDelete", "audit");
 
     if (message.author.bot) return;
-    if (!deleteMessage) return;
+    if (!enabled || !channel) return;
 
     const chan = message.guild!.channels.get(channel) as TextChannel;
 

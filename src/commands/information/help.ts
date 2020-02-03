@@ -28,6 +28,7 @@ export default class extends Command {
       helpEmbed.setDescription(
         "**Syntax**: <> Required; [] Optional; <[]> Depends on Previous Argument."
       );
+
       for (const [name, category] of this.client.commands.categories) {
         if (category.size)
           helpEmbed.addField(
@@ -36,33 +37,39 @@ export default class extends Command {
             true
           );
       }
-    } else {
-      let info = "";
-      const description = command.description
-        ? command.description
-        : { usage: "", content: "", examples: [] };
-      info += `**Category**: ${command.categoryID}\n`;
-      info += `**Description**: ${description.content || "None"}\n`;
-      info += `**Cooldown**: ${ms(
-        command.cooldown || this.client.commands.defaultCooldown
-      )}\n`;
-      info += `**Aliases**: ${
-        command.aliases.length
-          ? command.aliases.map(a => `\`${a}\``).join(", ")
-          : "None"
-      }\n`;
 
-      helpEmbed.setAuthor(
-        `${command.aliases[0]} ${description.usage || ""}`,
-        message.author.displayAvatarURL()
-      );
-      helpEmbed.setDescription(info);
-      if (description.examples && description.examples.length > 0)
-        helpEmbed.addField(
-          "Examples",
-          description.examples.map((e: string) => `\`${e}\``).join("\n")
-        );
+      return message.util.send(helpEmbed);
     }
-    message.channel.send(helpEmbed);
+
+    let info = "";
+    const description = command.description || {
+      usage: "",
+      content: "",
+      examples: []
+    };
+
+    info += `**Category**: ${command.categoryID}\n`;
+    info += `**Description**: ${description.content || "None"}\n`;
+    info += `**Cooldown**: ${ms(command.cooldown || 5000)}\n`;
+    info += `**Aliases**: ${
+      command.aliases.length
+        ? command.aliases.map(a => `\`${a}\``).join(", ")
+        : "None"
+    }\n`;
+
+    helpEmbed.setAuthor(
+      `${command.aliases[0]} ${description.usage || ""}`,
+      message.author.displayAvatarURL()
+    );
+
+    helpEmbed.setDescription(info);
+
+    if (description.examples && description.examples.length > 0)
+      helpEmbed.addField(
+        "Examples",
+        description.examples.map((e: string) => `\`${e}\``).join("\n")
+      );
+      
+    message.util.send(helpEmbed);
   }
 }

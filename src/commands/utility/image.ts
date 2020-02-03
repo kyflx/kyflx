@@ -38,6 +38,6 @@ export default class extends Command {
       .setColor("#000000")
       .setImage(link);
     if (link.title) emb.setTitle(link.title);
-    message.channel.send(emb);
+    message.util.send(emb);
   }
 }
