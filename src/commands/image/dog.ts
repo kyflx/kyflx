@@ -21,7 +21,7 @@ export default class extends Command {
     }
 
     const image = data.data[Math.floor(Math.random() * data.data.length)];
-    return message.channel.send(
+    return message.util.send(
       new VorteEmbed(message)
         .baseEmbed()
         .setAuthor(image.author)

@@ -24,7 +24,7 @@ export default class extends Command {
       aliases: ["uwu", "uwuify"],
       args: [
         {
-          id: "content", 
+          id: "content",
           match: "rest",
           prompt: {
             start: "Provide some text I can uwuify"
@@ -34,13 +34,13 @@ export default class extends Command {
       description: {
         content: "Uwuify's your message",
         usage: "<message>",
-        examples: [ "v!uwu x3 nuzzles pounces on you uwu u so warm!" ]
+        examples: ["v!uwu x3 nuzzles pounces on you uwu u so warm!"]
       }
     });
   }
 
   public async exec(message: Message, { content }: { content: string }) {
-		if (message.deletable) message.delete();
+    if (message.deletable) message.delete();
     content = content.replace("th", "d");
     content = content.replace("Th", "D");
     content = content.replace(" is", " ish");

@@ -37,7 +37,11 @@ export default class extends Command {
           `**Joined At**: ${member.joinedAt!.toLocaleDateString()}`,
           `**Created At**: ${member.user.createdAt.toLocaleDateString()}`,
           `**Status**: ${Presence[member.presence.status]}`,
-          `**Game**: ${this.getGame(member)}`,
+          `**Game**: ${
+            member.presence!.activities.length
+              ? member.presence!.activities[0].name
+              : "None"
+          }`,
           `**Roles**: ${member.roles
             .sorted((a, b) => b.position - a.position)
             .filter(r => r.name !== "@everyone")
@@ -46,11 +50,6 @@ export default class extends Command {
         ].join("\n")
       )
       .setThumbnail(member.user.displayAvatarURL({ size: 2048 }));
-    message.channel.send(infoEmbed);
-  }
-
-  private getGame(member: GuildMember) {
-    if (!member.presence.activity) return "None.";
-    return member.presence.activity.name;
+    message.util.send(infoEmbed);
   }
 }

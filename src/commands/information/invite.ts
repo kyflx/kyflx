@@ -2,7 +2,7 @@ import { Command } from "@vortekore/lib";
 import { Message } from "discord.js";
 
 export default class extends Command {
-  constructor() {
+  public constructor() {
     super("invite", {
       aliases: ["invite"],
       description: {
@@ -11,7 +11,11 @@ export default class extends Command {
     });
   }
 
-  async exec(message: Message) {
-    return message.sem("Use [this link](http://bit.ly/2EmfskO) to invite the bot!");
+  public async exec(message: Message) {
+    return message.sem(
+      `Use [this link](${await this.client.generateInvite(
+        8
+      )}) to invite the bot!`
+    );
   }
 }

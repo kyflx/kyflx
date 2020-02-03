@@ -10,13 +10,15 @@ export default class extends Command {
         usage: "<thoughts>",
         examples: ["!feedback fix stuff", "!feedback amazing music quality!"]
       },
-      args: [{
-        id: "feedback",
-        match: "rest",
-        prompt: {
-          start: "Maybe you should put something next time."
+      args: [
+        {
+          id: "feedback",
+          match: "rest",
+          prompt: {
+            start: "Maybe you should put something next time."
+          }
         }
-      }]
+      ]
     });
   }
 
@@ -27,7 +29,9 @@ export default class extends Command {
       .setDescription(feedback)
       .addField(
         "\u200b",
-        `**Sent From**: ${message.guild ? `${message.guild.name} (${message.guild.id})` : "DMs"} `
+        `**Sent From**: ${
+          message.guild ? `${message.guild.name} (${message.guild.id})` : "DMs"
+        } `
       );
     await (<TextChannel>this.client.channels.get("631151085150797833")!).send(
       Feedback

@@ -33,14 +33,8 @@ export default class extends Command {
       true
     );
 
-    // embed.addField("Commit Versions", [
-    // 	`**Main**: ${}`,
-    // 	`**Lib**: ${}`,
-    // 	`**Verta**: ${}`
-    // ])
-
     embed.setThumbnail(this.client.user.displayAvatarURL());
 
-    return message.channel.send(embed);
+    return message.util.send(embed);
   }
 }

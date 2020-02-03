@@ -140,11 +140,10 @@ export default class extends Command {
 
     await _case.save();
     await message._guild.save();
-    if (!message._guild.logs.channel || !message._guild.logs.mute) return;
 
-    const logs = (await message.guild.channels.get(
-      message._guild.logs.channel
-    )) as TextChannel;
+    const { channel, enabled } = message._guild.log("mute", "audit");
+    if (!channel || !enabled) return;
+    const logs = (await message.guild.channels.get(channel)) as TextChannel;
 
     return logs.send(
       new VorteEmbed(message)

@@ -35,7 +35,7 @@ export default class extends Command {
     const leaderboardEmbed = new VorteEmbed(message)
       .baseEmbed()
       .setAuthor("Leaderboard", message.author.displayAvatarURL())
-      .setDescription("```\n" + str + "```");
-    return message.channel.send(leaderboardEmbed);
+      .setDescription("```prolog\n" + str + "```");
+    return message.util.send(leaderboardEmbed);
   }
 }

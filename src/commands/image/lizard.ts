@@ -24,7 +24,7 @@ export default class extends Command {
         post => post.data.post_hint === "image"
       ),
       image = images[Math.floor(Math.random() * images.length)].data;
-    return message.channel.send(
+    return message.util.send(
       new VorteEmbed(message)
         .baseEmbed()
         .setAuthor(image.author)

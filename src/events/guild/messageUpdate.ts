@@ -12,12 +12,13 @@ export default class extends Listener {
   public async exec(oldmsg: Message, newmsg: Message) {
     return;
     const guild = await this.client.findOrCreateGuild(oldmsg.guild!.id);
-    if (!guild.logs.channel && !guild.logs.editMessage) return;
+    const { enabled, channel } = guild.log("messageUpdate", "audit");
+    if (!channel || !enabled) return;
 
     const oldcon = oldmsg.cleanContent.toString().slice(0, 900);
     const newcon = newmsg.cleanContent.toString().slice(0, 900);
-    const ch = oldmsg.guild!.channels.get(guild.logs.channel) as TextChannel;
 
+    const ch = oldmsg.guild!.channels.get(channel) as TextChannel;
     if (!ch) return;
 
     ch.send(
