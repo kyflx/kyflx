@@ -1,7 +1,7 @@
-import { VorteEmbed } from "@vortekore/lib";
+import { VorteEmbed, paginate } from "@vortekore/lib";
 import { Argument, Command } from "discord-akairo";
 import { Message, Util } from "discord.js";
-import { In, paginate } from "../../util";
+import { In } from "../../util";
 import ms = require("ms");
 
 export default class SkipCommand extends Command {

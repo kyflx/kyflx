@@ -85,7 +85,7 @@ export default class WebServer {
       if (!router) return;
 
       for (const route of router.routes)
-        (routeInstance.router[route.method].apply as Function)(
+        (<Function> routeInstance.router[route.method].apply)(
           routeInstance.router,
           [
             route.path,

@@ -1,8 +1,8 @@
 import { Command, trunc, VorteEmbed } from "@vortekore/lib";
-import { Playlist, Video } from "better-youtube-api";
+import { Video } from "better-youtube-api";
 import { Argument } from "discord-akairo";
 import { Message, Util } from "discord.js";
-import { parse as parseUrl } from "url";
+import { parse } from "url";
 import { In, search as searchYT } from "../../util";
 
 export default class extends Command {
@@ -52,7 +52,7 @@ export default class extends Command {
 
     let response,
       queue = message.queue;
-    if (!["http://", "https://"].includes(parseUrl(search).protocol!)) {
+    if (!["http:", "https:"].includes(parse(search).protocol!)) {
       await searchYT(search).then(async results => {
         const embed = new VorteEmbed(message).baseEmbed().setDescription(
           results
@@ -65,7 +65,7 @@ export default class extends Command {
                   song instanceof Video ? "[Video]" : "Playlist"
                 }`
             )
-            .join("\n")
+            .join("\n") + "\n\n**Send 'cancel' to cancel the selection.**"
         );
 
         const sent = (await message.util.send(embed)) as Message;
@@ -73,34 +73,29 @@ export default class extends Command {
           .awaitMessages(m => m.author.id === message.author.id, {
             max: 1,
             errors: ["time"],
-            time: 15000 
+            time: 10000
           })
-          .then(
-            async messages => {
-              const msg = messages.first();
-              if (msg.deletable) msg.delete();
-              if (msg.content.ignoreCase("cancel")) return message.sem("Okay!");
-              if (!msg)
-                return (response = await this.client.music.load(
-                  results[0].url
-                ));
-              const i = this.client.commands.resolver.type("number")(
-                msg,
-                msg.content
-              );
-              if (!i || results[i - 1] === undefined)
-                return (response = await this.client.music.load(
-                  results[0].url
-                ));
-              return (response = await this.client.music.load(
-                results[i - 1].url
-              ));
-            },
-            async () =>
-              (response = await this.client.music.load(results[0].url))
-          );
+          .then(async messages => {
+            const msg = messages.first();
+            if (msg.deletable) msg.delete();
+            if (msg.content.ignoreCase("cancel") || !msg)
+              return message.sem("Okay, I cancelled the selection.");
+            const i = this.client.commands.resolver.type("number")(
+              msg,
+              msg.content
+            );
+            if (!i || results[i - 1] === undefined)
+              return message.sem("Okay, I cancelled the selection.");
+            return (response = await this.client.music.load(
+              results[i - 1].url
+            ));
+          })
+          .catch(() => {
+            return message.sem("Okay, I cancelled the selection.");
+          });
       });
     } else response = await this.client.music.load(search);
+    if (!response) return;
 
     if (!message.guild.me.voice.channel)
       await queue.player.join(message.member.voice.channel.id);

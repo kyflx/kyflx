@@ -6,7 +6,6 @@ export default class extends Command {
   public constructor() {
     super("leave", {
       aliases: ["leave", "stop"],
-      category: "Music",
       channel: "guild",
       args: [
         {

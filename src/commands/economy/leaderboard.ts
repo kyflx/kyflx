@@ -18,24 +18,23 @@ export default class extends Command {
   public async exec(message: Message, { page: selected }: { page: number }) {
     let members = await ProfileEntity.find({ guildId: message.guild!.id });
     if (!members.length) return message.sem("Nothing to show ¯\\_(ツ)_/¯");
-    members = members.sort((a, b) => b.xp - a.xp);
+    members = members
+      .filter(({ userId }) => message.guild.members.has(userId))
+      .sort((a, b) => b.xp - a.xp);
 
-    let { items, page } = paginate(members, selected),
-      str = "",
-      index = (page - 1) * 10;
-
-    for (const member of items) {
-      const user = this.client.users.get(member.userId)!;
-      str += `${++index}. ${user ? user.username : "Unknown"} : ${
-        member.level
-      } [${member.xp}]\n`;
-    }
-    str += `Page : ${page}`;
+    let { items, page, maxPage } = paginate(members, selected),
+      index = (page - 1) * 10,
+      str = items
+        .map(({ userId, level }) => {
+          const user = message.guild.member(userId);
+          return `**${++index}.**  ${user ? user : "Unknown"} - Level ${level}`;
+        })
+        .join("\n");
 
     const leaderboardEmbed = new VorteEmbed(message)
       .baseEmbed()
       .setAuthor("Leaderboard", message.author.displayAvatarURL())
-      .setDescription("```prolog\n" + str + "```");
+      .setDescription(`${str}\nPage #${page} / ${maxPage}`);
     return message.util.send(leaderboardEmbed);
   }
 }

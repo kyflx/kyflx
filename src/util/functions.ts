@@ -5,13 +5,6 @@ import { NP } from "lavaqueue/typings/Queue";
 import { api } from "..";
 import { Video, Playlist } from "better-youtube-api";
 
-export interface PaginateResults<T> {
-  items: T[];
-  page: number;
-  maxPage: number;
-  pageLength: number;
-}
-
 export async function search(
   input: string,
   maxResults: number = 10
@@ -77,27 +70,6 @@ export function progressBar(percent: number, length = 10) {
     else str += "▬";
   }
   return str;
-}
-
-export function paginate<T>(
-  items: T[],
-  page = 1,
-  pageLength = 10
-): PaginateResults<T> {
-  const maxPage = Math.ceil(items.length / pageLength);
-  if (page < 1) page = 1;
-  if (page > maxPage) page = maxPage;
-  const startIndex = (page - 1) * pageLength;
-
-  return {
-    items:
-      items.length > pageLength
-        ? items.slice(startIndex, startIndex + pageLength)
-        : items,
-    page,
-    maxPage,
-    pageLength
-  };
 }
 
 export function In(member: GuildMember): boolean {

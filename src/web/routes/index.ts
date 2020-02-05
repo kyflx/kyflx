@@ -1,4 +1,4 @@
-import { Router, Get, Route, Use } from "../lib";
+import { Router, Get, Route } from "../lib";
 import { Request, Response } from "express";
 import passport from "passport";
 import { Strategy } from "passport-discord";

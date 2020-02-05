@@ -1,6 +1,5 @@
-import { Command, trunc, VorteEmbed } from "@vortekore/lib";
+import { Command, trunc, VorteEmbed, paginate } from "@vortekore/lib";
 import { Message, Util } from "discord.js";
-import { paginate } from "../../util";
 import ms = require("ms");
 
 export default class extends Command {
