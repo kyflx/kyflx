@@ -8,7 +8,7 @@ export default class extends Command {
       aliases: ["seek"],
       description: {
         examples: ["!seek 5s"],
-        description: "Seeks to a position in the song",
+        content: "Seeks to a position in the song",
         usage: "<time>"
       },
       channel: "guild",

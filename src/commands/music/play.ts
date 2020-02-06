@@ -4,6 +4,7 @@ import { Argument } from "discord-akairo";
 import { Message, Util } from "discord.js";
 import { parse } from "url";
 import { In, search as searchYT } from "../../util";
+import QueueHook from "../../util/QueueHook";
 
 export default class extends Command {
   public constructor() {
@@ -30,6 +31,7 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { search }: { search: string }) {
+    if (!message.queue.hook) message.queue.hook = new QueueHook(message.queue);
     if (message.guild.me.voice.channel && !In(message.member!))
       return message.sem("Please join the voice channel I'm in.", {
         type: "error"
@@ -98,7 +100,7 @@ export default class extends Command {
     if (!response) return;
 
     if (!message.guild.me.voice.channel)
-      await queue.player.join(message.member.voice.channel.id);
+      await queue.player.join(message.member.voice.channel.id)
     else if (!In(message.member!))
       return message.sem("Please join the voice channel I'm in.", {
         type: "error"

@@ -34,25 +34,26 @@ export default class extends Command {
       return message.util.send(stationEmbed);
     }
 
-    const current = await message.queue.current();
-
+    const current = message.queue.np;
     if (!current)
       return message.sem(`Sorry, there is nothing playing :p`, {
         type: "error"
       });
 
-    let np = await this.client.music.decode(current.track);
+    let np = await this.client.music.decode(current.song);
     let playingEmbed = new VorteEmbed(message)
       .musicEmbed()
       .setAuthor("Now Playing", message.author.displayAvatarURL())
       .setDescription(
-        `**Song Name**: [${Util.escapeMarkdown(np.title)}](${np.uri})\n**Author**: ${np.author}`
+        `**Song Name**: [${Util.escapeMarkdown(np.title)}](${
+          np.uri
+        })\n**Author**: ${np.author}`
       )
       .addField(
         "\u200B",
         playerEmbed(message.queue, {
           ...current,
-          np: { info: np, track: current.track }
+          np: { info: np, track: current.song }
         })
       );
     return message.util.send(playingEmbed);

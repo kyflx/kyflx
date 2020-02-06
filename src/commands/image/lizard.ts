@@ -5,9 +5,7 @@ export default class extends Command {
   public constructor() {
     super("lizard", {
       aliases: ["lizard"],
-      description: {
-        content: "Provides a lizard pic from r/lizards"
-      }
+      description: t => t("cmds:img.lizard.desc") 
     });
   }
 

@@ -21,7 +21,7 @@ export default class extends Listener {
     });
 
     if (process.env.NODE_ENV === "production") {
-      const dbl = new DBLAPI(process.env.DBL_TOKEN!, this.client);
+      const dbl = new DBLAPI(client.config.get("DBL_TOKEN"), this.client);
       setInterval(() => dbl.postStats(this.client.guilds.size), 120000);
     }
 

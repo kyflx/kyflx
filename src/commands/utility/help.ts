@@ -6,11 +6,7 @@ export default class extends Command {
   public constructor() {
     super("help", {
       aliases: ["help", "commands", "halp"],
-      description: {
-        content: "Shows all the commands that the bot has to offer",
-        usage: "[command]",
-        examples: ["v!help", "v!help cat"]
-      },
+      description: t => t("cmds:util.help.desc"),
       args: [
         {
           id: "command",
@@ -42,20 +38,15 @@ export default class extends Command {
     }
 
     let info = "";
-    const description = command.description || {
-      usage: "",
-      content: "",
-      examples: []
-    };
+    const description = typeof command.description === "function"
+      ? command.description(message.t.bind(message))
+      : {};
 
     info += `**Category**: ${command.categoryID}\n`;
     info += `**Description**: ${description.content || "None"}\n`;
     info += `**Cooldown**: ${ms(command.cooldown || 5000)}\n`;
-    info += `**Aliases**: ${
-      command.aliases.length
-        ? command.aliases.map(a => `\`${a}\``).join(", ")
-        : "None"
-    }\n`;
+    info += `**Aliases**: ${command.aliases.map(a => `\`${a}\``).join(", ") ||
+      "None"}\n`;
 
     helpEmbed.setAuthor(
       `${command.aliases[0]} ${description.usage || ""}`,
@@ -69,7 +60,7 @@ export default class extends Command {
         "Examples",
         description.examples.map((e: string) => `\`${e}\``).join("\n")
       );
-      
+
     message.util.send(helpEmbed);
   }
 }

@@ -6,11 +6,6 @@ export default class extends Command {
   public constructor() {
     super("mute", {
       aliases: ["mute"],
-      description: {
-        content: "Mutes a member",
-        usage: "<member> <duration>",
-        examples: ["!mute @user 10m"]
-      },
       userPermissions: ["MUTE_MEMBERS"],
       channel: "guild",
       args: [
@@ -31,11 +26,14 @@ export default class extends Command {
         {
           id: "reason",
           prompt: {
-            start: "Please provide a reason for this kick."
+            start: "Please provide a reason for this mute."
           },
           match: "rest"
         }
-      ]
+      ],
+       description: {
+         content: t => t("commands:mute.description")
+       }
     });
   }
 
@@ -86,14 +84,14 @@ export default class extends Command {
 
     let muteRole = message.guild.roles.get(message._guild.muteRole);
     try {
-      const confirmed = await confirm(message, `Could I create a mute role?`);
-      if (!confirmed)
-        return message
-          .sem(
-            `Okay, use \`@${this.client.user.tag} muterole\` to set a mute role!`
-          )
-          .then(m => m.delete({ timeout: 8000 }));
       if (!muteRole) {
+        const confirmed = await confirm(message, `Could I create a mute role?`);
+        if (!confirmed)
+          return message
+            .sem(
+              `Okay, use \`@${this.client.user.tag} muterole\` to set a mute role!`
+            )
+            .then(m => m.delete({ timeout: 8000 }));
         muteRole = await message.guild.roles.create({
           data: {
             name: "Muted",

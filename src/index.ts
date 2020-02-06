@@ -4,12 +4,9 @@ import { config } from "dotenv";
 import { join } from "path";
 
 config({ path: join(process.cwd(), ".env") });
-export const developers = ["464499620093886486", "396096412116320258"];
-export const api = new YouTube(process.env.YOUTUBE_API_KEY);
-
 const bot = new VorteClient(__dirname);
 
-bot.events.loadAll();
-bot.commands.loadAll();
+export const developers = bot.developers;
+export const api = new YouTube(bot.config.get("YOUTUBE_API_KEY"));
 
 bot.login(bot.config.get("TOKEN"));

@@ -7,11 +7,11 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import { join } from "path";
-import { getRouteObject, Route } from "./lib";
+import { getRouteObject, APIRouter } from "./lib";
 
 export default class WebServer {
   public app: express.Application = express();
-  public modules: Route[] = [];
+  public modules: APIRouter[] = [];
 
   public constructor(public client: AkairoClient) {}
 
@@ -78,7 +78,7 @@ export default class WebServer {
     for (const path of AkairoHandler.readdirRecursive(
       join(__dirname, "routes")
     )) {
-      const routeMod: typeof Route = (_ => _.default || _)(require(path)),
+      const routeMod: typeof APIRouter = (_ => _.default || _)(require(path)),
         routeInstance = new routeMod(this.client);
 
       const router = getRouteObject(routeInstance);

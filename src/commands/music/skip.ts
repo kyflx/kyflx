@@ -63,55 +63,7 @@ export default class SkipCommand extends Command {
         type: "error"
       });
 
-    const queue = this.client.music.queues.get(message.guild!.id);
-
-    let tracks;
-    if (num > 1) tracks = await message.queue.tracks(0, num - 2);
-
-    const current = await queue.current();
-
-    tracks = [(current || { track: null }).track]
-      .concat(tracks || [])
-      .filter(track => track);
-
-    const skip = await queue.next(num);
-
-    if (!skip) {
-      await queue.stop();
-      return message.sem("Skipped the last playing song.");
-    }
-
-    const decoded = await this.client.music.decode(tracks as any[]);
-
-    const totalLength = decoded.reduce(
-      (prev, song) => prev + song.info.length,
-      0
-    );
-
-    const paginated = paginate(decoded, 1, 10);
-    let index = (paginated.page - 1) * 10;
-
-    const embed = new VorteEmbed(message)
-      .baseEmbed()
-      .setAuthor(
-        `${message.author.tag} (${message.author.id})`,
-        message.author.displayAvatarURL()
-      )
-      .setDescription(
-        [
-          `**Skipped songs**`,
-          paginated.items
-            .map(
-              song =>
-                `**${++index}.** [${Util.escapeMarkdown(song.info.title)}](${song.info.uri}) *${ms(
-                  song.info.length
-                )}*`
-            )
-            .join("\n"),
-          `**Total skipped time:** ${ms(totalLength)}`
-        ].join("\n")
-      );
-
-    return message.util!.send(embed);
+    await message.queue.stop();
+    return message.sem("Skipped the last playing song.");
   }
 }

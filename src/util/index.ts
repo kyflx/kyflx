@@ -14,7 +14,11 @@ declare global {
 	interface String {
 		ignoreCase(value: string): boolean;
 		trunc(n: number, useWordBoundary?: boolean): String;
-	}
+  }
+  
+  interface ObjectConstructor {
+    keys<T extends object>(o: T): (keyof T)[];
+  }
 }
 
 export interface RadioObject {

@@ -6,25 +6,21 @@ export default class extends Command {
     super("ban", {
       aliases: ["ban"],
       channel: "guild",
-      description: {
-        content: "Bans a member from the server",
-        examples: ["v!ban @2D not cool"],
-        usage: "<@member> <reason>"
-      },
+      description: t => t("cmds:mod.ban.desc"),
       userPermissions: ["BAN_MEMBERS"],
       clientPermissions: ["BAN_MEMBERS"],
       args: [
         {
           id: "member",
           prompt: {
-            start: "Please provide a member to ban."
+            start: (_: Message) => _.t("cmds:mod.memb", { action: "ban" })
           },
           type: "member"
         },
         {
           id: "reason",
           prompt: {
-            start: "Please provide a reason for this ban."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "ban" })
           },
           match: "rest"
         }
@@ -39,48 +35,45 @@ export default class extends Command {
     if (message.deletable) message.delete();
     if (member.id === message.member.id)
       return message
-        .sem(
-          "If you wanted to ban yourself just leave and never come back...",
-          { type: "error" }
-        )
+        .sem(message.t("cmds:mod.ban.ursf"), { type: "error" })
         .then(m => m.delete({ timeout: 8000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
     if (mh.position >= uh.position)
       return message
-        .sem(
-          `That person is ${
-            mh.position === uh.position
-              ? "in the same level as you"
-              : "above you"
-          } in the role hierarchy.`,
-          {
-            type: "error"
-          }
-        )
+        .sem(message.t("cmds:mod.hier", { mh, uh }), {
+          type: "error"
+        })
         .then(m => m.delete({ timeout: 8000 }));
 
     const confirmed = await confirm(
       message,
-      `I need confirmation to ban **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\``
+      message.t("cmds:mod.confirm", { member, reason, action: "ban" })
     );
 
     if (!confirmed)
-      return message.sem("Okay, your choice!").then(m => m.delete({ timeout: 8000 }));
+      return message
+        .sem(message.t("cmds:mod.canc"))
+        .then(m => m.delete({ timeout: 8000 }));
 
     try {
       await member.ban({ reason });
-      message.sem(
-        `Banned **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\``
-      ).then(m => m.delete({ timeout: 8000 }));
+      message
+        .sem(
+          message.t("cmds:mod.done", {
+            member,
+            action: "Banned",
+            reason
+          })
+        )
+        .then(m => m.delete({ timeout: 8000 }));
     } catch (error) {
       this.logger.error(error, "ban");
       return message
-        .sem(
-          `Oh no, I couldn't ban **${member.user.tag}**... contact the developers.`,
-          { type: "error" }
-        )
+        .sem(message.t("cmds:mod.error", { member, action: "ban" }), {
+          type: "error"
+        })
         .then(m => m.delete({ timeout: 10000 }));
     }
 

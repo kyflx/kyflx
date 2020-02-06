@@ -5,14 +5,12 @@ export default class extends Command {
   public constructor() {
     super("lmgtfy", {
       aliases: ["lmgtfy"],
-      description: {
-        content: "Sends a lmgtfy url."
-      },
+      description: t => t("cmds:fun.lgy.desc"),
       args: [
         {
           id: "query",
           prompt: {
-            start: "Are you gonna provide something?"
+            start: (_: Message) => _.t("cmds:fun.lgy.prompt")
           },
           type: "restContent"
         }

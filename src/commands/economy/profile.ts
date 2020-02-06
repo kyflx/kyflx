@@ -2,22 +2,14 @@ import { createCanvas, loadImage } from "canvas";
 import { MessageAttachment } from "discord.js";
 import { formatNumber } from "../../util";
 import { join } from "path";
-import {
-  Command,
-  ProfileEntity,
-  VorteEmbed
-} from "@vortekore/lib";
+import { Command, ProfileEntity, VorteEmbed } from "@vortekore/lib";
 import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("profile", {
       aliases: ["profile", "me"],
-      description: {
-        content: "Displays your profile in an embed.",
-        usage: "[action] <value>",
-        example: ["v!profile set bio I'm cool!"],
-      },
+      description: t => t("cmds:eco.prf.desc"),
       channel: "guild"
     });
   }
@@ -29,11 +21,11 @@ export default class extends Command {
           case "bio":
           case "biography":
             message.profile!.bio = args.slice(2).join(" ");
-            message.sem("Successfully updated your bio.");
+            message.sem(message.t("cmds.eco.prf.new_bio"));
             await message.profile!.save();
             break;
           default:
-            message.sem("The only setting avaliable is **bio**");
+            message.sem(message.t("cmds:eco.prf.settings"));
             break;
         }
         break;
@@ -43,13 +35,18 @@ export default class extends Command {
           where: { guildId: message.guild!.id }
         });
         users = users.sort((a, b) => b.xp - a.xp);
-        const rank = users.findIndex(user => user.userId === message.author.id) + 1;
+        const rank =
+          users.findIndex(user => user.userId === message.author.id) + 1;
 
         const canvas = createCanvas(500, 200);
         const ctx = canvas.getContext("2d");
         const xpNeed = 2 * (75 * level);
-        const image = await loadImage(join(process.cwd(), "images/rank-card.png"));
-        const pfp = await loadImage(message.author.displayAvatarURL().replace(".webp", ".png"));
+        const image = await loadImage(
+          join(process.cwd(), "images/rank-card.png")
+        );
+        const pfp = await loadImage(
+          message.author.displayAvatarURL().replace(".webp", ".png")
+        );
         const lineLength = Math.round((xp / xpNeed) * 458);
 
         ctx.lineWidth = 20;
@@ -58,7 +55,7 @@ export default class extends Command {
 
         pfp.width = 310;
         pfp.height = 310;
-        ctx.drawImage(pfp, 186, 36)
+        ctx.drawImage(pfp, 186, 36);
         ctx.drawImage(image, 0, 0);
         ctx.fillText(message.author.username, 33, 85);
         ctx.fillText(`[${formatNumber(level)}]`, 102, 155);

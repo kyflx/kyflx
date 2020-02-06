@@ -20,18 +20,16 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { page }: { page: number }) {
-    const tracks = (await message.queue.tracks()).filter(t => t);
+    const tracks = message.queue.next.filter(t => t);
     if (!tracks.length)
       return message.sem(
         `Hmmmm... pretty empty, you should add some more songs with **${message.util.parsed.prefix}play**`
       );
 
     const decoded = await this.client.music.decode(tracks);
-    const np = await this.client.music.decode(
-      (await message.queue.current()).track
-    );
+    const np = await this.client.music.decode(message.queue.np.song);
 
-    let total = decoded.reduceRight((prev, song) => prev + song.info.length, 0),
+    let total = decoded.reduce((prev, song) => prev + song.info.length, 0),
       paginated = paginate(decoded, page),
       index = (paginated.page - 1) * 10,
       upNext = "";
@@ -40,8 +38,10 @@ export default class extends Command {
       ? (upNext += paginated.items
           .map(
             song =>
-              `${++index}. **[${Util.escapeMarkdown(
-                trunc(song.info.title, 30, false)
+              `${++index}. **[${trunc(
+                Util.escapeMarkdown(song.info.title),
+                30,
+                false
               )}](${song.info.uri})** *${ms(song.info.length)}*`
           )
           .join("\n"))

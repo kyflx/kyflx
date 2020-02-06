@@ -34,13 +34,19 @@ export default class extends Command {
       return message.sem("Please join the voice channel I'm in.", {
         type: "error"
       });
-      
+
     if (message.player.radio)
       return message.sem("Sorry, the player is currently in radio mode :p", {
         type: "error"
       });
-
-    await message.queue.shuffle();
+      
+    for (let i = message.queue.next.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [message.queue.next[i], message.queue.next[j]] = [
+        message.queue.next[j],
+        message.queue.next[i]
+      ];
+    }
     return message.sem("Shuffled the Queue!");
   }
 }

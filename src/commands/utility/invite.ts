@@ -5,17 +5,15 @@ export default class extends Command {
   public constructor() {
     super("invite", {
       aliases: ["invite"],
-      description: {
-        content: "Sends a bot invite."
-      }
+      description: t => t("cmds:utility.inv.desc")
     });
   }
 
   public async exec(message: Message) {
     return message.sem(
-      `Use [this link](${await this.client.generateInvite(
-        8
-      )}) to invite the bot!`
+      message.t("cmds:util.inv.res", {
+        invite: await this.client.generateInvite(8)
+      })
     );
   }
 }
