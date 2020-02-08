@@ -9,17 +9,29 @@ export default class extends Command {
         super("profile", {
             aliases: ["profile", "me"],
             description: t => t("cmds:eco.prf.desc"),
-            channel: "guild"
+            channel: "guild",
+            args: [
+                {
+                    id: "locale",
+                    default: "Lol",
+                    type: "string"
+                },
+                {
+                    id: "value",
+                    default: "lol",
+                    type: "string"
+                }
+            ]
         });
     }
 
-    public async exec(message: Message, args: string[]) {
-        switch (args[0]) {
+    public async exec(message: Message, {locale, value}: { locale: string, value: string }) {
+        switch (locale) {
             case "set":
-                switch (args[1]) {
+                switch (value) {
                     case "bio":
                     case "biography":
-                        message.profile!.bio = args.slice(2).join(" ");
+                        message.profile!.bio = message.content.split(" ").slice(3).join(" ");
                         message.sem(message.t("cmds:eco.prf.new_bio"));
                         await message.profile!.save();
                         break;
