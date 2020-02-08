@@ -5,7 +5,7 @@ export default class extends Command {
   public constructor() {
     super("invite", {
       aliases: ["invite"],
-      description: t => t("cmds:utility.inv.desc")
+      description: t => t("cmds:util.inv.desc")
     });
   }
 

@@ -1,5 +1,6 @@
 import { Command } from "@vortekore/lib";
 import { Message } from "discord.js";
+import { TextChannel } from "discord.js";
 
 const faces = [
   "(*^ω^)",
@@ -31,7 +32,8 @@ export default class extends Command {
           }
         }
       ],
-      description: t => t("cmds:fun.uwu.desc")
+      description: t => t("cmds:fun.uwu.desc"),
+      clientPermissions: "MANAGE_WEBHOOKS"
     });
   }
 
@@ -51,6 +53,18 @@ export default class extends Command {
     content = content.replace("!", ` ${face()} `);
     content = content.replace(".", ` ${face()} `);
     content = content.replace(",", ` ${face()} `);
-    return message.sem(content);
+
+    if (message.channel.type !== "text") return message.sem(content);
+
+    const hook = await (<TextChannel>message.channel).createWebhook(
+      message.author.username,
+      {
+        avatar: message.author.displayAvatarURL(),
+        reason: "uwuify command"
+      }
+    );
+
+    await hook.send(content);
+    return hook.delete("End");
   }
 }

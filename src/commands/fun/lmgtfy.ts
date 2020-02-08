@@ -19,6 +19,6 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { query }: { query: string }) {
-    return message.sem(`${encodeURI(`https://lmgtfy.com/?q=${query}`)}`);
+    return message.sem(`https://lmgtfy.com/?q=${query}`);
   }
 }

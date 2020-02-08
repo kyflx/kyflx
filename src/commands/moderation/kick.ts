@@ -36,7 +36,7 @@ export default class extends Command {
     if (member.id === message.member.id)
       return message
         .sem(message.t("cmds:mod.kick.ursf"), { type: "error" })
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
@@ -45,16 +45,16 @@ export default class extends Command {
         .sem(message.t("cmds:mod.hier", { mh, uh }), {
           type: "error"
         })
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     const confirmed = await confirm(
       message,
-      message.t("cmds:mod.confirm", { member, reason, action: "ban" })
+      message.t("cmds:mod.confirm", { member, reason, action: "kick" })
     );
     if (!confirmed)
       return message
         .sem(message.t("cmds:mod.canc"))
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     try {
       await member.kick(reason);
@@ -66,7 +66,7 @@ export default class extends Command {
             reason
           })
         )
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
       this.logger.error(error, "kick");
       return message

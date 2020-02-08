@@ -39,7 +39,7 @@ export default class extends Command {
     if (member.id === message.member.id)
       return message
         .sem("C'mon man you can't warn yourself...", { type: "error" })
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
@@ -55,7 +55,7 @@ export default class extends Command {
             type: "error"
           }
         )
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     const confirmed = await confirm(
       message,
@@ -64,7 +64,7 @@ export default class extends Command {
     if (!confirmed)
       return message
         .sem("Okay, your choice!")
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     const profile = await this.client.findOrCreateProfile(
       member.id,
@@ -76,7 +76,7 @@ export default class extends Command {
       .sem(
         `Warned **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\`. They now have \`${profile.warns}\` warns`
       )
-      .then(m => m.delete({ timeout: 8000 }));
+      .then(m => m.delete({ timeout: 6000 }));
 
     const _case = new CaseEntity(++message._guild.cases, message.guild.id);
     _case.reason = reason;

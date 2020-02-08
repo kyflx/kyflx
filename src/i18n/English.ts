@@ -1,6 +1,5 @@
 import { Language } from "@vortekore/lib";
-import { Role } from "discord.js";
-import { GuildMember } from "discord.js";
+import { Collection, GuildMember, Message, Role } from "discord.js";
 
 export default class EnglishTranslations extends Language {
   public constructor() {
@@ -163,9 +162,10 @@ export default class EnglishTranslations extends Language {
                 : "above you"
             } in the role hierarchy.`,
           confirm: (m: GuildMember) =>
-            `I need confirmation to {{action}} **${m.user.tag}** \`(${m.id})\` for reason *"{{reason}}"*`,
+            `I need confirmation to {{action}} **${m.user.tag}** \`(${m.id})\` for reason **"{{reason}}"**`,
           canc: "Okay, I cancelled the command.",
-          done: (m: GuildMember) => `{{action}} **${m.user.tag}** \`(${m.id})\` for reason \`{{reason}}\``,
+          done: (m: GuildMember) =>
+            `{{action}} **${m.user.tag}** \`(${m.id})\` for reason \`{{reason}}\``,
           ban: {
             desc: {
               content: "Bans a member from the server",
@@ -183,8 +183,37 @@ export default class EnglishTranslations extends Language {
             },
             ursf: "If you wanted to kick yourself just leave..."
           },
-          mute: {},
-          purge: {},
+          mute: {
+            desc: {
+              content: "Mutes a member.",
+              usage: "<member> <duration> <reason>",
+              examples: ["v!mute 2D 10m bad kid"]
+            },
+            create_mtr: `Okay, use \`@${this.client.user.tag} muterole\` to set a mute role!`,
+            mtr_confirm: "Could I create a mute role?",
+            ursf: "If you wanted to mute yourself just don't talk...",
+            purp: "Please provide a duration for this mute."
+          },
+          purge: {
+            desc: {
+              content: "Purge a number of messages",
+              examples: ["v!purge 20 @2D"],
+              usage: "<amount> [member]"
+            },
+            purp: "Please provide an amount of messages you want me to purge.",
+            confirm: (
+              message: Message,
+              messages: Collection<string, Message>,
+              reason: string
+            ) =>
+              `I need confirmation to purge **${messages.size.toLocaleString()}** messages in channel ${
+                message.channel
+              } \`(${message.channel.id})\` with reason \`${reason}\``,
+            done: (message: Message) =>
+              `Deleted **{{deleted}}** messages in channel ${message.channel} \`(${message.channel.id})\` with reason **{{reason}}**`,
+            error:
+              "Sorry, I couldn't purge any messages... contact the developers to see what happened"
+          },
           warn: {}
         },
         music: {},
@@ -192,11 +221,9 @@ export default class EnglishTranslations extends Language {
         util: {
           invite: {
             desc: {
-              content: "Sends the bot & discord api ping.",
-              usage: "[command]",
-              examples: ["v!help", "v!help cat"]
+              content: "Sends a bot invite with administrator permissions",
             },
-            response: `Use [this link]({{invite}}) to invite the bot!`
+            res: `Use [this link]({{invite}}) to invite the bot!`
           },
           help: {
             desc: {
@@ -207,7 +234,7 @@ export default class EnglishTranslations extends Language {
             desc: {
               content: "Sends the bot & discord api ping."
             },
-            response: (bot: number, api: number) =>
+            res: (bot: number, api: number) =>
               [
                 `**Bot Ping**: ${Math.round(bot)}ms`,
                 `**API Ping**: ${Math.round(api)}ms`
