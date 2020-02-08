@@ -1,10 +1,12 @@
-import { Hook, Queue, listen } from "@vortekore/lib";
+import {Hook, listen, Queue} from "@vortekore/lib";
 
 export default class QueueHook extends Hook {
-  public emitter: Queue;
+    public emitter: Queue;
 
-  @listen("finish")
-  public async finished() {
-		this.emitter.player.destroy();
-  }
+    @listen("finish")
+    // @ts-ignore
+    public async finished() {
+        this.emitter.player.leave();
+        this.emitter.player.destroy();
+    }
 }
