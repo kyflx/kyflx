@@ -6,9 +6,7 @@ export default class extends Command {
   public constructor() {
     super("queue", {
       aliases: ["queue", "q", "next"],
-      description: {
-        content: "Shows the current and next up songs."
-      },
+      description: t => t("cmds:music.queue.desc"),
       channel: "guild",
       args: [
         {
@@ -22,9 +20,7 @@ export default class extends Command {
   public async exec(message: Message, { page }: { page: number }) {
     const tracks = message.queue.next.filter(t => t);
     if (!tracks.length)
-      return message.sem(
-        `Hmmmm... pretty empty, you should add some more songs with **${message.util.parsed.prefix}play**`
-      );
+      return message.sem(message.t("cmds:music.queue.empty", { message }));
 
     const decoded = await this.client.music.decode(tracks);
     const np = await this.client.music.decode(message.queue.np.song);
@@ -47,7 +43,7 @@ export default class extends Command {
           .join("\n"))
       : (upNext = ``);
     if (paginated.maxPage > 1)
-      upNext += '\n"Use queue <page> to view a specific page."';
+      upNext += message.t("cmds:music.queue.page");
 
     const queueEmbed = new VorteEmbed(message)
       .musicEmbed()

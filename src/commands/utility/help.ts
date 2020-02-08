@@ -42,7 +42,7 @@ export default class extends Command {
       ? command.description(message.t.bind(message))
       : {};
 
-    info += `**Category**: ${command.categoryID}\n`;
+    info += `**Category**: ${command.categoryID.capitalize()}\n`;
     info += `**Description**: ${description.content || "None"}\n`;
     info += `**Cooldown**: ${ms(command.cooldown || 5000)}\n`;
     info += `**Aliases**: ${command.aliases.map(a => `\`${a}\``).join(", ") ||

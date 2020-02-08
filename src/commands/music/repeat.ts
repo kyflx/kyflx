@@ -6,11 +6,7 @@ export default class extends Command {
   public constructor() {
     super("repeat", {
       aliases: ["repeat", "loop"],
-      description: {
-        content: "Repeats the queue or song.",
-        examples: ["!repeat queue", "!repeat song"],
-        usage: "<song|queue>"
-      },
+      description: t => t("cmds:music.loop.desc"),
       args: [
         {
           id: "type",
@@ -24,35 +20,21 @@ export default class extends Command {
 
   public async exec(message: Message, { type }: { type: "queue" | "track" }) {
     if (!message.guild.me.voice.channel)
-      return message.sem("I'm not in a voice channel...", {
+      return message.sem(message.t("cmds:music.no_vc"), {
         type: "error"
       });
 
     if (!In(message.member!))
-      return message.sem("Please join the voice channel I'm in.", {
+      return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
     if (message.player.radio)
-      return message.sem("Sorry, the player is currently in radio mode :p", {
+      return message.sem(message.t("cmds:music.rad"), {
         type: "error"
       });
 
-    switch (type) {
-      case "track":
-        const track = (message.queue.repeat.song = !message.player.queue
-          .repeat.song);
-        message.sem(
-          `${track ? "Enabled" : "Disabled"} song repeat for the player.`
-        );
-        break;
-
-      case "queue":
-        const queue = (message.player.queue.repeat.queue = !message.player.queue
-          .repeat.queue);
-        message.sem(
-          `${queue ? "Enabled" : "Disabled"} queue repeat for the player.`
-        );
-        break;
-    }
+    //@ts-ignore
+    const val = (message.queue[type].song = !message.player[type].repeat.song);
+    return message.sem(message.t("cmds:music.loop.res", { val, type }));
   }
 }

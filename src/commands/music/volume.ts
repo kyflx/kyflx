@@ -8,6 +8,7 @@ export default class extends Command {
   public constructor() {
     super("volume", {
       aliases: ["volume", "vol"],
+      description: t => t("cmds:music.volume.desc"),
       userPermissions(message: Message) {
         if (
           developers.includes(message.author.id) ||
@@ -27,7 +28,7 @@ export default class extends Command {
           id: "volume",
           type: Argument.range("number", 1, 100),
           prompt: {
-            start: "Provide a valid number between 1-100."
+            start: (_: Message) => _.t("cmds:music.vol.prompt")
           }
         }
       ]
@@ -36,16 +37,16 @@ export default class extends Command {
 
   public async exec(message: Message, { volume }: { volume: number }) {
     if (!message.guild.me.voice.channel)
-      return message.sem("I'm not in a voice channel...", {
+      return message.sem(message.t("cmds:music.no_vc"), {
         type: "error"
       });
 
     if (!In(message.member!))
-      return message.sem("Please join the voice channel I'm in.", {
+      return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
 
-    message.sem(`Changed the volume from ${100} to ${volume}`);
+    message.sem(message.t("cmds:music.vol.res", { volume }));
     await message.player.setVolume(volume);
   }
 }

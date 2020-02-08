@@ -10,10 +10,7 @@ export default class extends Command {
   public constructor() {
     super("play", {
       aliases: ["play", "add"],
-      description: {
-        content: "Plays a song in your voide channel.",
-        usage: "<query>"
-      },
+      description: t => t("cmds:music.play.desc"),
       channel: "guild",
       args: [
         {
@@ -33,24 +30,21 @@ export default class extends Command {
   public async exec(message: Message, { search }: { search: string }) {
     if (!message.queue.hook) message.queue.hook = new QueueHook(message.queue);
     if (message.guild.me.voice.channel && !In(message.member!))
-      return message.sem("Please join the voice channel I'm in.", {
+      return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
 
     if (!message.member!.voice.channel)
-      return message.sem("Please join a voice channel.", { type: "error" });
+      return message.sem(message.t("cmds:music.join_vc"), { type: "error" });
 
     if (!message.member.voice.channel.joinable)
-      return message.sem("I don't have the permissions to join this channel.", {
+      return message.sem(message.t("cmds:music.play.join"), {
         type: "error"
       });
     if (!message.member.voice.channel.speakable)
-      return message.sem(
-        "I don't have the permissions to talk in this channel.",
-        {
-          type: "error"
-        }
-      );
+      return message.sem(message.t("cmds:music.play.speak"), {
+        type: "error"
+      });
 
     let response,
       queue = message.queue;
@@ -67,7 +61,7 @@ export default class extends Command {
                   song instanceof Video ? "[Video]" : "Playlist"
                 }`
             )
-            .join("\n") + "\n\n**Send 'cancel' to cancel the selection.**"
+            .join("\n") + message.t("cmds:music.play.cancel")
         );
 
         const sent = (await message.util.send(embed)) as Message;
@@ -81,28 +75,28 @@ export default class extends Command {
             const msg = messages.first();
             if (msg.deletable) msg.delete();
             if (msg.content.ignoreCase("cancel") || !msg)
-              return message.sem("Okay, I cancelled the selection.");
+              return message.sem(message.t("cmds:music.play.cancelled"));
             const i = this.client.commands.resolver.type("number")(
               msg,
               msg.content
             );
             if (!i || results[i - 1] === undefined)
-              return message.sem("Okay, I cancelled the selection.");
+              return message.sem(message.t("cmds:music.play.cancelled"));
             return (response = await this.client.music.load(
               results[i - 1].url
             ));
           })
           .catch(() => {
-            return message.sem("Okay, I cancelled the selection.");
+            return message.sem(message.t("cmds:music.play.cancelled"));
           });
       });
     } else response = await this.client.music.load(search);
     if (!response) return;
 
     if (!message.guild.me.voice.channel)
-      await queue.player.join(message.member.voice.channel.id)
+      await queue.player.join(message.member.voice.channel.id);
     else if (!In(message.member!))
-      return message.sem("Please join the voice channel I'm in.", {
+      return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
 
@@ -116,7 +110,7 @@ export default class extends Command {
       await queue.add(...response.tracks.map(track => track.track));
       msg = response.playlistInfo!.name;
     } else
-      return message.sem("Sorry, I couldn't find what you were looking for.", {
+      return message.sem(message.t("cmds:music.play.look"), {
         type: "error"
       });
 

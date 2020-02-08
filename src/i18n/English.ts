@@ -214,21 +214,192 @@ export default class EnglishTranslations extends Language {
             error:
               "Sorry, I couldn't purge any messages... contact the developers to see what happened"
           },
-          warn: {}
-        },
-        music: {},
-        conf: {},
-        util: {
-          invite: {
+          warn: {
             desc: {
-              content: "Sends a bot invite with administrator permissions",
+              content: "Warns a member",
+              usage: "<@member> <reason>",
+              examples: ["v!warn @2D#5773 not following rules"]
             },
-            res: `Use [this link]({{invite}}) to invite the bot!`
+            ursf: "C'mon man you can't warn yourself..."
+          }
+        },
+        music: {
+          no_vc: "Sorry, I'm not in a voice channel...",
+          join:
+            "Sorry, you're going to have to join the voice channel I am in.",
+          join_vc: "Can you please join a voice channel?",
+          rad: "Sorry, the player is currently in radio mode :p",
+          bb: {
+            desc: {
+              content: "Manages the bassboost for the guild.",
+              examples: ["!bassboost medium"],
+              usage: "<high|medium|low|none>"
+            },
+            lvls:
+              "The avaliable levels are **high**, **medium**, **low**, and **none**.",
+            curr: "The current bass level for this player is **{{current}}**.",
+            res: "Okay! I set the bass level to **{{level}}**!"
           },
+          leave: {
+            desc: {
+              content: "Leaves the voice channel that the bot is currently in."
+            },
+            res: "Okay, I successfully left the voice channel!"
+          },
+          np: {
+            desc: {
+              content: "Displays what is currently playing."
+            },
+            empty: "Sorry, there is currently nothing playing."
+          },
+          pause: {
+            desc: { content: "Pauses the player if not already resumed." },
+            alr: "Oof... the player is already paused :/",
+            res: "Okay! I successfully paused the player."
+          },
+          play: {
+            desc: {
+              content: "Plays a song in your voide channel.",
+              usage: "<query>",
+              examples: "v!play city of angels"
+            },
+            join: "I don't have the permissions to join this channel.",
+            speak: "I don't have the permissions to talk in this channel.",
+            cancel: "\n\n**Send 'cancel' to cancel the selection.**",
+            cancelled: "Okay... I cancelled the song selection.",
+            look: "Sorry, I couldn't find what you were looking for :/"
+          },
+          queue: {
+            desc: {
+              content: "Shows the current and next up songs."
+            },
+            empty: (message: Message) =>
+              `Hmmmm... pretty empty, you should add some more songs with **${message.util.parsed.prefix}play**`,
+            page: '\n"Use queue <page> to view a specific page."'
+          },
+          radio: {},
+          rm: {
+            desc: {
+              content: "Removes a song from the queue.",
+              usage: "<index>"
+            },
+            prompt: "Provide the index of the song you want to remove.",
+            nope: "Ohh no's... That song isn't in the queue?!",
+            res: (decoded: {
+              identifier: string;
+              isSeekable: boolean;
+              author: string;
+              length: number;
+              isStream: boolean;
+              position: number;
+              title: string;
+              uri: string;
+            }) =>
+              `Successfully removed [${decoded.title}](${decoded.uri}) from the queue.`
+          },
+          loop: {
+            desc: {
+              content: "Repeats the queue or song.",
+              examples: ["!repeat queue", "!repeat song"],
+              usage: "<song|queue>"
+            },
+            res: (val: boolean) =>
+              `${val ? "Enabled" : "Disabled"} {{type}} repeat for the player.`
+          },
+          res: {
+            desc: {
+              content: "Resumes the player if not already paused."
+            },
+            alr: "Ummmm... the player isn't paused...",
+            res: "Okay! I just resumed the player for you :)"
+          },
+          seek: {
+            desc: {
+              examples: ["!seek 5s"],
+              description: "Seeks to a position in the song",
+              usage: "<time>"
+            },
+            prompt:
+              "Please provide a time to skip in (provide it in seconds or minutes, Example: !seek 5s)",
+            res: "Okay, I seeked to the requested time."
+          },
+          shuf: {
+            desc: {
+              content: "Shuffles the queue."
+            },
+            res: "Okay, I successfully shuffled the queue"
+          },
+          skip: {
+            desc: {
+              content: "Skips the amount of songs you specify (defaults to 1)",
+              usage: "<num>",
+              examples: ["3", "1"]
+            },
+            res: "Okay I skipped the last playing song."
+          },
+          vol: {
+            desc: {
+              content: "Adjusts the volume of the player.",
+              usage: "<volume>",
+              examples: ["v!vol 50"]
+            },
+            res: "Okay! I set the volume to **{{volume}}**!",
+            prompt: "Provide a valid number between **1**-**100**."
+          }
+        },
+        conf: {
+          dj: {
+            desc: {
+              content:
+                "Manages the role used for controlling the music player.",
+              usage: "[clear|set] <[@role|role name|role id]>",
+              examples: ["v!djrole", "v!djrole clear", "v!djrole set @Muted"]
+            },
+            prompt: "Please provide a role I can use for DJs :/",
+            cur: (message: Message) =>
+              `The current DJ role is ${
+                message._guild.djRole
+                  ? `<@&${message._guild.djRole}> \`(${message._guild.djRole})\``
+                  : "is literally nothing..."
+              }`,
+            clr:
+              "Okay, I cleared the DJ role! To set a new one do `djrole set <role>`!",
+            done: (role: Role) =>
+              `Okay, I set the DJ role to ${role} \`(${role.id})\``
+          },
+          emb_c: {},
+          lang: {
+            desc: {
+              content: "Manages this guilds language setting.",
+              usage: "[language]",
+              examples: ["v!lang ingles", "v!lang english"]
+            },
+            confirm: (lang: Language) =>
+              `Are you sure you want to change the language to ${lang.displayName} \`(${lang.id})\`?`,
+            cancelled: "Okay, I cancelled the request to change the language.",
+            res: (lang: Language) =>
+              `Okay, I changed the language to ${lang.displayName} \`(${lang.id})\`.`
+          },
+          logs: {},
+          mtr: {},
+          prf: {}
+        },
+        util: {
+          ava: {},
+          bi: {},
+          emb: {},
+          fb: {},
           help: {
             desc: {
               content: "Shows all the commands VorteKore has to offer."
             }
+          },
+          img: {},
+          inv: {
+            desc: {
+              content: "Sends a bot invite with administrator permissions"
+            },
+            res: `Use [this link]({{invite}}) to invite the bot!`
           },
           ping: {
             desc: {
@@ -239,7 +410,9 @@ export default class EnglishTranslations extends Language {
                 `**Bot Ping**: ${Math.round(bot)}ms`,
                 `**API Ping**: ${Math.round(api)}ms`
               ].join("\n")
-          }
+          },
+          stats: {},
+          ui: {}
         }
       }
     };
