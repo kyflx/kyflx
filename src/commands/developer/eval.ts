@@ -6,11 +6,7 @@ export default class extends Command {
   public constructor() {
     super("eval", {
       aliases: ["eval", "evaluate"],
-      description: {
-        content: "Nothing lol",
-        examples: ["veval <code>"],
-        usage: "!ban <code>"
-      },
+      description: t => t("cmds:dev.eval.desc"),
       ownerOnly: true,
       args: [
         {

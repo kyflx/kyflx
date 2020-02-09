@@ -5,17 +5,13 @@ export default class extends Command {
   public constructor() {
     super("feedback", {
       aliases: ["feedback", "thoughts"],
-      description: {
-        content: "Provide feedback on the bot!",
-        usage: "<thoughts>",
-        examples: ["!feedback fix stuff", "!feedback amazing music quality!"]
-      },
+      description: t => t("cmds:util.fb.desc"),
       args: [
         {
           id: "feedback",
           match: "rest",
           prompt: {
-            start: "Maybe you should put something next time."
+            start: (_: Message) => _.t("cmds:util.fb.prompt")
           }
         }
       ]
@@ -36,6 +32,6 @@ export default class extends Command {
     await (<TextChannel>this.client.channels.get("631151085150797833")!).send(
       Feedback
     );
-    return message.sem("Feedback sent! Thanks <3");
+    return message.sem(message.t("cmds:util.fb.sent"));
   }
 }

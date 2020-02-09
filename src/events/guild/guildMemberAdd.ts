@@ -12,12 +12,16 @@ export default class extends Listener {
 
   async exec(member: GuildMember) {
     const guild = await this.client.findOrCreateGuild(member.guild.id);
-    const channel = guild.logs.memberJoined;
-    if (!channel) return;
 
-    const welcomeChannel = member.guild.channels.get(channel) as TextChannel;
-    if (!welcomeChannel) return;
+    if (guild.autoRoles.length > 0)
+      await member.roles.add(guild.autoRoles, "auto roles");
+    
+    // const channel = guild.logs.memberJoined;
+    // if (!channel) return;
 
-    welcomeChannel.send(formatString(guild.welcomeMessage, member));
+    // const welcomeChannel = member.guild.channels.get(channel) as TextChannel;
+    // if (!welcomeChannel) return;
+
+    // welcomeChannel.send(formatString(guild.welcomeMessage, member));
   }
 }

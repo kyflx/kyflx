@@ -6,32 +6,28 @@ export default class extends Command {
   public constructor() {
     super("mute", {
       aliases: ["mute"],
-      description: {
-        content: "Mutes a member",
-        usage: "<member> <duration>",
-        examples: ["!mute @user 10m"]
-      },
+      description: t => t("cmds:mod.mute.desc"),
       userPermissions: ["MUTE_MEMBERS"],
       channel: "guild",
       args: [
         {
           id: "member",
           prompt: {
-            start: "Please provide a member to mute."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "mute" })
           },
           type: "member"
         },
         {
           id: "time",
           prompt: {
-            start: "Please provide a mute time."
+            start: (_: Message) => _.t("cmds:mod.mute.purp")
           },
           type: "string"
         },
         {
           id: "reason",
           prompt: {
-            start: "Please provide a reason for this kick."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "mute" })
           },
           match: "rest"
         }
@@ -50,50 +46,44 @@ export default class extends Command {
     if (message.deletable) message.delete();
     if (member.id === message.member.id)
       return message
-        .sem("If you wanted to mute yourself just don't talk...", {
+        .sem(message.t("cmds:mod.mute.ursf"), {
           type: "error"
         })
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
     if (mh.position >= uh.position)
       return message
-        .sem(
-          `That person is ${
-            mh.position === uh.position
-              ? "in the same level as you"
-              : "above you"
-          } in the role hierarchy.`,
-          {
-            type: "error"
-          }
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.hier", { mh, uh }), { type: "error" })
+        .then(m => m.delete({ timeout: 6000 }));
 
     const muteTime = ms(time);
 
     const confirmed = await confirm(
       message,
-      `I need confirmation to mute **${member.user.tag}** \`(${
-        member.id
-      })\` for ${ms(muteTime, { long: true })} with reason \`${reason}\``
+      message.t("cmds:mod.confirm", {
+        member,
+        reason,
+        action: "mute"
+      })
     );
     if (!confirmed)
       return message
         .sem("Okay, your choice!")
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     let muteRole = message.guild.roles.get(message._guild.muteRole);
     try {
-      const confirmed = await confirm(message, `Could I create a mute role?`);
-      if (!confirmed)
-        return message
-          .sem(
-            `Okay, use \`@${this.client.user.tag} muterole\` to set a mute role!`
-          )
-          .then(m => m.delete({ timeout: 8000 }));
       if (!muteRole) {
+        const confirmed = await confirm(
+          message,
+          message.t("cmds:mod.mute.mtr_confirm")
+        );
+        if (!confirmed)
+          return message
+            .sem(message.t("cmds:mod.mute.create_mtr"))
+            .then(m => m.delete({ timeout: 6000 }));
         muteRole = await message.guild.roles.create({
           data: {
             name: "Muted",
@@ -117,17 +107,14 @@ export default class extends Command {
 
       await member.roles.add(muteRole, reason);
       message
-        .sem(
-          `Successfully muted **${member.user.tag}** \`(${member.id})\` with reason \`${reason}\``
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.done", { member, action: "Muted" }))
+        .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
       this.logger.error(error, "ban");
       return message
-        .sem(
-          `Oh no, I couldn't ban **${member.user.tag}**... contact the developers.`,
-          { type: "error" }
-        )
+        .sem(message.t("cmds:mod.error", { member, action: "mute" }), {
+          type: "error"
+        })
         .then(m => m.delete({ timeout: 10000 }));
     }
 

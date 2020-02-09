@@ -6,16 +6,14 @@ export default class extends Command {
   public constructor() {
     super("nowplaying", {
       aliases: ["nowplaying", "np"],
-      description: {
-        content: "Sends the current playing song."
-      },
+      description: t => t("cmds:music.np.desc"),
       channel: "guild"
     });
   }
 
   public async exec(message: Message) {
     if (!message.guild.me.voice.channel)
-      return message.sem("I'm not in a voice channel...", { type: "error" });
+      return message.sem(message.t("cmds:music.no_vc"), { type: "error" });
 
     if (message.player.radio) {
       const stationEmbed = new VorteEmbed(message)
@@ -34,25 +32,26 @@ export default class extends Command {
       return message.util.send(stationEmbed);
     }
 
-    const current = await message.queue.current();
-
+    const current = message.queue.np;
     if (!current)
-      return message.sem(`Sorry, there is nothing playing :p`, {
+      return message.sem(message.t("cmds:music.np.empty"), {
         type: "error"
       });
 
-    let np = await this.client.music.decode(current.track);
+    let np = await this.client.music.decode(current.song);
     let playingEmbed = new VorteEmbed(message)
       .musicEmbed()
       .setAuthor("Now Playing", message.author.displayAvatarURL())
       .setDescription(
-        `**Song Name**: [${Util.escapeMarkdown(np.title)}](${np.uri})\n**Author**: ${np.author}`
+        `**Song Name**: [${Util.escapeMarkdown(np.title)}](${
+          np.uri
+        })\n**Author**: ${np.author}`
       )
       .addField(
         "\u200B",
         playerEmbed(message.queue, {
           ...current,
-          np: { info: np, track: current.track }
+          np: { info: np, track: current.song }
         })
       );
     return message.util.send(playingEmbed);

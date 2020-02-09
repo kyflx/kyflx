@@ -7,11 +7,7 @@ export default class extends Command {
   public constructor() {
     super("exec", {
       aliases: ["exec", "execute"],
-      description: {
-        content: "Executes code",
-        examples: ["v!exec ls"],
-        usage: "v!exec <command>"
-      },
+      description: t => t("cmds:dev.eval.desc"),
       ownerOnly: true,
       args: [
         {

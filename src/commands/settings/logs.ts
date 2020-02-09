@@ -1,10 +1,9 @@
-import { Command, confirm } from "@vortekore/lib";
-import { Message, TextChannel } from "discord.js";
-import { Argument } from "discord-akairo";
+import { Command } from "@vortekore/lib";
 import { ArgumentOptions } from "discord-akairo";
+import { Message, TextChannel } from "discord.js";
 
 const channelKeys = ["channel", "memberJoined", "memberLeave"];
-const logs = [
+export const logs = [
   "warn",
   "editMessage",
   "roleAdd",
@@ -20,19 +19,10 @@ export default class extends Command {
   public constructor() {
     super("log", {
       aliases: ["log", "logs"],
-      description: {
-        content: "Manages the guild logs.",
-        usage: "<action> <[channel|...logEvents]>",
-        examples: [
-          "v!logs enable ban, warn, mute",
-          "v!logs disable purge",
-          "v!logs enable purge",
-          "v!logs set #logs"
-        ]
-      },
+      description: t => t("cmds:conf.logs.desc"),
       channel: "guild",
       userPermissions: ["MANAGE_GUILD"],
-      *args() {
+      *args(_: Message) {
         const action = yield {
           type: ["set", "enable", "disable", "reset"]
         };
@@ -43,16 +33,14 @@ export default class extends Command {
             ? {
                 type: "textChannel",
                 prompt: {
-                  start: "Provide a text channel to use as logs."
+                  start: _.t("cmds:conf.logs.set_prompt")
                 }
               }
             : {
                 type: "string",
                 match: "rest",
                 prompt: {
-                  start: `Provide some valid log types...\n${logs
-                    .map(l => `\`${l}\``)
-                    .join(", ")}`
+                  start: _.t("cmds:conf.logs.prompt")
                 }
               };
         })();
@@ -74,15 +62,7 @@ export default class extends Command {
   ) {
     if (!action)
       return message.sem(
-        `Logs are sent to ${
-          message._guild.channels.audit
-            ? `<#${message._guild.channels.audit}> \`(${message._guild.channels.audit})\`.`
-            : `the void...`
-        }\n **Enabled Events**: ${Object.keys(message._guild.logs)
-          // @ts-ignore
-          .filter(k => !channelKeys.includes(k) && message._guild.logs[k])
-          .map(key => `\`${key}\``)
-          .join(", ") || "Wow nothing"}`
+        message.t("cmds:conf.logs.curr", { message, channelKeys })
       );
 
     // const confirmation = await confirm(
@@ -99,31 +79,26 @@ export default class extends Command {
           .forEach(key => (message._guild.logs[key] = false));
         message._guild.channels.audit = "";
 
-        message.sem("Successfully reset the log settings!");
+        message.sem(message.t("cmds:conf.logs.reset"));
         break;
       case "set":
         message._guild.channels.audit = (corlog as TextChannel).id;
-        message.sem(
-          `Okay, I set the logs channel to ${corlog} \`(${message._guild.channels.audit})\``
-        );
+        message.sem(message.t("cmds:conf.logs.set", { message, corlog }));
         break;
       case "disable":
       case "enable":
         const filtered = corlog
           .toString()
           .split(",")
-          .filter(t => logs.includes(t.trim()));
+          .filter(t => logs.includes(t.trim()))
+          .map(t => t.trim());
         if (!filtered.length)
-          return message.sem("Can't do anything about that chief...");
+          return message.sem(message.t("cmds:conf.logs.cheif"));
         filtered.forEach(
           // @ts-ignore
-          e => (message._guild.logs[e.trim()] = action === "disable" ? false : true)
+          e => (message._guild.logs[e] = action === "disable" ? false : true)
         );
-        message.sem(
-          `Okay, I **${action}d** the ${filtered
-            .map(e => `**${e.trim()}**`)
-            .join(", ")} log events.`
-        );
+        message.sem(message.t("cmds:conf.logs.de", { filtered, action }));
         break;
     }
     return message._guild.save();

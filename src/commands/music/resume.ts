@@ -6,26 +6,24 @@ export default class extends Command {
   public constructor() {
     super("resume", {
       aliases: ["resume"],
-      description: {
-        content: "Resumes the player if not already paused."
-      },
+      description: t => t("cmds:music.res.desc"),
       channel: "guild"
     });
   }
 
   public async exec(message: Message) {
     if (!message.guild.me.voice.channel)
-      return message.sem("I'm not in a voice channel...", {
+      return message.sem(message.t("cmds:music.no_vc"), {
         type: "error"
       });
 
     if (!In(message.member!))
-      return message.sem("Please join the voice channel I'm in.", {
+      return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
-    if (!message.player.paused) return message.sem(`I'm not paused... :p`);
+    if (!message.player.paused) return message.sem(message.t("cmds:music.res.alr"));
 
     await message.player.pause(false);
-    return message.sem(`Successfully resumed the player!`);
+    return message.sem(message.t("cmds:music.res.res"));
   }
 }

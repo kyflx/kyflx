@@ -5,9 +5,7 @@ export default class extends Command {
   public constructor() {
     super("meme", {
       aliases: ["meme", "joke"],
-      description: {
-        content: "Provides a meme"
-      }
+      description: t => t("cmds:img.meme.desc") 
     });
   }
 

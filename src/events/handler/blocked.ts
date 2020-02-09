@@ -9,22 +9,11 @@ export default class CommandBlocked extends Listener {
     });
   }
 
-  public async exec(
-    message: Message,
-    command: Command,
-    reason: string,
-  ) {
+  public async exec(message: Message, _: Command, reason: string) {
     switch (reason) {
-      case "owner":
-        message.sem("This command can only be used by developers :p", {
-          type: "error"
-        });
-        break;
       case "guild":
-        message.sem(
-          "Sorry my guy, this command can only be used in guilds :(",
-          { type: "error" }
-        );
+      case "owner":
+        message.sem(message.t(`evts:cmds.${reason}`), { type: "error" });
         break;
     }
   }
