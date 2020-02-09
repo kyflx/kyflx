@@ -1,9 +1,8 @@
+import { NowPlaying, Queue } from "@vortekore/lib";
+import { Playlist, Video } from "better-youtube-api";
 import { GuildMember } from "discord.js";
 import { Track } from "lavalink";
-import { Queue } from "lavaqueue";
-import { NP } from "lavaqueue/typings/Queue";
 import { api } from "..";
-import { Video, Playlist } from "better-youtube-api";
 
 export async function search(
   input: string,
@@ -56,7 +55,7 @@ export function formatTime(duration: number) {
 
 export function playerEmbed(
   queue: Queue,
-  { np, position }: NP & { np: Track }
+  { np, position }: NowPlaying & { np: Track }
 ) {
   return `${queue.player.paused ? "\u23F8" : "\u25B6"} ${progressBar(
     position / np.info.length

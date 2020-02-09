@@ -5,13 +5,9 @@ export default class MuteroleCommand extends Command {
   public constructor() {
     super("muterole", {
       aliases: ["mute-role"],
-      description: {
-        content: "Manages the role used when muting a member.",
-        usage: "[clear|set] <[@role|role name|role id]>",
-        examples: ["v!muterole", "v!muterole clear", "v!muterole set @Muted"]
-      },
+      description: t => t("cmds:conf.mtr.desc"),
       channel: "guild",
-      *args() {
+      *args(_: Message) {
         const action = yield {
           type: [
             ["clear", "reset", "revert"],
@@ -24,7 +20,7 @@ export default class MuteroleCommand extends Command {
             ? yield {
                 type: "role",
                 prompt: {
-                  start: "Please provide a role I can use for mutes :/"
+                  start: _.t("cmds:conf.mtr.prompt")
                 }
               }
             : {};
@@ -39,24 +35,16 @@ export default class MuteroleCommand extends Command {
     { action, role }: { action: "clear" | "set"; role: Role }
   ) {
     if (!(action && role))
-      return message.sem(
-        `The current mute role is ${
-          message._guild.muteRole
-            ? `<@&${message._guild.muteRole}> \`(${message._guild.muteRole})\``
-            : "is literally nothing..."
-        }`
-      );
+      return message.sem(message.t("cmds:conf.mtr.curr", { message }));
 
     if (action === "clear") {
       message._guild.muteRole = "";
       await message._guild.save();
-      return message.sem(
-        "Okay, I cleared the mute role! To set a new one do `muterole set <role>`!"
-      );
+      return message.sem(message.t("cmds:conf.mtr.clear"));
     }
 
     message._guild.muteRole = role.id;
     await message._guild.save();
-    return message.sem(`Okay, I set the mute role to ${role} \`(${role.id})\``);
+    return message.sem(message.t("cmds:conf.mtr.set", { role }));
   }
 }

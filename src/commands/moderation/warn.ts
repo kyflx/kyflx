@@ -4,11 +4,7 @@ import { GuildMember, Message, TextChannel } from "discord.js";
 export default class extends Command {
   constructor() {
     super("warn", {
-      description: {
-        content: "Warns a member",
-        usage: "<@member> <reason>",
-        examples: ["v!warn @2D#5773 not following rules"]
-      },
+      description: t => t("cmds:mod.warn.desc"),
       channel: "guild",
       aliases: ["warn"],
       userPermissions: ["MANAGE_GUILD"],
@@ -16,14 +12,14 @@ export default class extends Command {
         {
           id: "member",
           prompt: {
-            start: "Please provide a member to warn."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "warn" })
           },
           type: "member"
         },
         {
           id: "reason",
           prompt: {
-            start: "Please provide a reason for this warn."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "warn" })
           },
           match: "rest"
         }
@@ -38,33 +34,26 @@ export default class extends Command {
     if (message.deletable) message.delete();
     if (member.id === message.member.id)
       return message
-        .sem("C'mon man you can't warn yourself...", { type: "error" })
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.warn.ursf"), { type: "error" })
+        .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
     if (mh.position >= uh.position)
       return message
-        .sem(
-          `That person is ${
-            mh.position === uh.position
-              ? "in the same level as you"
-              : "above you"
-          } in the role hierarchy.`,
-          {
-            type: "error"
-          }
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.hier", { mh, uh }), {
+          type: "error"
+        })
+        .then(m => m.delete({ timeout: 6000 }));
 
     const confirmed = await confirm(
       message,
-      `I need confirmation to warn **${member.user.tag}** \`(${member.id})\` with the reason \`${reason}\``
+      message.t("cmds:mod.confirm", { member, reason, action: "ban" })
     );
     if (!confirmed)
       return message
-        .sem("Okay, your choice!")
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.canc"))
+        .then(m => m.delete({ timeout: 6000 }));
 
     const profile = await this.client.findOrCreateProfile(
       member.id,
@@ -73,10 +62,8 @@ export default class extends Command {
     ++profile.warns;
 
     message
-      .sem(
-        `Warned **${member.user.tag}** \`(${member.id})\` for reason \`${reason}\`. They now have \`${profile.warns}\` warns`
-      )
-      .then(m => m.delete({ timeout: 8000 }));
+      .sem(message.t("cmds:mod.done", { member, reason, action: "Warned" }))
+      .then(m => m.delete({ timeout: 6000 }));
 
     const _case = new CaseEntity(++message._guild.cases, message.guild.id);
     _case.reason = reason;

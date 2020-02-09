@@ -5,11 +5,7 @@ export default class MuteroleCommand extends Command {
   public constructor() {
     super("djrole", {
       aliases: ["dj-role", "dj"],
-      description: {
-        content: "Manages the role used for controlling the music player.",
-        usage: "[clear|set] <[@role|role name|role id]>",
-        examples: ["v!djrole", "v!djrole clear", "v!djrole set @Muted"]
-      },
+      description: t => t("cmds:conf.dj.desc"),
       channel: "guild",
       *args() {
         const action = yield {
@@ -24,7 +20,7 @@ export default class MuteroleCommand extends Command {
             ? yield {
                 type: "role",
                 prompt: {
-                  start: "Please provide a role I can use for DJs :/"
+                  start: (_: Message) => _.t("cmds:conf.dj.prompt")
                 }
               }
             : {};
@@ -39,24 +35,16 @@ export default class MuteroleCommand extends Command {
     { action, role }: { action: "clear" | "set"; role: Role }
   ) {
     if (!(action && role))
-      return message.sem(
-        `The current DJ role is ${
-          message._guild.djRole
-            ? `<@&${message._guild.djRole}> \`(${message._guild.djRole})\``
-            : "is literally nothing..."
-        }`
-      );
+      return message.sem(message.t("cmds:conf.dj.cur", { message }));
 
     if (action === "clear") {
       message._guild.djRole = "";
       await message._guild.save();
-      return message.sem(
-        "Okay, I cleared the DJ role! To set a new one do `djrole set <role>`!"
-      );
+      return message.sem(message.t("cmds:conf.dj.clr"));
     }
 
     message._guild.djRole = role.id;
     await message._guild.save();
-    return message.sem(`Okay, I set the DJ role to ${role} \`(${role.id})\``);
+    return message.sem(message.t("cmds:conf.dj.done", { role }));
   }
 }

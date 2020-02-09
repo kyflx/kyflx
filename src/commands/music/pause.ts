@@ -1,29 +1,29 @@
 import { Command } from "@vortekore/lib";
 import { Message } from "discord.js";
-import { In } from '../../util';
+import { In } from "../../util";
 
 export default class extends Command {
   public constructor() {
     super("pause", {
       aliases: ["pause"],
-      description: { content: "Pauses the player if not already resumed." },
+      description: t => t("cmds:music.pause.desc"),
       channel: "guild"
     });
   }
 
   public async exec(message: Message) {
     if (!message.guild.me.voice.channel)
-      return message.sem("I'm not in a voice channel...", { type: "error" });
+      return message.sem(message.t("cmds:music.no_vc"), { type: "error" });
 
     if (!In(message.member))
-      return message.sem("Please join the voice channel I'm in.", {
+      return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
 
     if (message.player.paused)
-      return message.sem(`I'm already paused... :p`,);
+      return message.sem(message.t("cmds:music.pause.alr"));
 
     await message.player.pause();
-    return message.sem(`Successfully paused the player!`);
+    return message.sem(message.t("cmds:music.pause.res"));
   }
 }

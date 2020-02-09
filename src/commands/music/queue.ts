@@ -6,9 +6,7 @@ export default class extends Command {
   public constructor() {
     super("queue", {
       aliases: ["queue", "q", "next"],
-      description: {
-        content: "Shows the current and next up songs."
-      },
+      description: t => t("cmds:music.queue.desc"),
       channel: "guild",
       args: [
         {
@@ -20,18 +18,14 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { page }: { page: number }) {
-    const tracks = (await message.queue.tracks()).filter(t => t);
+    const tracks = message.queue.next.filter(t => t);
     if (!tracks.length)
-      return message.sem(
-        `Hmmmm... pretty empty, you should add some more songs with **${message.util.parsed.prefix}play**`
-      );
+      return message.sem(message.t("cmds:music.queue.empty", { message }));
 
     const decoded = await this.client.music.decode(tracks);
-    const np = await this.client.music.decode(
-      (await message.queue.current()).track
-    );
+    const np = await this.client.music.decode(message.queue.np.song);
 
-    let total = decoded.reduceRight((prev, song) => prev + song.info.length, 0),
+    let total = decoded.reduce((prev, song) => prev + song.info.length, 0),
       paginated = paginate(decoded, page),
       index = (paginated.page - 1) * 10,
       upNext = "";
@@ -40,14 +34,16 @@ export default class extends Command {
       ? (upNext += paginated.items
           .map(
             song =>
-              `${++index}. **[${Util.escapeMarkdown(
-                trunc(song.info.title, 30, false)
+              `${++index}. **[${trunc(
+                Util.escapeMarkdown(song.info.title),
+                30,
+                false
               )}](${song.info.uri})** *${ms(song.info.length)}*`
           )
           .join("\n"))
       : (upNext = ``);
     if (paginated.maxPage > 1)
-      upNext += '\n"Use queue <page> to view a specific page."';
+      upNext += message.t("cmds:music.queue.page");
 
     const queueEmbed = new VorteEmbed(message)
       .musicEmbed()
