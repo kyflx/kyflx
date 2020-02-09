@@ -10,7 +10,7 @@ export default class extends Command {
       args: [
         {
           id: "type",
-          type: ["queue", ["track", "song"]],
+          type: ["queue", ["song", "track"]],
           default: "track"
         }
       ],
@@ -34,7 +34,7 @@ export default class extends Command {
       });
 
     //@ts-ignore
-    const val = (message.queue[type].song = !message.player[type].repeat.song);
+    const val = (message.queue.repeat[type] = !message.queue.repeat[type]);
     return message.sem(message.t("cmds:music.loop.res", { val, type }));
   }
 }

@@ -6,9 +6,7 @@ export default class extends Command {
   public constructor() {
     super("botinfo", {
       aliases: ["bot-info", "bi"],
-      description: {
-        content: "Displays info on VorteKore"
-      }
+      description: t => t("cmds:util.bi.desc")
     });
   }
 
@@ -19,11 +17,7 @@ export default class extends Command {
         `${this.client.user!.username} Bot Info`,
         this.client.user!.displayAvatarURL()
       )
-      .setDescription(
-        `Hello, I'm ${
-          this.client.user!.username
-        }!, I am a public bot with many uses! If you wish to check out the commands I have, please do \`v!help\`.`
-      )
+      .setDescription(message.t("cmds:util.bi.info"))
       .addField(
         "\u200B",
         [

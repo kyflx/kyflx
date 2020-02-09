@@ -12,13 +12,13 @@ export default class extends Command {
           prompt: {
             start: (_: Message) => _.t("cmds:fun.lgy.prompt")
           },
-          type: "restContent"
+          match: "rest",
         }
       ]
     });
   }
 
   public async exec(message: Message, { query }: { query: string }) {
-    return message.sem(`https://lmgtfy.com/?q=${query}`);
+    return message.sem(`${encodeURI(`https://lmgtfy.com/?q=${query}`)}`);
   }
 }

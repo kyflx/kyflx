@@ -6,13 +6,10 @@ export default class extends Command {
   public constructor() {
     super("prefix", {
       aliases: ["prefix", "prefixes"],
-      description: {
-        content: "Manages the guild prefix.",
-        usage: "[prefix]"
-      },
+      description: t => t("cmds:conf.prf.desc"),
       channel: "guild",
       userPermissions: ["MANAGE_GUILD"],
-      *args() {
+      *args(_: Message) {
         const action = yield {
           type: [
             ["add", "new"],
@@ -24,8 +21,8 @@ export default class extends Command {
           ? {
               type: Argument.range("string", 1, 5),
               prompt: {
-                start: "Provide a prefix with 1-5 characters in length.",
-                retry: "Cmon... provide a prefix with 1-5 characters in length."
+                start: _.t("cmds:conf.prf.start"),
+                retry: _.t("cmds:conf.prf.retry")
               }
             }
           : {};
@@ -40,39 +37,33 @@ export default class extends Command {
     { action, prefix }: { action: "remove" | "add"; prefix: string }
   ) {
     if (!(action && prefix)) {
-      return message.sem(
-        `This guilds current prefixes are\n${message._guild.prefixes
-          .map((prefix, i) => `**${++i}.** ${prefix}`)
-          .join("\n")}`
-      );
+      return message.sem(message.t("cmds:conf.prf.curr", { message }));
     }
 
     const guild = message._guild;
     switch (action) {
       case "add":
         if (guild.prefixes.some(s => equalsIgnoreCase(s, prefix)))
-          return message.sem(`Sorry, this prefix already exists.`, {
+          return message.sem(message.t("cmds:conf.prf.exists"), {
             type: "error"
           });
 
         if (guild.prefixes.length >= 5)
-          return message.sem("Sorry, you can only have 5 prefixes :p", {
+          return message.sem(message.t("cmds:conf.prf.5prf"), {
             type: "error"
           });
 
         if (prefix.length > 5)
-          return message.sem("Prefixes can only be 5 characters in length.", {
+          return message.sem(message.t("cmds:conf.prf.5ch"), {
             type: "error"
           });
 
         guild.prefixes.push(prefix);
         await guild.save();
-        return message.sem(
-          `Successfully added \`${prefix}\` to the list of prefixes!`
-        );
+        return message.sem(message.t("cmds:conf.prf.added", { prefix }));
       case "remove":
         if (!guild.prefixes.some(s => equalsIgnoreCase(s, prefix)))
-          return message.sem(`Sorry, that prefix doesn't exist.`, {
+          return message.sem(message.t("cmds:conf.prf.!exists"), {
             type: "error"
           });
 
@@ -82,13 +73,7 @@ export default class extends Command {
         guild.prefixes.splice(index, 1);
 
         await guild.save();
-        return message.sem(
-          `Successfully removed \`${prefix}\` from the list of prefixes.${
-            guild.prefixes.length > 0
-              ? ""
-              : `\n*to use commands you need to mention the bot* @VorteKore ping`
-          }`
-        );
+        return message.sem(message.t("cmds:conf.prf.rmed", { guild, prefix }));
     }
   }
 }

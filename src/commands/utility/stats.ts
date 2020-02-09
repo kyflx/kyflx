@@ -6,9 +6,7 @@ export default class extends Command {
   public constructor() {
     super("stats", {
       aliases: ["stats", "statistics"],
-      description: {
-        content: "Shows some bot statistics"
-      }
+      description: t => t("cmds:util.inv.desc")
     });
   }
 

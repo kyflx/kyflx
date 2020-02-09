@@ -26,7 +26,7 @@ export default class extends Command {
       args: [
         {
           id: "volume",
-          type: Argument.range("number", 1, 100),
+          type: Argument.range("number", 1, 101),
           prompt: {
             start: (_: Message) => _.t("cmds:music.vol.prompt")
           }
@@ -46,7 +46,7 @@ export default class extends Command {
         type: "error"
       });
 
-    message.sem(message.t("cmds:music.vol.res", { volume }));
     await message.player.setVolume(volume);
+    return message.sem(message.t("cmds:music.vol.res", { volume }));
   }
 }

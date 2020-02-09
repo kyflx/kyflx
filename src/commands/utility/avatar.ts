@@ -5,11 +5,7 @@ export default class extends Command {
   public constructor() {
     super("avatar", {
       aliases: ["avatar", "ava", "av", "pfp"],
-      description: {
-        content: "Sends an embed that contains a users avatar.",
-        usage: "[user]",
-        examples: ["v!av 396096412116320258", "v!av", "v!av @2D#5773"],
-      },
+      description: t => t("cmds:util.ava.desc"),
       args: [
         {
           id: "user",

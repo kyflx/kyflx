@@ -12,7 +12,8 @@ export default class extends Command {
           prompt: {
             start: (_: Message) => _.t("cmds:fun.8b.pmt")
           },
-          type: "text"
+          type: "string",
+          match: "rest"
         }
       ]
     });

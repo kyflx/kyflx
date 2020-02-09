@@ -5,11 +5,7 @@ export default class extends Command {
   constructor() {
     super("emb", {
       aliases: ["embed"],
-      description: {
-        content: "Creates an embed with provided title and description",
-        usage: "<title> | <description>",
-        examples: ["!embed Cool guy | I know i am really cool"]
-      },
+      description: t => t("cmds:util.emb.desc"),
       userPermissions: ["ADMINISTRATOR"],
       args: [
         {
