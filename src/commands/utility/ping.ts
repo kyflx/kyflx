@@ -5,9 +5,8 @@ export default class extends Command {
   public constructor() {
     super("ping", {
       aliases: ["ping", "pong"],
-      description: {
-        content: "Sends the bot & discord api ping."
-      }
+      description: t => t("cmds:util.ping.desc"),
+      typing: false
     });
   }
 
@@ -19,10 +18,10 @@ export default class extends Command {
         .then(() => {
           return resolve(
             message.sem(
-              [
-                `**Bot Ping**: ${Math.round(this.client.ws.ping)}ms`,
-                `**API Ping**: ${Math.round(Date.now() - start)}ms`
-              ].join("\n")
+              message.t("cmds:util.ping.res", {
+                bot: this.client.ws.ping,
+                api: Date.now() - start
+              })
             )
           );
         });

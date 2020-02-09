@@ -1,39 +1,67 @@
 import { createCanvas, loadImage } from "canvas";
-import { MessageAttachment } from "discord.js";
+import { Message, MessageAttachment } from "discord.js";
 import { formatNumber } from "../../util";
 import { join } from "path";
-import {
-  Command,
-  ProfileEntity,
-  VorteEmbed
-} from "@vortekore/lib";
-import { Message } from "discord.js";
+import { Command, ProfileEntity, VorteEmbed } from "@vortekore/lib";
 
 export default class extends Command {
   public constructor() {
     super("profile", {
       aliases: ["profile", "me"],
-      description: {
-        content: "Displays your profile in an embed.",
-        usage: "[action] <value>",
-        example: ["v!profile set bio I'm cool!"],
-      },
-      channel: "guild"
+      description: t => t("cmds:eco.prf.desc"),
+      channel: "guild",
+      *args() {
+        const action = yield {
+          type: ["set"]
+        };
+
+        const setting = yield {
+          type: [["bio", "biography"] /*, [ "locale", "lang", "language" ] */]
+        };
+
+        let value;
+        switch (setting) {
+          case "bio":
+            value = yield {
+              match: "rest",
+              type: "string"
+            };
+            break;
+          case "locale":
+            value = yield {
+              type: [
+                ["en_US", "en", "english", "ingles"],
+                ["en_ES", "es", "spanish", "espanol"]
+              ],
+              prompt: {
+                start: "Please provide a locale to use."
+              }
+            };
+        }
+
+        return { action, setting, value };
+      }
     });
   }
 
-  public async exec(message: Message, args: string[]) {
-    switch (args[0]) {
+  public async exec(
+    message: Message,
+    { locale, value }: { locale: string; value: string }
+  ) {
+    switch (locale) {
       case "set":
-        switch (args[1]) {
+        switch (value) {
           case "bio":
           case "biography":
-            message.profile!.bio = args.slice(2).join(" ");
-            message.sem("Successfully updated your bio.");
+            message.profile!.bio = message.content
+              .split(" ")
+              .slice(3)
+              .join(" ");
+            message.sem(message.t("cmds:eco.prf.new_bio"));
             await message.profile!.save();
             break;
           default:
-            message.sem("The only setting avaliable is **bio**");
+            message.sem(message.t("cmds:eco.prf.settings"));
             break;
         }
         break;
@@ -43,13 +71,18 @@ export default class extends Command {
           where: { guildId: message.guild!.id }
         });
         users = users.sort((a, b) => b.xp - a.xp);
-        const rank = users.findIndex(user => user.userId === message.author.id) + 1;
+        const rank =
+          users.findIndex(user => user.userId === message.author.id) + 1;
 
         const canvas = createCanvas(500, 200);
         const ctx = canvas.getContext("2d");
         const xpNeed = 2 * (75 * level);
-        const image = await loadImage(join(process.cwd(), "images/rank-card.png"));
-        const pfp = await loadImage(message.author.displayAvatarURL().replace(".webp", ".png"));
+        const image = await loadImage(
+          join(process.cwd(), "images/rank-card.png")
+        );
+        const pfp = await loadImage(
+          message.author.displayAvatarURL().replace(".webp", ".png")
+        );
         const lineLength = Math.round((xp / xpNeed) * 458);
 
         ctx.lineWidth = 20;
@@ -58,12 +91,12 @@ export default class extends Command {
 
         pfp.width = 310;
         pfp.height = 310;
-        ctx.drawImage(pfp, 186, 36)
+        ctx.drawImage(pfp, 186, 36);
         ctx.drawImage(image, 0, 0);
-        ctx.fillText(message.author.username, 33, 85);
-        ctx.fillText(`[${formatNumber(level)}]`, 102, 155);
-        ctx.fillText(`[${formatNumber(xp)}/${formatNumber(xpNeed)}]`, 400, 155);
-        ctx.fillText(`#${formatNumber(rank)}`, 370, 60);
+        ctx.fillText(message.author.username, 40, 85);
+        ctx.fillText(`[${formatNumber(level)}]`, 102, 153);
+        ctx.fillText(`[${formatNumber(xp)}/${formatNumber(xpNeed)}]`, 397, 153);
+        ctx.fillText(`#${formatNumber(rank)}`, 350, 60);
         ctx.moveTo(40, 170);
         ctx.lineTo(lineLength, 170);
         ctx.lineCap = "round";
@@ -76,6 +109,20 @@ export default class extends Command {
         );
         const embed = new VorteEmbed(message)
           .baseEmbed()
+          .setTitle(message.author.username)
+          .addField(
+            "Economy",
+            [
+              `**Coins:** ${message.profile.coins}[Bank: ${message.profile.bank}]`
+            ].join("\n"),
+            true
+          )
+          .addField(
+            "General",
+            [`**Highest Role:** ${message.member.roles.highest}`].join("\n"),
+            true
+          )
+          .addField("Description", message.profile.bio)
           .setImage(`attachment://RankCard-${message.author.username}.png`);
 
         message.util.send({ embed, files: [attachment] });

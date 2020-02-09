@@ -1,4 +1,4 @@
-import { Router, Get, Route } from "../lib";
+import { Router, Get, APIRouter, Post } from "../lib";
 import { Request, Response } from "express";
 import passport from "passport";
 import { Strategy } from "passport-discord";
@@ -14,7 +14,7 @@ declare module "express" {
 }
 
 @Router()
-export default class MainRouter extends Route {
+export default class MainRouter extends APIRouter {
   @Get("/servers")
   public async dashboard(req: Request, res: Response) {
     if (!req.isAuthenticated()) return res.redirect("/login");

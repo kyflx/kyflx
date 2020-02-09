@@ -5,32 +5,29 @@ export default class extends Command {
   public constructor() {
     super("purge", {
       aliases: ["purge", "clear"],
-      description: {
-        content: "Purge a number of messages",
-        examples: ["v!purge 20 @2D"],
-        usage: "<amount> [member]"
-      },
-      userPermissions: ["MANAGE_MESSAGES"],
+      description: t => t("cmds:mod.purge.desc"),
+      userPermissions: "MANAGE_MESSAGES",
+      clientPermissions: "MANAGE_MESSAGES",
       channel: "guild",
       args: [
         {
           id: "amount",
           type: "number",
           prompt: {
-            start: "Please provide an amount to purge"
+            start: (_: Message) => _.t("cmds:mod.purge.purp")
           }
         },
         {
           id: "reason",
           match: "rest",
           prompt: {
-            start: "Please provice a reason to purge,"
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "purge" })
           }
         },
         {
           id: "ignorePinned",
           match: "flag",
-          flag: "--ignore-pinned"
+          flag: ["--ignore-pinned", "-ip", ":ignore-pinned"]
         }
       ]
     });
@@ -51,32 +48,25 @@ export default class extends Command {
 
     const confirmation = await confirm(
       message,
-      `I need confirmation to purge **${messages.size.toLocaleString()}** messages in channel ${
-        message.channel
-      } \`(${message.channel.id})\` with reason \`${reason}\``
+      message.t("cmds:mod.purge.confirm", { message, messages, reason })
     );
 
     if (!confirmation)
       return message
         .sem("Okay, I aborted the purge request.")
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
 
     let deleted;
     try {
-      deleted = await message.channel.bulkDelete(messages, true);
+      deleted = (await message.channel.bulkDelete(messages, true)).size;
       message
-        .sem(
-          `Deleted **${deleted}** messages in channel ${message.channel} \`(${message.channel.id})\` with reason \`${reason}\``
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.purge.done", { message, deleted, reason }))
+        .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
       this.logger.error(error, "purge");
       return message
-        .sem(
-          "Sorry, I couldn't purge any messages... contact the developers to see what happened",
-          { type: "error" }
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.purge.error"), { type: "error" })
+        .then(m => m.delete({ timeout: 6000 }));
     }
 
     const _case = new CaseEntity(++message._guild.cases, message.guild.id);
@@ -106,7 +96,9 @@ export default class extends Command {
             `**Staff Member**: ${message.author} \`(${message.author.id})\``,
             `**Channel**: ${message.channel} \`(${message.channel.id})\``,
             `**Reason**: ${reason}`,
-            `**Deleted**: ${deleted} \`(${amount} intended)\``
+            `**Deleted**: ${deleted} ${
+              deleted < amount ? `\`(${amount} intended)\`` : ""
+            }`
           ].join("\n")
         )
     );

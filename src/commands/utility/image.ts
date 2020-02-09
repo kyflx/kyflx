@@ -6,10 +6,7 @@ export default class extends Command {
   public constructor() {
     super("image", {
       aliases: ["image"],
-      description: {
-        content: "Provides you image with provided name",
-        examples: ["!image cow"]
-      },
+      description: t => t("cmds:util.img.desc"),
       args: [
         {
           id: "image",

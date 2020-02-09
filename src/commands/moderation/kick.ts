@@ -6,25 +6,21 @@ export default class extends Command {
     super("kick", {
       aliases: ["kick"],
       channel: "guild",
-      description: {
-        content: "Kicks a member from the server",
-        examples: ["v!kick @2D not cool"],
-        usage: "<@member> <reason>"
-      },
+      description: t => t("cmds:mod.kick.desc"),
       userPermissions: "KICK_MEMBERS",
       clientPermissions: "KICK_MEMBERS",
       args: [
         {
           id: "member",
           prompt: {
-            start: "Please provide a member to kick."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "kick" })
           },
           type: "member"
         },
         {
           id: "reason",
           prompt: {
-            start: "Please provide a reason for this kick."
+            start: (_: Message) => _.t("cmds:mod.purp", { action: "kick" })
           },
           match: "rest"
         }
@@ -39,48 +35,44 @@ export default class extends Command {
     if (message.deletable) message.delete();
     if (member.id === message.member.id)
       return message
-        .sem("If you wanted to kick yourself just leave...", { type: "error" })
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.kick.ursf"), { type: "error" })
+        .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
     if (mh.position >= uh.position)
       return message
-        .sem(
-          `That person is ${
-            mh.position === uh.position
-              ? "in the same level as you"
-              : "above you"
-          } in the role hierarchy.`,
-          {
-            type: "error"
-          }
-        )
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.hier", { mh, uh }), {
+          type: "error"
+        })
+        .then(m => m.delete({ timeout: 6000 }));
 
     const confirmed = await confirm(
       message,
-      `I need confirmation to kick **${member.user.tag}** \`(${member.id})\` for reason *"${reason}"*`
+      message.t("cmds:mod.confirm", { member, reason, action: "kick" })
     );
     if (!confirmed)
       return message
-        .sem("Okay, your choice!")
-        .then(m => m.delete({ timeout: 8000 }));
+        .sem(message.t("cmds:mod.canc"))
+        .then(m => m.delete({ timeout: 6000 }));
 
     try {
       await member.kick(reason);
       message
         .sem(
-          `Kicked **${member.user.tag}** \`(${member.id})\` for reason **${reason}**`
+          message.t("cmds:mod.done", {
+            member,
+            action: "Kicked",
+            reason
+          })
         )
-        .then(m => m.delete({ timeout: 8000 }));
+        .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
       this.logger.error(error, "kick");
       return message
-        .sem(
-          `Oh no, I couldn't kick **${member.user.tag}**... contact the developers.`,
-          { type: "error" }
-        )
+        .sem(message.t("cmds:mod.error", { member, action: "kick" }), {
+          type: "error"
+        })
         .then(m => m.delete({ timeout: 10000 }));
     }
 

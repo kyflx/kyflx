@@ -12,11 +12,7 @@ export default class extends Command {
   public constructor() {
     super("userinfo", {
       aliases: ["userinfo", "whois", "ui"],
-      description: {
-        content: "Shows info on a member",
-        usage: "[@member]",
-        examples: ["v!ui 396096412116320258", "v!ui", "v!ui @2D#5773"]
-      },
+      description: t => t("cmds:util.ui.desc"),
       channel: "guild",
       args: [
         {

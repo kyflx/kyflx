@@ -2,16 +2,16 @@ import { Logger } from "@ayana/logger";
 import bodyParser from "body-parser";
 import MongoStore from "connect-mongo";
 import { AkairoClient, AkairoHandler } from "discord-akairo";
-import express, { Request, Response, NextFunction } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as DiscordStrategy } from "passport-discord";
 import { join } from "path";
-import { getRouteObject, Route } from "./lib";
+import { APIRouter, getRouteObject } from "./lib";
 
 export default class WebServer {
   public app: express.Application = express();
-  public modules: Route[] = [];
+  public modules: APIRouter[] = [];
 
   public constructor(public client: AkairoClient) {}
 
@@ -71,21 +71,21 @@ export default class WebServer {
     await this.loadAll();
 
     this.app.listen(3000);
-    WebServer.logger.info("Listening on Port 3000");
+    this.logger.info("Listening on Port 3000");
   }
 
   public async loadAll(): Promise<void> {
     for (const path of AkairoHandler.readdirRecursive(
       join(__dirname, "routes")
     )) {
-      const routeMod: typeof Route = (_ => _.default || _)(require(path)),
+      const routeMod: typeof APIRouter = (_ => _.default || _)(require(path)),
         routeInstance = new routeMod(this.client);
 
       const router = getRouteObject(routeInstance);
       if (!router) return;
 
       for (const route of router.routes)
-        (<Function> routeInstance.router[route.method].apply)(
+        (<Function>routeInstance.router[route.method].apply)(
           routeInstance.router,
           [
             route.path,
@@ -94,7 +94,7 @@ export default class WebServer {
               try {
                 await route.fn.apply(routeInstance, [req, res, next]);
               } catch (error) {
-                WebServer.logger.error(error);
+                this.logger.error(error);
                 res
                   .status(500)
                   .json({
@@ -112,5 +112,5 @@ export default class WebServer {
     }
   }
 
-  public static logger: Logger = Logger.get(WebServer);
+  public logger = Logger.get(WebServer);
 }

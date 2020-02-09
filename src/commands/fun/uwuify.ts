@@ -1,5 +1,6 @@
 import { Command } from "@vortekore/lib";
 import { Message } from "discord.js";
+import { TextChannel } from "discord.js";
 
 const faces = [
   "(*^ω^)",
@@ -27,19 +28,17 @@ export default class extends Command {
           id: "content",
           match: "rest",
           prompt: {
-            start: "Provide some text I can uwuify"
+            start: (_: Message) => _.t("cmds:fun.uwu.prompt")
           }
         }
       ],
-      description: {
-        content: "Uwuify's your message",
-        usage: "<message>",
-        examples: ["v!uwu x3 nuzzles pounces on you uwu u so warm!"]
-      }
+      description: t => t("cmds:fun.uwu.desc"),
+      clientPermissions: "MANAGE_WEBHOOKS"
     });
   }
 
   public async exec(message: Message, { content }: { content: string }) {
+    const face = () => faces[Math.floor(Math.random() * faces.length)];
     if (message.deletable) message.delete();
     content = content.replace("th", "d");
     content = content.replace("Th", "D");
@@ -51,18 +50,21 @@ export default class extends Command {
     content = content.replace(/N([aeiou])/g, "Ny$1");
     content = content.replace(/N([AEIOU])/g, "Ny$1");
     content = content.replace(/ove/g, "uv");
-    content = content.replace(
-      "!",
-      ` ${faces[Math.floor(Math.random() * faces.length)]} `
+    content = content.replace("!", ` ${face()} `);
+    content = content.replace(".", ` ${face()} `);
+    content = content.replace(",", ` ${face()} `);
+
+    if (message.channel.type !== "text") return message.sem(content);
+
+    const hook = await (<TextChannel>message.channel).createWebhook(
+      message.author.username,
+      {
+        avatar: message.author.displayAvatarURL(),
+        reason: "uwuify command"
+      }
     );
-    content = content.replace(
-      ".",
-      ` ${faces[Math.floor(Math.random() * faces.length)]} `
-    );
-    content = content.replace(
-      ",",
-      ` ${faces[Math.floor(Math.random() * faces.length)]} `
-    );
-    return message.sem(content);
+
+    await hook.send(content);
+    return hook.delete("End");
   }
 }
