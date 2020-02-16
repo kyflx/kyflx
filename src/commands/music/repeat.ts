@@ -10,15 +10,15 @@ export default class extends Command {
 			args: [
 				{
 					id: "type",
-					type: ["queue", ["song", "track"]],
-					default: "track"
+					default: "song",
+					type: ["queue", ["song", "track"]]
 				}
 			],
 			channel: "guild"
 		});
 	}
 
-	public async exec(message: Message, {type}: { type: "queue" | "track" }) {
+	public async exec(message: Message, {type}: { type: "queue" | "song" }) {
 		if (!message.guild.me.voice.channel)
 			return message.sem(message.t("cmds:music.no_vc"), {
 				type: "error"
@@ -34,7 +34,7 @@ export default class extends Command {
 			});
 
 		//@ts-ignore
-		const val = (message.queue. repeat[type] = !message.queue.repeat[type]);
+		const val = (message.queue.repeat[type] = !message.queue.repeat[type]);
 		return message.sem(message.t("cmds:music.loop.res", {val, type}));
 	}
 }

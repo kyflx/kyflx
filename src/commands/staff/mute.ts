@@ -107,7 +107,7 @@ export default class extends Command {
 
 			await member.roles.add(muteRole, reason);
 			message
-				.sem(message.t("cmds:mod.done", {member, action: "Muted"}))
+				.sem(message.t("cmds:mod.done", {member, action: "Muted", reason}))
 				.then(m => m.delete({timeout: 6000}));
 		} catch (error) {
 			this.logger.error(error, "ban");

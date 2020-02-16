@@ -23,11 +23,11 @@ export default class MessageReceivedListener extends Listener {
 							profile.add("level", 1);
 							try {
 								if (!message._guild.lvlUpMsg) return;
-								if (!message._guild.lvlUpChannel) return message.sem( message.t("evts:msg.lvl_up", {lvl: profile.level}) );
+								if (!message._guild.lvlUpChannel) return message.sem( message.t("evts:msg.lvl_up", {level: profile.level}) );
 
 								const channel = message.guild.channels.resolve(message._guild.lvlUpChannel);
-								if (!channel) return message.sem( message.t("evts:lvl_up", {lvl: profile.level}) );
-								return message.channel.send(new VorteEmbed(message).setDescription(message.t("evts:lvl_up", {lvl: profile.level})))
+								if (!channel) return message.sem( message.t("evts:lvl_up", {level: profile.level}) );
+								return message.channel.send(new VorteEmbed(message).setDescription(message.t("evts:lvl_up", {level: profile.level})))
 							} catch (e) { }
 						}
 					}
