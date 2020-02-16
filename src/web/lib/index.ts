@@ -1,17 +1,17 @@
 import express from "express";
-import { ParamsDictionary, RequestHandler } from "express-serve-static-core";
+import { RequestHandler } from "express-serve-static-core";
 import { IRESTDecoratorDefinition } from "./Decorators";
 
 export * from "./Decorators";
 export * from "./Route";
 
 export enum RESTMethod {
-  GET = 'get',
-  POST = 'post',
-  USE = 'use',
-  PUT = 'put',
-  PATCH = 'patch',
-  DELETE = 'delete'
+  GET = "get",
+  POST = "post",
+  USE = "use",
+  PUT = "put",
+  PATCH = "patch",
+  DELETE = "delete"
 }
 
 export type MethodShit = (
@@ -20,12 +20,12 @@ export type MethodShit = (
   next: express.NextFunction
 ) => Promise<void>;
 
-export type Handlers = RequestHandler<ParamsDictionary, any, any>[];
+export type Handlers = RequestHandler[];
 
 export const REST_COMPONENT_SYMBOL = Symbol("RESTComponent");
 
 /**
- * Applys a rest decorator the given target.
+ * Apply's a rest decorator the given target.
  * @param method - The request method.
  * @param path - The path of the endpoint
  * @param target - The targeted class method

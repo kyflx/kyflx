@@ -1,50 +1,50 @@
-import { Command } from "@vortekore/lib";
-import { Message, Role } from "discord.js";
+import {Command} from "@vortekore/lib";
+import {Message, Role} from "discord.js";
 
-export default class MuteroleCommand extends Command {
-  public constructor() {
-    super("djrole", {
-      aliases: ["dj-role", "dj"],
-      description: t => t("cmds:conf.dj.desc"),
-      channel: "guild",
-      *args() {
-        const action = yield {
-          type: [
-            ["clear", "reset", "revert"],
-            ["set", "set-role"]
-          ]
-        };
+export default class DJRoleCommand extends Command {
+	public constructor() {
+		super("dj-role", {
+			aliases: ["dj-role", "dj"],
+			description: t => t("cmds:conf.dj.desc"),
+			channel: "guild",
+			* args() {
+				const action = yield {
+					type: [
+						["clear", "reset", "revert"],
+						["set", "set-role"]
+					]
+				};
 
-        const role =
-          action === "set"
-            ? yield {
-                type: "role",
-                prompt: {
-                  start: (_: Message) => _.t("cmds:conf.dj.prompt")
-                }
-              }
-            : {};
+				const role =
+					action === "set"
+						? yield {
+							type: "role",
+							prompt: {
+								start: (_: Message) => _.t("cmds:conf.dj.prompt")
+							}
+						}
+						: {};
 
-        return { action, role };
-      }
-    });
-  }
+				return {action, role};
+			}
+		});
+	}
 
-  public async exec(
-    message: Message,
-    { action, role }: { action: "clear" | "set"; role: Role }
-  ) {
-    if (!(action && role))
-      return message.sem(message.t("cmds:conf.dj.cur", { message }));
+	public async exec(
+		message: Message,
+		{action, role}: { action: "clear" | "set"; role: Role }
+	) {
+		if (!(action && role))
+			return message.sem(message.t("cmds:conf.dj.cur", {message}));
 
-    if (action === "clear") {
-      message._guild.djRole = "";
-      await message._guild.save();
-      return message.sem(message.t("cmds:conf.dj.clr"));
-    }
+		if (action === "clear") {
+			message._guild.djRole = "";
+			await message._guild.save();
+			return message.sem(message.t("cmds:conf.dj.clr"));
+		}
 
-    message._guild.djRole = role.id;
-    await message._guild.save();
-    return message.sem(message.t("cmds:conf.dj.done", { role }));
-  }
+		message._guild.djRole = role.id;
+		await message._guild.save();
+		return message.sem(message.t("cmds:conf.dj.done", {role}));
+	}
 }

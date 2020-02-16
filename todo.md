@@ -21,27 +21,30 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
       - [ ] removeRole <member> <role> <reason>
       - [ ] hackban <member> <reason>
   - [ ] Fun
-    - [x] rps (rock paper scissors) (Chaos)
+    - [x] rps (rock paper scissors) (Chaos & 2D)
     - [x] 8ball (yes... 8ball it's the easiest shit ever) (Chaos)
     - [ ] trivia?
     - [ ] Mafia?
-  - [ ] Image
-    - [x] Meme (2D)
-    - [x] Dog (2D)
-    - [x] Cat (2D)
-    - [x] Fox (2D)
-    - [x] Panda (2D)
-    - [x] Birb (2D)
+  - [ ] Image (2D)
+    - [x] Meme
+    - [x] Dog
+    - [x] Cat
+    - [x] Fox
+    - [x] Panda
+    - [x] Birb
     - [x] Lizard
-    - [ ] Duck
-  - [ ] Settings
+    - [x] Duck
+  - [ ] Settings (2D)
     - [ ] Configuration (shows the guilds current config)
-    - [x] Prefix (2D)
-    - [ ] Embed Color
+    - [x] Prefix
+    - [x] Embed Color
+    - [x] DJ Role
+    - [x] Mute Role
+    - [x] Language
     - [x] Logs
     - [ ] Welcome Channel & Message
     - [ ] Farewell Channel & Message
-    - [ ] Auto Role
+    - [x] Auto Role
   - [ ] Utility
     - [x] Embed
     - [x] Feedback (2D)
@@ -50,7 +53,8 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
   - [ ] ~~Economy~~ Sim
     - [x] Leaderboard (Chaos & 2D)
     - [x] Profile (Chaos & 2D)
-    - [ ] Bank
+    - [x] Bank (Chaos & 2D)
+    - [x] Gamble (Chaos & 2D)
     - [ ] Rob
     - [ ] Crime
     - [ ] Work
@@ -73,4 +77,4 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
     - [ ] Vote Webhooks
 
 VorteKore 2019 - 2020
-[ChaosPhoe](https://github.com/chaosphoe) &bull; [LolWastedJS](https://github.com/lolwastedjs) &bull; [Johna3212](https://github.com/johna3212)
+[ChaosPhoe](https://github.com/chaosphoe) &bull; [LolWastedJS](https://github.com/lolwastedjs)

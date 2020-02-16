@@ -3,7 +3,7 @@ import {
   Handlers,
   MethodShit,
   REST_COMPONENT_SYMBOL,
-	RESTMethod
+  RESTMethod
 } from "./";
 
 export interface IRESTDecoratorDefinition {

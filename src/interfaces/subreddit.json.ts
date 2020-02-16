@@ -1,8 +1,10 @@
 namespace RedditTopJSON {
 
-	export interface MediaEmbed { }
+	export interface MediaEmbed {
+	}
 
-	export interface SecureMediaEmbed { }
+	export interface SecureMediaEmbed {
+	}
 
 	export interface Gildings {
 		gid_1: number;

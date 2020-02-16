@@ -1,4 +1,4 @@
-import { Listener } from "@vortekore/lib";
+import {Listener} from "@vortekore/lib";
 
 export default class NodeOpenedListener extends Listener {
 	public constructor() {
@@ -10,5 +10,5 @@ export default class NodeOpenedListener extends Listener {
 
 	public async exec() {
 		return this.client.logger.info(`Connected to Lavalink`)
-	} 
+	}
 }
