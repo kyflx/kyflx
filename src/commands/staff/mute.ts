@@ -13,22 +13,13 @@ export default class extends Command {
 				{
 					id: "member",
 					prompt: {
-						start: (_: Message) => _.t("cmds:mod.purp", {action: "mute"})
+						start: (_: Message) => _.t("cmds:mod.memb", {action: "mute"})
 					},
 					type: "member"
 				},
 				{
-					id: "time",
-					prompt: {
-						start: (_: Message) => _.t("cmds:mod.mute.purp")
-					},
-					type: "string"
-				},
-				{
 					id: "reason",
-					prompt: {
-						start: (_: Message) => _.t("cmds:mod.purp", {action: "mute"})
-					},
+					default: "None given",
 					match: "rest"
 				}
 			]
@@ -57,8 +48,6 @@ export default class extends Command {
 			return message
 				.sem(message.t("cmds:mod.hier", {mh, uh}), {type: "error"})
 				.then(m => m.delete({timeout: 6000}));
-
-		const muteTime = ms(time);
 
 		const confirmed = await confirm(
 			message,
@@ -122,8 +111,7 @@ export default class extends Command {
 		_case.reason = reason;
 		_case.moderator = message.author.id;
 		_case.subject = member.id;
-		_case.type = "ban";
-		_case.other = {finished: false, muteTime};
+		_case.type = "mute";
 
 		await _case.save();
 		await message._guild.save();
@@ -144,8 +132,7 @@ export default class extends Command {
 					[
 						`**Staff Member**: ${message.author} \`(${message.author.id})\``,
 						`**Victim**: ${member.user} \`(${member.id})\``,
-						`**Reason**: ${reason}`,
-						`**Mute Time**: ${ms(muteTime, {long: true})}`
+						`**Reason**: ${reason}`
 					].join("\n")
 				)
 		);

@@ -13,15 +13,13 @@ export default class extends Command {
 				{
 					id: "member",
 					prompt: {
-						start: (_: Message) => _.t("cmds:mod.purp", {action: "kick"})
+						start: (_: Message) => _.t("cmds:mod.memb", {action: "kick"})
 					},
 					type: "member"
 				},
 				{
 					id: "reason",
-					prompt: {
-						start: (_: Message) => _.t("cmds:mod.purp", {action: "kick"})
-					},
+					default: "None given",
 					match: "rest"
 				}
 			]

@@ -19,9 +19,7 @@ export default class extends Command {
 				},
 				{
 					id: "reason",
-					prompt: {
-						start: (_: Message) => _.t("cmds:mod.purp", {action: "ban"})
-					},
+					default: "None given",
 					match: "rest"
 				}
 			]

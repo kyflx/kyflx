@@ -20,9 +20,7 @@ export default class extends Command {
 				{
 					id: "reason",
 					match: "rest",
-					prompt: {
-						start: (_: Message) => _.t("cmds:mod.purp", {action: "purge"})
-					}
+					default: "None given",
 				},
 				{
 					id: "deletePinned",

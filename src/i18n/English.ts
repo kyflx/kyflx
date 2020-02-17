@@ -275,6 +275,34 @@ export default class English extends Language {
 						error:
 							"Sorry, I couldn't purge any messages... contact the developers to see what happened"
 					},
+					tb: {
+						desc: {
+							content: "Temporarily bans a member from the server.",
+							usage: "<member> <duration> [reason]",
+							examples: [
+								"v!ban @2D 2d advertising",
+								"v!ban @2D 1m"
+							]
+						},
+						ursf: "Come on, if you wanted to temp ban yourself just leave for awhile.",
+						dur: "Please provide a duration for this temp ban.\n**Examples**: '10m', '2d'",
+					},
+					tm: {
+						desc: {
+							
+						}
+					},
+					um: {
+						desc: {
+							content: "Unmutes a muted user.",
+							usage: "<member> [reason]",
+							examples: [
+								"v!unmute @2D cus he apologized"
+							]
+						},
+						ursf: "Why are you trying to unmute yourself?! There's no way to do it in the first place.",
+						not: (m: GuildMember) => `${m} (\`${m.id}\`) isn't muted.`
+					},
 					unpin: {
 						desc: {
 							content: "Unpins a message of your choice",

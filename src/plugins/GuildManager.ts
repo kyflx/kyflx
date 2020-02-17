@@ -1,7 +1,17 @@
-import { CaseEntity, ClientPlugin, Subscribe } from "@vortekore/lib";
-import { GuildMember, MessageReaction, TextChannel, User } from "discord.js";
-import { ReactionMsgs } from "@vortekore/lib/build/database/models/Guild";
 import Logger from "@ayanaware/logger";
+import {
+  CaseEntity,
+  ClientPlugin,
+  ReactionMsgs,
+  Subscribe
+} from "@vortekore/lib";
+import {
+  GuildMember,
+  MessageEmbed,
+  MessageReaction,
+  TextChannel,
+  User
+} from "discord.js";
 import { formatString } from "../util";
 
 export default class GuildManagerPlugin extends ClientPlugin {
@@ -10,16 +20,11 @@ export default class GuildManagerPlugin extends ClientPlugin {
 
   public async onReady(client = this.client) {
     if (!client.database.ready) return;
+    console.log("bullshit")
 
     setInterval(async () => {
-      for (const x of (await CaseEntity.find({
-        where: {
-          type: "mute",
-          other: {
-            temp: true
-          }
-        }
-      })) as CaseEntity[]) {
+      for (const x of await CaseEntity.find()) {
+        if (!x.other || !x.other.temp || x.other.finished) continue;
         if (x.other.duration <= Date.now()) {
           try {
             const guild = client.guilds.resolve(x.guildId);
@@ -45,6 +50,22 @@ export default class GuildManagerPlugin extends ClientPlugin {
             }
 
             x.other.finished = true;
+
+            const chan = <TextChannel>(
+              guild.channels.resolve(_guild.channels.audit)
+            );
+            if (chan)
+              chan.send(
+                new MessageEmbed()
+                  .setColor(_guild.embedColor)
+                  .setTitle(`Temporary Action [ Case ID: ${x.id} ]`)
+                  .setDescription(
+                    `**${member}** \`(${member.id})\` is now ${
+                      x.type === "ban" ? "unbanned" : "unmuted"
+                    }.`
+                  )
+              );
+
             await x.save();
           } catch (error) {
             this.log.error(error, "Temp. Case Interval");

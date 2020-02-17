@@ -12,6 +12,7 @@ export default class BotReady extends Listener {
 	}
 
 	async exec(client = this.client) {
+		(this.client as any).guild_manager.onReady();
 		new WebServer(client).init();
 		client.user!.setPresence({
 			activity: {
