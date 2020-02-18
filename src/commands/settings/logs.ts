@@ -14,23 +14,23 @@ export default class extends Command {
           type: ["set", "enable", "disable", "reset"]
         };
 
-        const value =
-          !action || action === "reset"
+        const value = 
+          (!action || action === "reset"
             ? {}
             : action === "set"
-            ? {
+            ? yield {
                 type: "textChannel",
                 prompt: {
                   start: _.t("cmds:conf.logs.set_prompt")
                 }
               }
-            : {
+            :yield {
                 type: "string",
                 match: "rest",
                 prompt: {
                   start: _.t("cmds:conf.logs.prompt")
                 }
-              };
+              });
 
         return { action, value };
       }
@@ -64,8 +64,10 @@ export default class extends Command {
         break;
       case "set":
         message._guild.channels.audit = (value as TextChannel).id;
+        console.log((<TextChannel>value).id, message._guild.channels);
+
         await message.sem(
-          message.t("cmds:conf.logs.set", { message, value: value })
+          message.t("cmds:conf.logs.set", { message, value })
         );
         break;
       case "disable":

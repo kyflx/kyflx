@@ -28,6 +28,11 @@ export default class extends Command {
           id: "reason",
           default: "None given",
           match: "rest"
+        },
+        {
+          id: "yes",
+          match: "flag",
+          flag: ["-y", "--yes", ":y"]
         }
       ]
     });
@@ -38,8 +43,9 @@ export default class extends Command {
     {
       member,
       duration,
-      reason
-    }: { member: GuildMember; duration: number; reason: string }
+      reason,
+      yes
+    }: { member: GuildMember; duration: number; reason: string; yes: boolean }
   ) {
     if (message.deletable) await message.delete();
     if (member.id === message.member.id)
@@ -56,49 +62,36 @@ export default class extends Command {
         .sem(message.t("cmds:mod.hier", { mh, uh }), { type: "error" })
         .then(m => m.delete({ timeout: 6000 }));
 
-    const confirmed = await confirm(
-      message,
-      message.t("cmds:mod.confirm", {
-        member,
-        reason,
-        action: "temp mute"
-      })
-    );
-    if (!confirmed)
-      return message
-        .sem("Okay, your choice!")
-        .then(m => m.delete({ timeout: 6000 }));
+    if (!yes) {
+      const confirmed = await confirm(
+        message,
+        message.t("cmds:mod.confirm", {
+          member,
+          reason,
+          action: "temp mute"
+        })
+      );
+      if (!confirmed)
+        return message
+          .sem("Okay, your choice!")
+          .then(m => m.delete({ timeout: 6000 }));
+    }
 
     let muteRole = message.guild.roles.resolve(message._guild.muteRole);
     try {
       if (!muteRole) {
-        const confirmed = await confirm(
-          message,
-          message.t("cmds:mod.mute.mtr_confirm")
-        );
-        if (!confirmed)
-          return message
-            .sem(message.t("cmds:mod.mute.create_mtr"))
-            .then(m => m.delete({ timeout: 6000 }));
-        muteRole = await message.guild.roles.create({
-          data: {
-            name: "Muted",
-            permissions: 0,
-            color: "#1f1e1c"
-          }
-        });
-
-        message._guild.muteRole = muteRole.id;
-        for (const [, cg] of message.guild.channels.cache.filter(
-          c => c.type === "category"
-        ))
-          await cg.createOverwrite(
-            muteRole,
-            {
-              SEND_MESSAGES: false
-            },
-            "new mute role"
+        if (!yes) {
+          const confirmed = await confirm(
+            message,
+            message.t("cmds:mod.mute.mtr_confirm")
           );
+          if (!confirmed)
+            return message
+              .sem(message.t("cmds:mod.mute.create_mtr"))
+              .then(m => m.delete({ timeout: 6000 }));
+        }
+
+        muteRole = (<any>this.client).guild_manager.createMuteRole(message);
       }
 
       await member.roles.add(muteRole, reason);
