@@ -292,7 +292,12 @@ export default class English extends Language {
               "Please provide a duration for this temp ban.\n**Examples**: '10m', '2d'"
           },
           tm: {
-            desc: {}
+            desc: {
+              content: "Temporarily mutes a member for a given duration.",
+              usage: "<member> <duration> [reason]",
+              examples: ["v!tempmute @2D 10m"]
+            },
+            ursf: "If you wanted to temp mute yourself, just shut up for a few minutes."
           },
           um: {
             desc: {

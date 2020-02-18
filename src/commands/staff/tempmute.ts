@@ -101,7 +101,7 @@ export default class extends Command {
         )
         .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
-      this.logger.error(error, "ban");
+      this.logger.error(error, "tempmute");
       return message
         .sem(message.t("cmds:mod.error", { member, action: "temp mute" }), {
           type: "error"
@@ -131,7 +131,7 @@ export default class extends Command {
       new VorteEmbed(message)
         .baseEmbed()
         .setAuthor(
-          `Mute [ Case ID: ${_case.id} ]`,
+          `Temp. Mute [ Case ID: ${_case.id} ]`,
           message.author.displayAvatarURL()
         )
         .setThumbnail(this.client.user.displayAvatarURL())

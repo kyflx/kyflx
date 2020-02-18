@@ -1,6 +1,21 @@
 import Logger from "@ayanaware/logger";
-import { CaseEntity, ClientPlugin, ProfileEntity, ReactionMenu, Subscribe, VorteEmbed } from "@vortekore/lib";
-import { GuildMember, Message, MessageEmbed, MessageReaction, Role, TextChannel, User } from "discord.js";
+import {
+  CaseEntity,
+  ClientPlugin,
+  ProfileEntity,
+  ReactionMenu,
+  Subscribe,
+  VorteEmbed
+} from "@vortekore/lib";
+import {
+  GuildMember,
+  Message,
+  MessageEmbed,
+  MessageReaction,
+  Role,
+  TextChannel,
+  User
+} from "discord.js";
 import { formatString } from "../util";
 import ms = require("ms");
 
@@ -9,8 +24,8 @@ export default class GuildManagerPlugin extends ClientPlugin {
   public log: Logger = Logger.get("GuildManager");
 
   public async onReady(client = this.client) {
-    if (!client.database.ready) return;
     setInterval(async () => {
+      if (!this.client.database.ready) return;
       for (const x of await CaseEntity.find()) {
         if (!x.other || !x.other.temp || x.other.finished) continue;
         if (x.other.duration <= Date.now()) {
@@ -23,7 +38,8 @@ export default class GuildManagerPlugin extends ClientPlugin {
 
             switch (x.type) {
               case "ban":
-                await guild.members.unban(x.subject, "Times Up");
+                if ((await guild.fetchBans()).has(x.subject))
+                  await guild.members.unban(x.subject, "Times Up");
                 break;
               case "mute":
                 const muteRole = guild.roles.resolve(_guild.muteRole);
@@ -35,6 +51,7 @@ export default class GuildManagerPlugin extends ClientPlugin {
             }
 
             x.other.finished = true;
+            await x.save();
 
             const chan = <TextChannel>(
               guild.channels.resolve(_guild.channels.audit)
@@ -43,15 +60,13 @@ export default class GuildManagerPlugin extends ClientPlugin {
               chan.send(
                 new MessageEmbed()
                   .setColor(_guild.embedColor)
-                  .setTitle(`Temporary Action [ Case ID: ${x.id} ]`)
+                  .setTitle(`Temp. ${x.type.capitalize()} [ Case ID: ${x.id} ]`)
                   .setDescription(
                     `**<@${x.subject}>** \`(${x.subject})\` is now ${
                       x.type === "ban" ? "unbanned" : "unmuted"
                     }.`
                   )
               );
-
-            await x.save();
           } catch (error) {
             this.log.error(error, "Temp. Case Interval");
           }
@@ -106,6 +121,8 @@ export default class GuildManagerPlugin extends ClientPlugin {
             break;
           case "mute":
             let muteRole = message.guild.roles.resolve(message._guild.muteRole);
+            await member.roles.add(muteRole);
+            break;
         }
       } catch (error) {
         this.log.error(error, `${message.guild.id} warn punishments`);
@@ -121,8 +138,9 @@ export default class GuildManagerPlugin extends ClientPlugin {
       await _case.save();
       await message._guild.save();
 
-      if (logs && message._guild.logs[punishment.type]) return logs.send(embed);
-    }
+      if (logs && message._guild.logs[punishment.type]) logs.send(embed);
+      return false;
+    } else return true;
   }
 
   public async createMuteRole(message: Message): Promise<Role> {

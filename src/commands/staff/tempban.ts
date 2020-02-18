@@ -1,7 +1,6 @@
 import { CaseEntity, Command, confirm, VorteEmbed } from "@vortekore/lib";
 import { GuildMember, Message, TextChannel } from "discord.js";
 import ms = require("ms");
-import { Argument } from "discord-akairo";
 
 export default class TempBanCommand extends Command {
   public constructor() {
@@ -28,6 +27,11 @@ export default class TempBanCommand extends Command {
           id: "reason",
           default: "None given",
           match: "rest"
+        },
+        {
+          id: "yes",
+          match: "flag",
+          flag: ["-y", "--yes", ":y"]
         }
       ]
     });
@@ -38,13 +42,14 @@ export default class TempBanCommand extends Command {
     {
       member,
       duration,
-      reason = ""
-    }: { member: GuildMember; duration: number; reason: string }
+      reason = "",
+      yes
+    }: { member: GuildMember; duration: number; reason: string; yes: boolean }
   ) {
     if (message.deletable) await message.delete();
     if (member.id === message.member.id)
       return message
-        .sem(message.t("cmds:mod.ban.ursf"), { type: "error" })
+        .sem(message.t("cmds:mod.tb.ursf"), { type: "error" })
         .then(m => m.delete({ timeout: 6000 }));
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
@@ -54,14 +59,17 @@ export default class TempBanCommand extends Command {
           type: "error"
         })
         .then(m => m.delete({ timeout: 6000 }));
-    const confirmed = await confirm(
-      message,
-      message.t("cmds:mod.confirm", { member, reason, action: "temp ban" })
-    );
-    if (!confirmed)
-      return message
-        .sem(message.t("cmds:mod.canc"))
-        .then(m => m.delete({ timeout: 6000 }));
+
+    if (!yes) {
+      const confirmed = await confirm(
+        message,
+        message.t("cmds:mod.confirm", { member, reason, action: "temp ban" })
+      );
+      if (!confirmed)
+        return message
+          .sem(message.t("cmds:mod.canc"))
+          .then(m => m.delete({ timeout: 6000 }));
+    }
 
     try {
       await member.ban({ reason });
@@ -75,7 +83,7 @@ export default class TempBanCommand extends Command {
         )
         .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
-      this.logger.error(error, "ban");
+      this.logger.error(error, "Tempban");
       return message
         .sem(message.t("cmds:mod.error", { member, action: "temp ban" }), {
           type: "error"
@@ -113,8 +121,7 @@ export default class TempBanCommand extends Command {
             `**Staff Member**: ${message.author} \`(${message.author.id})\``,
             `**Victim**: ${member.user} \`(${member.id})\``,
             `**Reason**: ${reason}`,
-            `**Duration**: ${ms(duration, { long: true })}`,
-            `\nFinishes in **${ms(Date.now() + duration, { long: true })}**.`
+            `**Duration**: ${ms(duration, { long: true })}`
           ].join("\n")
         )
     );

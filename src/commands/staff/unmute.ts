@@ -19,6 +19,11 @@ export default class UnmuteCommand extends Command {
           id: "reason",
           default: "None given.",
           match: "rest"
+        },
+        {
+          id: "yes",
+          match: "flag",
+          flag: ["-y", "--yes", ":y"]
         }
       ]
     });
@@ -26,7 +31,11 @@ export default class UnmuteCommand extends Command {
 
   public async exec(
     message: Message,
-    { member, reason }: { member: GuildMember; reason: string }
+    {
+      member,
+      reason,
+      yes
+    }: { member: GuildMember; reason: string; yes: boolean }
   ) {
     if (message.deletable) await message.delete();
     if (member.id === message.member.id)
@@ -41,18 +50,20 @@ export default class UnmuteCommand extends Command {
           type: "error"
         })
         .then(m => m.delete({ timeout: 6000 }));
-    
+
     if (!member.roles.cache.has(message._guild.muteRole))
       return message.sem(message.t("cmds:mod.un.not", { member }));
 
-    const confirmed = await confirm(
-      message,
-      message.t("cmds:mod.confirm", { member, reason, action: "temp ban" })
-    );
-    if (!confirmed)
-      return message
-        .sem(message.t("cmds:mod.canc"))
-        .then(m => m.delete({ timeout: 6000 }));
+    if (!yes) {
+      const confirmed = await confirm(
+        message,
+        message.t("cmds:mod.confirm", { member, reason, action: "temp ban" })
+      );
+      if (!confirmed)
+        return message
+          .sem(message.t("cmds:mod.canc"))
+          .then(m => m.delete({ timeout: 6000 }));
+    }
 
     try {
       if (!message._guild.muteRole)
@@ -68,32 +79,32 @@ export default class UnmuteCommand extends Command {
       );
     } catch (error) {
       this.logger.error(error, "Unmute");
-      return message.sem(message.t("cmds:mod.error", { member, action: "unmute" }));
+      return message.sem(
+        message.t("cmds:mod.error", { member, action: "unmute" })
+      );
     }
 
     // const _case = new CaseEntity(++message._guild.cases, message.guild.id);
     // _case.reason = reason;
-		// _case.moderator = message.author.id;
-		// _case.subject = member.id;
+    // _case.moderator = message.author.id;
+    // _case.subject = member.id;
     // _case.type = "";
-    
-    const {channel, enabled} = message._guild.log("mute", "audit");
-		if (!channel || !enabled) return;
+
+    const { channel, enabled } = message._guild.log("mute", "audit");
+    if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 
     return logs.send(
       new VorteEmbed(message)
-      .setAuthor(
-        `Unmute [  ]`,
-        message.author.displayAvatarURL()
-      )
-      .setThumbnail(this.client.user.displayAvatarURL())
-      .setDescription(
-        [
-          `**Staff Member**: ${message.author} \`(${message.author.id})\``,
-          `**Victim**: ${member.user} \`(${member.id})\``,
-          `**Reason**: ${reason}`,
-        ].join("\n"))
-    )
+        .setAuthor(`Unmute`, message.author.displayAvatarURL())
+        .setThumbnail(this.client.user.displayAvatarURL())
+        .setDescription(
+          [
+            `**Staff Member**: ${message.author} \`(${message.author.id})\``,
+            `**Victim**: ${member.user} \`(${member.id})\``,
+            `**Reason**: ${reason}`
+          ].join("\n")
+        )
+    );
   }
 }
