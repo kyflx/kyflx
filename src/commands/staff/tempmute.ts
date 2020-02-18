@@ -4,18 +4,25 @@ import ms from "ms";
 
 export default class extends Command {
   public constructor() {
-    super("mute", {
-      aliases: ["mute"],
-      description: t => t("cmds:mod.mute.desc"),
+    super("tempmute", {
+      aliases: ["temp-mute"],
+      description: t => t("cmds:mod.tm.desc"),
       userPermissions: ["MUTE_MEMBERS"],
       channel: "guild",
       args: [
         {
           id: "member",
           prompt: {
-            start: (_: Message) => _.t("cmds:mod.memb", { action: "mute" })
+            start: (_: Message) => _.t("cmds:mod.memb", { action: "temp mute" })
           },
           type: "member"
+        },
+        {
+          id: "duration",
+          prompt: {
+            start: (_: Message) => _.t("cmds:mod.mute.purp")
+          },
+          type: (_: Message, p: string) => (p ? ms(p) || null : null)
         },
         {
           id: "reason",
@@ -35,14 +42,15 @@ export default class extends Command {
     message: Message,
     {
       member,
+      duration,
       reason,
       yes
-    }: { member: GuildMember; reason: string; yes: boolean }
+    }: { member: GuildMember; duration: number; reason: string; yes: boolean }
   ) {
     if (message.deletable) await message.delete();
     if (member.id === message.member.id)
       return message
-        .sem(message.t("cmds:mod.mute.ursf"), {
+        .sem(message.t("cmds:mod.tm.ursf"), {
           type: "error"
         })
         .then(m => m.delete({ timeout: 6000 }));
@@ -60,7 +68,7 @@ export default class extends Command {
         message.t("cmds:mod.confirm", {
           member,
           reason,
-          action: "mute"
+          action: "temp mute"
         })
       );
       if (!confirmed)
@@ -88,12 +96,14 @@ export default class extends Command {
 
       await member.roles.add(muteRole, reason);
       message
-        .sem(message.t("cmds:mod.done", { member, action: "Muted", reason }))
+        .sem(
+          message.t("cmds:mod.done", { member, action: "Temp Muted", reason })
+        )
         .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
-      this.logger.error(error, "ban");
+      this.logger.error(error, "tempmute");
       return message
-        .sem(message.t("cmds:mod.error", { member, action: "mute" }), {
+        .sem(message.t("cmds:mod.error", { member, action: "temp mute" }), {
           type: "error"
         })
         .then(m => m.delete({ timeout: 10000 }));
@@ -104,6 +114,11 @@ export default class extends Command {
     _case.moderator = message.author.id;
     _case.subject = member.id;
     _case.type = "mute";
+    _case.other = {
+      finished: false,
+      duration: duration + Date.now(),
+      temp: true
+    };
 
     await _case.save();
     await message._guild.save();
@@ -116,7 +131,7 @@ export default class extends Command {
       new VorteEmbed(message)
         .baseEmbed()
         .setAuthor(
-          `Mute [ Case ID: ${_case.id} ]`,
+          `Temp. Mute [ Case ID: ${_case.id} ]`,
           message.author.displayAvatarURL()
         )
         .setThumbnail(this.client.user.displayAvatarURL())
@@ -124,7 +139,8 @@ export default class extends Command {
           [
             `**Staff Member**: ${message.author} \`(${message.author.id})\``,
             `**Victim**: ${member.user} \`(${member.id})\``,
-            `**Reason**: ${reason}`
+            `**Reason**: ${reason}`,
+            `**Duration**: ${ms(duration, { long: true })}`
           ].join("\n")
         )
     );
