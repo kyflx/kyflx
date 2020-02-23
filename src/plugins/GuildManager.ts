@@ -1,21 +1,6 @@
 import Logger from "@ayanaware/logger";
-import {
-  CaseEntity,
-  ClientPlugin,
-  ProfileEntity,
-  ReactionMenu,
-  Subscribe,
-  VorteEmbed
-} from "@vortekore/lib";
-import {
-  GuildMember,
-  Message,
-  MessageEmbed,
-  MessageReaction,
-  Role,
-  TextChannel,
-  User
-} from "discord.js";
+import { CaseEntity, ClientPlugin, ProfileEntity, ReactionMenu, Subscribe, VorteEmbed } from "@vortekore/lib";
+import { GuildMember, Message, MessageEmbed, MessageReaction, Role, TextChannel, User } from "discord.js";
 import { formatString } from "../util";
 import ms = require("ms");
 
@@ -153,15 +138,15 @@ export default class GuildManagerPlugin extends ClientPlugin {
     });
 
     message._guild.muteRole = muteRole.id;
-    for (const [, cg] of message.guild.channels.cache.filter(
+    for (const [, c] of message.guild.channels.cache.filter(
       c => c.type === "category"
     ))
-      await cg.createOverwrite(
+      await c.createOverwrite(
         muteRole,
         {
           SEND_MESSAGES: false
         },
-        "new mute role"
+        "Creating mute role."
       );
 
     return muteRole;
@@ -178,7 +163,7 @@ export default class GuildManagerPlugin extends ClientPlugin {
     if (!_guild.reactionRoles[reaction.message.id]) return;
 
     const msg = _guild.reactionRoles[reaction.message.id];
-    const role = msg.roles[reaction.emoji.id || reaction.emoji.name] as string;
+    const role = msg.roles[reaction.emoji.id || reaction.emoji.name];
     return !role ? null : { msg, role };
   }
 
@@ -202,7 +187,7 @@ export default class GuildManagerPlugin extends ClientPlugin {
         );
         if (other)
           await member.roles.remove(
-            msg.roles[other.emoji.id || other.emoji.name] as string
+            msg.roles[other.emoji.id || other.emoji.name]
           );
       }
       await member.roles.add(role);
@@ -216,7 +201,9 @@ export default class GuildManagerPlugin extends ClientPlugin {
     const data = this.getData(reaction, user),
       message = reaction.message;
     if (!data) return;
-    const { msg, role } = data;
+    const member = message.guild.member(user);
+    if (member.roles.resolve(data.role))
+      member.roles.remove(data.role);
   }
 
   @Subscribe("guildMemberAdd")

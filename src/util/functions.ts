@@ -1,8 +1,10 @@
-import { Queue } from "@vortekore/lib";
+import { Queue, Language } from "@vortekore/lib";
 import { Playlist, Video } from "better-youtube-api";
 import { GuildMember } from "discord.js";
 import { api } from "..";
 import { TrackInfo } from "@lavalink/encoding";
+import { Collection } from "discord.js";
+import { Message } from "discord.js";
 
 export async function search(
   input: string,
@@ -22,10 +24,8 @@ export function formatString(message: string, member: GuildMember) {
   return message.replace(new RegExp(Object.keys(obj).join("|")), m => obj[m]);
 }
 
-export function formatNumber(n: number) {
-  if (n < 1e3) return n;
-  if (n >= 1e3) return +(n / 1e3).toFixed(1) + "K";
-}
+export const formatNumber = (n: number) =>
+  n < 1e3 ? n : +(n / 1e3).toFixed(1) + "K";
 
 export function isPromise(value: any): boolean {
   return (
@@ -35,12 +35,12 @@ export function isPromise(value: any): boolean {
   );
 }
 
-// export function getVolumeIcon(volume: number) {
-// 	if (volume == 0) return "\uD83D\uDD07";
-// 	else if (volume < 33) return "\uD83D\uDD08";
-// 	else if (volume < 67) return "\uD83D\uDD09";
-// 	else return "\uD83D\uDD0A";
-// }
+export function getVolumeIcon(volume: number) {
+  if (volume == 0) return "\uD83D\uDD07";
+  else if (volume < 33) return "\uD83D\uDD08";
+  else if (volume < 67) return "\uD83D\uDD09";
+  else return "\uD83D\uDD0A";
+}
 
 export function formatTime(duration: number) {
   const minutes = Math.floor(duration / 60000);
@@ -53,9 +53,11 @@ export function playerEmbed(
   queue: Queue,
   { np, position }: { np: TrackInfo; position: number }
 ) {
-  return `${queue.player.paused ? "\u23F8" : "\u25B6"} ${progressBar(
-    position / Number(np.length)
-  )} \`[${formatTime(position)}/${formatTime(Number(np.length))}]\``;
+  return `${getVolumeIcon(queue.player.volume)} ${
+    queue.player.paused ? "\u23F8" : "\u25B6"
+  } ${progressBar(position / Number(np.length))} \`[${formatTime(
+    position
+  )}/${formatTime(Number(np.length))}]\``;
 }
 
 export function progressBar(percent: number, length = 10) {
@@ -67,7 +69,16 @@ export function progressBar(percent: number, length = 10) {
   return str;
 }
 
-export function In(member: GuildMember): boolean {
-  if (!member.voice.channel) return false;
-  return member.voice.channel.members.has(member.guild.me.id);
+export const In = (member: GuildMember) =>
+  member.voice.channel
+    ? member.voice.channel.members.has(member.guild.me.id)
+    : false;
+
+export function getLanguageKeys(message: Message): string[][] {
+  return new Collection<string, Language>(
+    <any>message.client.i18n.languages.entries()
+  ).reduce<string[][]>((keys, language) => {
+    keys.push([language.id, ...language.aliases]);
+    return keys;
+  }, []);
 }

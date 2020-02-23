@@ -27,10 +27,6 @@ export default class BotReady extends Listener {
       setInterval(() => dbl.postStats(this.client.guilds.cache.size), 120000);
     }
 
-    [this.client.database.guilds.items].map(c =>
-      setInterval(() => c.clear(), ms("30m"))
-    );
-
     client.logger.info(`${client.user!.username} is ready to rumble!`);
   }
 }

@@ -58,5 +58,12 @@ export const Presences: Record<string, string> = {
 };
 
 export enum LogChannels {
-	GUILDS = "613827877015650304"
+  GUILDS = "613827877015650304"
+}
+
+export enum PUNS {
+  kick = "kicked",
+  ban = "banned",
+  warn = "warned",
+  mute = "muted"
 }

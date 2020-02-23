@@ -28,7 +28,7 @@ export default class MessageReceivedListener extends Listener {
                 if (!message._guild.lvlUpMsg) return;
                 if (!message._guild.lvlUpChannel)
                   return message.sem(
-                    message.t("evts:msg.lvl_up", { level: profile.level })
+                    message.t("evts:lvl_up", { level: profile.level })
                   );
 
                 const channel = message.guild.channels.resolve(

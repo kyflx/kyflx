@@ -1,4 +1,4 @@
-import { GuildEntity, Language } from "@vortekore/lib";
+import { GuildEntity, Language, WarnPunishment } from "@vortekore/lib";
 import {
   Collection,
   GuildMember,
@@ -7,7 +7,7 @@ import {
   TextChannel
 } from "discord.js";
 import ms from "ms";
-import { logs } from "../util";
+import { logs, PUNS } from "../util";
 
 export default class English extends Language {
   public constructor() {
@@ -35,7 +35,7 @@ export default class English extends Language {
             })}** left on your cooldown :(`,
           guild: "Sorry, this command can only be used in guilds.",
           owner: "Oop I can't allow you to run this command..."
-        }, // :
+        },
         lvl_up: `Congrats 🎉 You're now level **{{level}}**!`
       },
       cmds: {
@@ -164,7 +164,7 @@ export default class English extends Language {
             prompt: "Provide some text I can uwuify."
           }
         },
-        img: { 
+        img: {
           cat: {
             desc: {
               content: "Provides a cat picture from r/cats"
@@ -297,7 +297,8 @@ export default class English extends Language {
               usage: "<member> <duration> [reason]",
               examples: ["v!tempmute @2D 10m"]
             },
-            ursf: "If you wanted to temp mute yourself, just shut up for a few minutes."
+            ursf:
+              "If you wanted to temp mute yourself, just shut up for a few minutes."
           },
           um: {
             desc: {
@@ -369,7 +370,9 @@ export default class English extends Language {
             speak: "I don't have the permissions to talk in this channel.",
             cancel: "\n\n**Send 'cancel' to cancel the selection.**",
             cancelled: "Okay... I cancelled the song selection.",
-            look: "Sorry, I couldn't find what you were looking for :/"
+            look: "Sorry, I couldn't find what you were looking for :/",
+            quota:
+              "Oh no... the youtube quota was exceeded, the only way to play songs is to use URLs :("
           },
           queue: {
             desc: {
@@ -446,7 +449,10 @@ export default class English extends Language {
               examples: ["v!vol 50"]
             },
             res: "Okay! I set the volume to **{{volume}}**!",
-            prompt: "Provide a valid number between **1**-**100**."
+            prompt: "Provide a valid number between **1**-**100**.",
+            cur: (_: Message) =>
+              `The current volume for this guilds player is **${_.player
+                .volume || 100}**`
           }
         },
         conf: {
@@ -649,6 +655,42 @@ export default class English extends Language {
                   ? ""
                   : `\n*to use commands you need to mention the bot* @VorteKore ping`
               }`
+          },
+          puns: {
+            desc: {
+              content:
+                "Customizes punishments given out at specific warn amounts.",
+              usage: "[set|remove] <level> <[type]> <[duration]>",
+              examples: [
+                "v!punishments new 1 ban 20s",
+                "v!punishments del 1",
+                "v!punishments new 5 ban"
+              ]
+            },
+            curr: (m: Message) =>
+              Object.keys(m._guild.warnPunishments).length > 0
+                ? [
+                    `The current warn punishments are`,
+                    ...Object.keys(m._guild.warnPunishments)
+                      .sort((a, b) => a - b)
+                      .map(a => {
+                        const p = m._guild.warnPunishments[a];
+                        return `**${a}**. ${p.type}${
+                          p.duration
+                            ? ` for \`${ms(p.duration, { long: true })}\``
+                            : ""
+                        }.`;
+                      })
+                  ].join("\n")
+                : "There are no warn punishments setup.",
+            new: (p: WarnPunishment) =>
+              `Users that exceed \`{{level}} warns\` will now be *${
+                PUNS[p.type]
+              }*${
+                p.duration ? ` for **${ms(p.duration, { long: true })}**` : ""
+              }.`,
+            del: `Users will not be punished when they exceed **{{level}} warns**.`,
+            del_prompt: "Please provide a level."
           }
         },
         util: {
