@@ -1,9 +1,9 @@
-import { VorteClient } from "@vortekore/lib";
-import { YouTube } from "better-youtube-api";
-import { config } from "dotenv";
-import { join } from "path";
+import {VorteClient} from "@vortekore/lib";
+import {YouTube} from "better-youtube-api";
+import {config} from "dotenv";
+import {join} from "path";
 
-config({ path: join(process.cwd(), ".env") });
+config({path: join(process.cwd(), ".env")});
 const bot = new VorteClient(__dirname);
 
 export const developers = bot.developers;

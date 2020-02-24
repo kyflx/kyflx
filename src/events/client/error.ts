@@ -12,3 +12,4 @@ export default class ClientError extends Listener {
     return bot.logger.error(error);
   }
 }
+  

@@ -1,5 +1,7 @@
 import {Command, confirm, Language, VorteEmbed} from "@vortekore/lib";
 import {Message} from "discord.js";
+import { Collection } from "discord.js";
+import { getLanguageKeys } from "../../util";
 
 export default class extends Command {
 	public constructor() {
@@ -13,7 +15,7 @@ export default class extends Command {
 					id: "lang",
 					type: (_: Message, phrase: string) => {
 						if (!phrase) return null;
-						const types = [["en_US", "en", "english", "ingles"], ["en_ES", "es", "spanish", "espanol"]];
+						const types = getLanguageKeys(_);
 						if (!types.some(t => t.some(_t => _t.ignoreCase(phrase))))
 							return null;
 

@@ -55,7 +55,7 @@ A list of things we should do or things we should be doing *cough cough @ChaosPh
     - [x] Profile (Chaos & 2D)
     - [x] Bank (Chaos & 2D)
     - [x] Gamble (Chaos & 2D)
-    - [ ] Rob
+    - [x] Rob
     - [ ] Crime
     - [ ] Work
     - [ ] Jobs

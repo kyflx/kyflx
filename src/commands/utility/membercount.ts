@@ -1,47 +1,46 @@
-import {Command, VorteEmbed} from "@vortekore/lib";
-import {Message} from "discord.js";
-import {MC_Emotes, Presences} from "../../util";
+import { Command, VorteEmbed } from "@vortekore/lib";
+import { Message } from "discord.js";
+import { MC_Emotes, Presences } from "../../util";
 
 export default class MemberCountCommand extends Command {
-	public constructor() {
-		super("member-count", {
-			aliases: ["member-count", "mc", "members"],
-			description: t => t("cmds:util.mc.desc")
-		});
-	}
+  public constructor() {
+    super("member-count", {
+      aliases: ["member-count", "mc", "members"],
+      description: t => t("cmds:util.mc.desc")
+    });
+  }
 
-	public async exec(message: Message) {
-		const cache = message.guild.members.cache;
-		const embed = new VorteEmbed(message)
-			.baseEmbed()
-			.setAuthor(
-				message.guild.name,
-				message.author.displayAvatarURL({dynamic: true})
-			)
-			.setDescription(
-				`**${message.guild.name}** has a total of \`${
-					cache.size
-				}\` members, with **${
-					cache.filter(m => !m.user.bot).size
-				} users** and **${cache.filter(m => m.user.bot).size} bots**.`
-			);
+  public async exec(message: Message) {
+    const cache = message.guild.members.cache;
+    const embed = new VorteEmbed(message)
+      .baseEmbed()
+      .setAuthor(
+        message.guild.name,
+        message.author.displayAvatarURL({ dynamic: true })
+      )
+      .setDescription(
+        `**${message.guild.name}** has a total of \`${
+          cache.size
+        }\` members, with **${
+          cache.filter(m => !m.user.bot).size
+        } users** and **${cache.filter(m => m.user.bot).size} bots**.`
+      );
 
-		if (message.guild.icon) message.guild.iconURL();
+    if (message.guild.icon) message.guild.iconURL();
 
-		const statuses: Record<string, number> = Object.assign(
-			{},
-			...["idle", "online", "offline", "dnd"].map(T => ({[T]: 0}))
-		);
-		for (const [, m] of cache) statuses[m.user.presence.status] += 1;
+    const statuses: Record<string, number> = Object.assign(
+      {},
+      ...["idle", "online", "offline", "dnd"].map(T => ({ [T]: 0 }))
+    );
+    for (const [, m] of cache) statuses[m.user.presence.status] += 1;
 
-		embed.addField(
-			"\u200b",
-			Object.keys(statuses).map(
-				k => `**${MC_Emotes[k]} ${Presences[k]}** ${statuses[k]}`
-			)
-		);
+    embed.addField(
+      "\u200b",
+      Object.keys(statuses).map(
+        k => `**${MC_Emotes[k]} ${Presences[k]}** ${statuses[k]}`
+      )
+    );
 
-		return message.channel.send(embed);
-	}
+    return message.channel.send(embed);
+  }
 }
-
