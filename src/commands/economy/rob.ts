@@ -19,17 +19,24 @@ export default class extends Command {
         });
     }
 
-    public async exec(message: Message, {member}: { member: GuildMember }) {
-        if (member.id === message.author.id)
+    public async exec(message: Message, {member}: { member: GuildMember | ProfileEntity }) {
+        if ((member as GuildMember).id === message.author.id)
             return message.sem(message.t("cmds:eco.rb.we"), {type: "error"});
 
         // @ts-ignore
-        member = new ProfileEntity.find({where: {userId: member, guildId: member.guild.id}});
+        member = await ProfileEntity.findOne({
+            where: {
+                userId: (member as GuildMember).id,
+                guildId: (member as GuildMember).guild.id
+            }
+        });
 
         if (Math.random() > 0.60) {
-            const amount = Math.floor(Math.random() * member);
+            const amount = Math.floor(Math.random() * member.coins);
             message.profile.coins += amount;
             message.profile.save();
+            member.coins -= amount;
+            member.save();
             message.sem(message.t("cmds:eco.rb.succ", {member, amount}));
         } else {
             const amount = Math.floor(Math.random() * Math.floor(message.profile.coins / 2));

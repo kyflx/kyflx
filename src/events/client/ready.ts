@@ -1,7 +1,6 @@
-import {CaseEntity, Listener} from "@vortekore/lib";
-import WebServer from "../../web/server";
+import {Listener} from "@vortekore/lib";
+//import WebServer from "../../web/server";
 import DBL from "dblapi.js";
-import ms from "ms";
 
 export default class BotReady extends Listener {
     public constructor() {
@@ -13,7 +12,7 @@ export default class BotReady extends Listener {
 
     async exec(client = this.client) {
         (this.client as any).guild_manager.onReady();
-        new WebServer(client).init();
+        //new WebServer(client).init();
         client.user!.setPresence({
             activity: {
                 name: "VorteKore | v!help",
