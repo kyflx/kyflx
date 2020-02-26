@@ -12,7 +12,7 @@ import { logs, PUNS } from "../util";
 export default class English extends Language {
   public constructor() {
     super("en_US", {
-      authors: ["MeLike2D"],
+      authors: ["MeLike2D", "Chaos_Phoe"],
       displayName: "English",
       aliases: ["en", "english", "ingles"]
     });
