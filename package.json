@@ -53,6 +53,6 @@
     "@types/express-session": "1.15.16",
     "@types/ws": "^6.0.4",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "typescript": "^3.8.3"
   }
 }
