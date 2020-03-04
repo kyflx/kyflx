@@ -1,0 +1,10 @@
+{
+	"extends": "@ayanaware/ts/config",
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"emitDecoratorMetadata": true,
+		"sourceMap": false,
+		"declaration": false,
+		"skipLibCheck": true
+	}
+}
