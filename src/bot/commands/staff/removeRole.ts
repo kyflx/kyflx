@@ -80,7 +80,7 @@ export default class RemoveRoleCommand extends Command {
     _case.reason = reason;
     _case.moderator = message.author.id;
     _case.subject = member.id;
-    _case.type = "roleAdd";
+    _case.type = "roleRemove";
 
     await _case.save();
     await message._guild.save();
