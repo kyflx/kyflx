@@ -10,6 +10,8 @@ export default class MessageDeleteListener extends Listener {
   }
 
   async exec(message: Message) {
+    if (!message.guild) return;
+
     const guild = await this.client.findOrCreateGuild(message.guild!.id);
     const { enabled, channel } = guild.log("messageDelete", "audit");
 
@@ -20,7 +22,6 @@ export default class MessageDeleteListener extends Listener {
 
     return chan.send(
       new VorteEmbed(message)
-        .baseEmbed()
         .setTitle(`Event: Message Delete`)
         .setDescription(
           [

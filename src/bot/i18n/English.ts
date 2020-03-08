@@ -26,6 +26,11 @@ export default class English extends Language {
         prompt_cancelled: "Okay! I cancelled the command.",
         prompt_retry: "Do you wanna retry that?"
       },
+      automod: {
+        warns: {
+          error: ""
+        }
+      },
       evts: {
         cmds: {
           cooldown: (remaining: number) =>
@@ -720,13 +725,12 @@ export default class English extends Language {
                   ? `<#${message._guild.channels.audit}> \`(${message._guild.channels.audit})\`.`
                   : `the void...`
               }\n **Enabled Events**: ${Object.keys(message._guild.logs)
-                // @ts-ignore
                 .filter(k => !channelKeys.includes(k) && message._guild.logs[k])
-                .map(key => `\`${key}\``)
+                .map(key => `\`${key}\``) 
                 .join(", ") || "Wow nothing"}`,
             chief: "Sorry, can't do anything about that chief...",
             de: (filtered: string[], action: string, all: boolean) =>
-              `Okay, I **${action}d** ${
+              `Okay, I \`${action}d\` ${
                 all
                   ? `all of the events.`
                   : `the ${filtered

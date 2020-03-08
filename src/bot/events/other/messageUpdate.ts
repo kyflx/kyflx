@@ -24,7 +24,6 @@ export default class MessageUpdateListener extends Listener {
 
     return ch.send(
       new VorteEmbed(new_msg)
-        .baseEmbed()
         .setTitle(`Event: Message Update`)
         .setDescription(
           [

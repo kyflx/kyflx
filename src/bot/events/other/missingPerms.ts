@@ -20,7 +20,7 @@ export default class MissingPermissionsListener extends Listener {
         [
           `Sorry, I need to following permissions for me to process your request :(`,
           Array.isArray(missing)
-            ? missing.map((p, i) => `**${i++}**. ${p}}`)
+            ? missing.map((p, i) => `**${++i}**. ${p}`)
             : `**1**. ${missing}`
         ].join("\n")
       );

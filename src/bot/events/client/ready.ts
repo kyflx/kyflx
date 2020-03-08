@@ -16,18 +16,19 @@ export default class BotReady extends Listener {
     await server.init();
 
     let activities = [
-        `${client.guilds.cache.size} guilds!`,
-        `${
-          client.commands.modules.filter(c => c.categoryID !== "flag").size
-        } commands!`,
-        `${client.users.cache.size} users!`
+        `${client.guilds.cache.size.toLocaleString()} guilds!`,
+        `${client.commands.modules
+          .filter(c => c.categoryID !== "flag")
+          .size.toLocaleString()} commands!`,
+        `${client.users.cache.size.toLocaleString()} users!`
       ],
       i = 0;
-    setInterval(() =>
-      client.user.setActivity(
-        `VorteKore | ${activities[i++ % activities.length]}`,
-        { type: "STREAMING", url: "https://twitch.tv/melike2d" }
-      ),
+    setInterval(
+      () =>
+        client.user.setActivity(
+          `VorteKore | ${activities[i++ % activities.length]}`,
+          { type: "STREAMING", url: "https://twitch.tv/melike2d" }
+        ),
       10000
     );
 

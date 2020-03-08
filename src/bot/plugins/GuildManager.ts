@@ -122,7 +122,7 @@ export default class GuildManagerPlugin extends Plugin {
         }
       } catch (error) {
         this.log.error(error, `${message.guild.id} warn punishments`);
-        return message.sem(message.t("automod:warns.error", { action: "ban" }));
+        return message.sem(message.t("automod:warns.error", { action: "ban", error }));
       }
 
       embed.setAuthor(
