@@ -33,11 +33,6 @@ export default class extends Command {
         type: "error"
       });
 
-    if (message.player.radio)
-      return message.sem(message.t("cmds:music.rad"), {
-        type: "error"
-      });
-
     for (let i = message.queue.next.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
       [message.queue.next[i], message.queue.next[j]] = [

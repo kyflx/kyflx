@@ -30,10 +30,6 @@ export default class extends Command {
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
-    if (message.player.radio)
-      return message.sem(message.t("cmds:music.rad"), {
-        type: "error"
-      });
 
     await message.player.seek(time);
     return message.sem(message.t("cmds:music.seek.res"));

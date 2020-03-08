@@ -43,11 +43,6 @@ export default class extends Command {
         type: "error"
       });
 
-    if (message.player.radio)
-      return message.sem(message.t("cmds:music.rad"), {
-        type: "error"
-      });
-
     const i = Number(index) - 1;
     const tracks = message.queue.next;
     if (!tracks.length)

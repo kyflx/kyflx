@@ -27,10 +27,6 @@ export default class extends Command {
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
-    if (message.player.radio)
-      return message.sem(message.t("cmds:music.rad"), {
-        type: "error"
-      });
 
     const val = (message.queue.repeat[type] = !message.queue.repeat[type]);
     return message.sem(message.t("cmds:music.loop.res", { val, type }));

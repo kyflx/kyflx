@@ -21,11 +21,6 @@ export default class SkipCommand extends Command {
         type: "error"
       });
 
-    if (message.player.radio)
-      return message.sem(message.t("cmds:music.rad"), {
-        type: "error"
-      });
-
     await message.queue._next();
     await message.queue.start();
     return message.sem(message.t("cmds:music.skip.res"));

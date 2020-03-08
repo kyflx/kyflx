@@ -10,7 +10,7 @@ export default class extends Command {
     });
   }
 
-  public async exec(message: Message, { clear }: { clear: boolean }) {
+  public async exec(message: Message) {
     if (!message.guild.me.voice.channel)
       return message.sem(message.t("cmds:music.no_vc"), { type: "error" });
 

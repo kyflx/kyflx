@@ -10,7 +10,7 @@ import { join } from "path";
 import { Plugin, CommandHandler, Queue, VorteEmbed } from "./classes";
 import { Database, GuildEntity, ProfileEntity, TagEntity } from "./database";
 import { LanguageProvider } from "./i18n";
-import { Config, ConfigData, RadioObject, developers } from "./util";
+import { Config, ConfigData, developers } from "./util";
 
 declare module "discord.js" {
   interface Message {
@@ -56,7 +56,6 @@ declare module "discord-akairo" {
 
 declare module "lavalink" {
   interface Player {
-    radio: RadioObject;
     bass: "high" | "medium" | "low" | "none";
     queue: Queue;
     volume: number;

@@ -121,34 +121,6 @@ export function paginate<T>(
   };
 }
 
-export interface RadioObject {
-  id: number;
-  changeuuid: string;
-  stationuuid: string;
-  name: string;
-  url: string;
-  url_resolved: string;
-  homepage: string;
-  favicon: string;
-  tags: string;
-  country: string;
-  countrycode: string;
-  state: string;
-  language: string;
-  votes: number;
-  lastchangetime: string;
-  ip: string;
-  codec: string;
-  bitrate: number;
-  hls: number;
-  lastcheckok: number;
-  lastchecktime: string;
-  lastcheckoktime: string;
-  clicktimestamp: string;
-  clickcount: number;
-  clicktrend: number;
-}
-
 String.prototype.capitalize = function() {
   return this.slice(0, 1).toUpperCase() + this.slice(1).toLowerCase();
 };
