@@ -1,18 +1,16 @@
-import { Command, get, VorteEmbed, ImgurHot } from "../../../lib";
+import { Command, get, VorteEmbed, ImgurHot, SFW_LINKS } from "../../../lib";
 import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
     super("owl", {
       aliases: ["owl"],
-      description: t => t("cmds:img.owl.desc")
+      description: t => t("cmds:sfw.owl.desc")
     });
   }
 
   public async exec(message: Message) {
-    const { data, error } = await get<ImgurHot>(
-      "https://www.imgur.com/r/owls/hot.json"
-    );
+    const { data, error } = await get<ImgurHot>(SFW_LINKS.owl);
     if (!data) {
       this.logger.error(error);
       return message.sem(`Sorry, we ran into an error :(`, { type: "error" });
@@ -21,7 +19,6 @@ export default class extends Command {
     const image = data.data[Math.floor(Math.random() * data.data.length)];
     return message.util.send(
       new VorteEmbed(message)
-        .baseEmbed()
         .setAuthor(image.author)
         .setTitle(image.title)
         .setURL(`https://imgur.com/${image.hash}`)

@@ -1,18 +1,16 @@
-import { Command, get, VorteEmbed, SubredditJson } from "../../../lib";
+import { Command, get, VorteEmbed, Reddit, SFW_LINKS } from "../../../lib";
 import { Message } from "discord.js";
 
 export default class extends Command {
   public constructor() {
-    super("lizard", {
-      aliases: ["lizard"],
-      description: t => t("cmds:img.lizard.desc")
+    super("wolf", {
+      aliases: ["wolf", "wolves"],
+      description: t => t("cmds:sfw.wolf.desc")
     });
   }
 
   public async exec(message: Message) {
-    const { data, error } = await get<SubredditJson>(
-      "https://www.reddit.com/r/lizards.json?limit=100"
-    );
+    const { data, error } = await get<Reddit>(SFW_LINKS.wolf);
     if (!data) {
       this.logger.error(error);
       return message.sem(`Sorry, we ran into an error :(`, { type: "error" });
@@ -24,7 +22,6 @@ export default class extends Command {
       image = images[Math.floor(Math.random() * images.length)].data;
     return message.util.send(
       new VorteEmbed(message)
-        .baseEmbed()
         .setAuthor(image.author)
         .setTitle(image.title)
         .setURL(`https://reddit.com${image.permalink}`)

@@ -150,6 +150,11 @@ export default class English extends Language {
               "As I see it, yes."
             ]
           },
+          fact: {
+            desc: {
+              content: "Sends a random fact."
+            }
+          },
           lmg: {
             desc: {
               content: "Sends a lmgtfy url.",
@@ -157,6 +162,14 @@ export default class English extends Language {
               examples: ["v!lmgtfy how to become a human?"]
             },
             prompt: "Are you gonna provide something?"
+          },
+          owo: {
+            desc: {
+              content: "Owoify's your message",
+              usage: "<message>",
+              examples: ["v!owo x3 nuzzles pounces on you uwu you so warm!"]
+            },
+            prompt: "Provide some text I can uwuify."
           },
           rps: {
             desc: {
@@ -169,6 +182,14 @@ export default class English extends Language {
             tie: "I picked **{{bot}}**, It's a tie!",
             win: "I picked **{{bot}}**, you lost! muhahah",
             lost: "I picked **{{bot}}**... you won... 😭"
+          },
+          spo: {
+            desc: {
+              content: "Makes each letter a spoiler to mess with people.",
+              usage: "<content>",
+              examples: ["v!spoiler haha try reading this now suckers!"]
+            },
+            prompt: "Can you give me something to make hard to read?"
           },
           tab: {
             desc: {
@@ -184,20 +205,26 @@ export default class English extends Language {
               `Okay! ${_.author} has started a game of taboo! They can choose to give you hints.`,
             dm: `The word is \`{{word}}\`, you can choose to give them hints. *make sure you don't say the word!*`,
             cheat: `Really, the host has cheated... smh`
-          },
-          uwu: {
-            desc: {
-              content: "Uwuify's your message",
-              usage: "<message>",
-              examples: ["v!uwu x3 nuzzles pounces on you uwu u so warm!"]
-            },
-            prompt: "Provide some text I can uwuify."
           }
         },
-        img: {
+        sfw: {
+          baka: {
+            desc: {
+              content: "You're a baka? or is someone else?",
+              usage: "[member]",
+              examples: ["v!baka @Chaos_Phoe"]
+            }
+          },
           cat: {
             desc: {
               content: "Provides a cat picture from r/cats"
+            }
+          },
+          cuddle: {
+            desc: {
+              content: "Cuddle with a server member. Awh!",
+              usage: "[member]",
+              examples: ["v!cuddle @2D"]
             }
           },
           dog: {
@@ -210,9 +237,45 @@ export default class English extends Language {
               content: "Provides a duck picture from r/duck"
             }
           },
+          feed: {
+            desc: {
+              content: "Feed a server member.",
+              usage: "[member]",
+              examples: ["v!feed @2D"]
+            }
+          },
           fox: {
             desc: {
               content: "Provides a fox picture from r/foxes"
+            }
+          },
+          foxg: {
+            desc: {
+              content: "Sends a lovely fox girl."
+            }
+          },
+          holo: {
+            desc: {
+              content: "Sends holo."
+            }
+          },
+          hug: {
+            desc: {
+              content: "Hug a server member. Awh!",
+              usage: "[member]",
+              examples: ["v!hug @2D"]
+            }
+          },
+          kemo: {
+            desc: {
+              content: "Send a picture of an animal human thing (idk)."
+            }
+          },
+          kiss: {
+            desc: {
+              content: "Kiss a server member. Awh!",
+              usage: "[member]",
+              examples: ["v!kiss @2D"]
             }
           },
           lizard: {
@@ -225,6 +288,11 @@ export default class English extends Language {
               content: "Provides a meme picture from r/dankmemes"
             }
           },
+          neko: {
+            desc: {
+              content: "Send a picture of an animal human thing (idk)."
+            }
+          },
           owl: {
             desc: {
               content: "Provides an owl picture frmo imgur!"
@@ -235,9 +303,42 @@ export default class English extends Language {
               content: "Provides a panda picture from imgur"
             }
           },
+          pat: {
+            desc: {
+              content: "Pat a server member. Awh!",
+              usage: "[member]",
+              examples: ["v!pat @2D"]
+            }
+          },
           pengu: {
             desc: {
               content: "Provides a random penguin picture from r/penguin"
+            }
+          },
+          poke: {
+            desc: {
+              content: "Poke a server member. Don't be too annoying!",
+              usage: "[member]",
+              examples: ["v!poke @2D"]
+            }
+          },
+          slap: {
+            desc: {
+              content: "Slap a server member. Oof!",
+              usage: "[member]",
+              examples: ["v!slap @2D"]
+            }
+          },
+          smug: {
+            desc: {
+              content: "Hmmm... being a bit smug are we now?"
+            }
+          },
+          tickle: {
+            desc: {
+              content: "Tickle a server member. Don't be too annoying!",
+              usage: "[member]",
+              examples: ["v!Tickle @2D"]
             }
           },
           wolf: {
@@ -342,7 +443,8 @@ export default class English extends Language {
             },
             ursf:
               "If you wanted to remove a role from yourself, just use the discord client.",
-            role: "Please provide a role I can remove from the specified member.",
+            role:
+              "Please provide a role I can remove from the specified member.",
             done: (role: Role, member: GuildMember) =>
               `Removed role ${role} \`(${role.id})\` from **${member}** \`(${member.id})\` for reason \`{{reason}}\``,
             error: (role: Role, member: GuildMember) =>
@@ -432,7 +534,7 @@ export default class English extends Language {
             desc: {
               content: "Plays a song in your voide channel.",
               usage: "<query>",
-              examples: "v!play city of angels"
+              examples: ["v!play city of angels"]
             },
             join: "I don't have the permissions to join this channel.",
             speak: "I don't have the permissions to talk in this channel.",

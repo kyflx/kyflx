@@ -1,4 +1,4 @@
-import { Command } from "../../../lib";
+import { Command, get, VorteEmbed, FUN_LINKS } from "../../../lib";
 import { Message } from "discord.js";
 
 export default class extends Command {
@@ -20,9 +20,16 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { question }: { question: string }) {
-    const answers = message.t<string[]>("cmds:fun.8b.answers");
-    await message.sem(
-      `**${question}**\n${answers[Math.floor(Math.random() * answers.length)]}`
+    const { error, data } = await get<{ response: string; url: string }>(
+      FUN_LINKS["8ball"]
+    );
+    if (error || !data) {
+      const answers = message.t("cmds:fun.8b.answers");
+      return message.sem(answers[Math.floor(Math.random() * answers.length)]);
+    }
+
+    return message.util.send(
+      new VorteEmbed(message).setDescription(`*${question}*`).setImage(data.url)
     );
   }
 }

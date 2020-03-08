@@ -197,7 +197,7 @@
     before?: any;
   }
 
-  export interface SubredditJson {
+  export interface Reddit {
     kind: string;
     data: Data;
   }
