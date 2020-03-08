@@ -28,7 +28,7 @@ export default class extends Command {
 
     link = `https://i.imgur.com/${link.hash}${link.ext}`;
 
-    const emb = new VorteEmbed(message).baseEmbed().setImage(link);
+    const emb = new VorteEmbed(message).setImage(link);
     if (link.title) emb.setTitle(link.title);
     return message.util.send(emb);
   }

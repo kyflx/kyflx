@@ -113,7 +113,6 @@ export default class extends Command {
 
     return logs.send(
       new VorteEmbed(message)
-        .baseEmbed()
         .setAuthor(
           `Mute [ Case ID: ${_case.id} ]`,
           message.author.displayAvatarURL()

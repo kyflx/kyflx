@@ -7,7 +7,6 @@ import { Stats, VorteClient } from "./lib";
 config({ path: join(process.cwd(), ".env") });
 const bot = new VorteClient(join(__dirname, "bot"));
 
-export const developers = bot.developers;
 export const api = new YouTube(bot.config.get("YOUTUBE_API_KEY"));
 export const stats: Stats = {
   commands: new Counter({

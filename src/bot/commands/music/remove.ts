@@ -1,4 +1,4 @@
-import { Command, In } from "../../../lib";
+import { Command, In, developers } from "../../../lib";
 import { Message } from "discord.js";
 
 export default class extends Command {
@@ -15,7 +15,20 @@ export default class extends Command {
             start: (_: Message) => _.t("cmds:music.rm.prompt")
           }
         }
-      ]
+      ],
+      userPermissions(message: Message) {
+        if (
+          developers.includes(message.author.id) ||
+          message.member!.hasPermission("ADMINISTRATOR")
+        )
+          return;
+        else if (
+          message._guild!.djRole &&
+          message.member!.roles.resolve(message._guild!.djRole)
+        )
+          return "DJ";
+        return;
+      },
     });
   }
 

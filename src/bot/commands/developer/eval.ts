@@ -19,6 +19,16 @@ export default class extends Command {
           id: "depth",
           match: "option",
           flag: ["-d=", "d:", "--depth=", "--depth:"]
+        },
+        {
+          id: "silent",
+          match: "flag",
+          flag: ["-s", "--silent", ":s"]
+        },
+        {
+          id: "async",
+          match: "flag",
+          flag: ["-a", "--async", ":a"]
         }
       ]
     });
@@ -26,24 +36,39 @@ export default class extends Command {
 
   public async exec(
     message: Message,
-    { code, depth }: { code: string; depth: number }
+    {
+      code,
+      depth,
+      silent,
+      async
+    }: { code: string; depth: number; silent: any; async: any }
   ) {
     try {
-      let resulted = eval(code);
+      let hr = process.hrtime();
+      let resulted = eval(async ? `(async () => {\n${code}\n})()` : code);
       if (isPromise(resulted)) resulted = await resulted;
+      hr = process.hrtime(hr);
 
-      const ctype = typeof resulted;
+      const ctype = this.resolve(resulted);
       if (typeof resulted !== "string")
         resulted = require("util").inspect(resulted, {
           depth: depth || 0
         });
+
+      if (silent) return;
 
       return message.util.send(
         new VorteEmbed(message)
           .baseEmbed()
           .addField("Input", `\`\`\`js\n${code}\`\`\``)
           .addField("Output", `\`\`\`js\n${resulted.trunc(1000, true)}\`\`\``)
-          .addField("\u200b", `**Type**: ${ctype}`, true)
+          .addField(
+            "\u200b",
+            `**Type**: \`\`\`ts\n${ctype}\`\`\`\n**Time**: ${
+              hr[0] > 0 ? `${hr[0]}s ` : ""
+            }${hr[1] / 1000000}ms`,
+            true
+          )
       );
     } catch (e) {
       this.logger.error(e, "eval");
@@ -53,6 +78,24 @@ export default class extends Command {
           .addField("Input", `\`\`\`js\n${code}\`\`\``)
           .addField("Error", `\`\`\`js\n${e.name}: ${e.message}\`\`\``)
       );
+    }
+  }
+
+  private resolve(value: any) {
+    const type = typeof value;
+    switch (type) {
+      case "object":
+        return value === null
+          ? "null"
+          : value.constructor
+          ? value.constructor.name
+          : "any";
+      case "function":
+        return `${value.constructor.name}(${value.length}-arity)`;
+      case "undefined":
+        return "void";
+      default:
+        return type;
     }
   }
 }

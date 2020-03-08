@@ -12,7 +12,6 @@ export default class MemberCountCommand extends Command {
   public async exec(message: Message) {
     const cache = message.guild.members.cache;
     const embed = new VorteEmbed(message)
-      .baseEmbed()
       .setAuthor(
         message.guild.name,
         message.author.displayAvatarURL({ dynamic: true })

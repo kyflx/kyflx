@@ -15,7 +15,7 @@ export default class MessageReceivedListener extends Listener {
   async exec(message: Message) {
     stats.messages.inc();
 
-    if (message.guild) {
+    if (message.guild && !message.author.bot) {
       const profile = await this.client.findOrCreateProfile(
         message.author.id,
         message.guild.id

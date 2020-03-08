@@ -69,21 +69,37 @@ export default class English extends Language {
           },
           bk: {
             desc: {
-              content: "Withdraws or Deposits money",
-              usage: "<locale> [amount]",
+              content: [
+                "Withdraw or Deposit money into your Bank!",
+                "**• Deposit**: Deposit money to the Bank, example: `v!bank deposit 200`",
+                "**• Withdraw**: Withdraw money from the Bank, example: `v!bank withdraw 200`",
+                "**• Upgrade**: Upgrade your bank, example: `v!bank upgrade 3`"
+              ].join("\n"),
+              usage: "<deposit|withdraw|upgrade> [amount]",
               examples: ["v!bank withdraw 200"]
             },
+            cur: (_: Message) =>
+              `You currently have **${
+                _.profile.coins
+              }** coins in your pocket and **${
+                _.profile.bank
+              }** coins in your bank, ${
+                _.profile.bank < _.profile.upgrades.bank
+                  ? `you have a max of \`${_.profile.upgrades.bank}\` coins that you can deposit in to the bank.`
+                  : "you have reached your max bank capacity."
+              }`,
             prompt: "How much do you want to {{locale}}?",
-            limit: "The limit for your account is **{{max}}**",
-            emdesc: [
-              "Withdraw or Deposit money into your Bank!",
-              "**Deposit**: Deposit money to the Bank, example: `v!bank deposit 200`",
-              "**Withdraw**: Withdraw money from the Bank, example: `v!bank withdraw 200`"
-            ].join("\n"),
-            dep: "",
-            with: "Withdraw money from the Bank, example: v!bank withdraw 200",
+            limit: "The limit for your account is **{{max}}** coins",
+            dep: (_: Message) =>
+              `How much do you want to deposit? You have **${_.profile.coins}** coins.`,
+            with: (_: Message) =>
+              `How much do you want to withdraw? You have **${_.profile.bank}** coins in your bank.`,
             suc: "Successfully {{locale}} **{{amount}}** coins!",
-            insuf: "Insufficient coins!"
+            insuf: "Insufficient coins!",
+            confirm:
+              "Are you sure you want to buy `{{amount}}` bank upgrades for **{{cost}}** coins `(pocket)`?",
+            upg:
+              "Okay! You just increased your bank capacity to `{{max}}` for **{{cost}}** coins `(pocket)`!"
           },
           lb: {
             desc: {
@@ -154,6 +170,21 @@ export default class English extends Language {
             win: "I picked **{{bot}}**, you lost! muhahah",
             lost: "I picked **{{bot}}**... you won... 😭"
           },
+          tab: {
+            desc: {
+              content: "Play taboo in the server you are in.",
+              examples: ["v!taboo"]
+            },
+            alr: "A game is in progress, check back in a few minutes.",
+            timesup:
+              "Welp, the 2 minutes have passed. Unfortunately no one has guessed correctly :(",
+            end: (_: Message) =>
+              `Yay! ${_.author} guessed correctly and said \`{{word}}\`. They have gained **{{amount}}** coins!`,
+            new: (_: Message) =>
+              `Okay! ${_.author} has started a game of taboo! They can choose to give you hints.`,
+            dm: `The word is \`{{word}}\`, you can choose to give them hints. *make sure you don't say the word!*`,
+            cheat: `Really, the host has cheated... smh`
+          },
           uwu: {
             desc: {
               content: "Uwuify's your message",
@@ -197,8 +228,7 @@ export default class English extends Language {
           owl: {
             desc: {
               content: "Provides an owl picture frmo imgur!"
-            },
-            ohno: "Oh no, I couldn't find an image."
+            }
           },
           panda: {
             desc: {
@@ -232,6 +262,20 @@ export default class English extends Language {
           canc: "Okay, I cancelled the command.",
           done: (m: GuildMember) =>
             `{{action}} **${m.user.tag}** \`(${m.id})\` for reason \`{{reason}}\``,
+          ar: {
+            desc: {
+              content: "Add role(s) to a member.",
+              usage: "<role> <member> [reason]",
+              examples: ["v!add-role Admin @2D#5773 Congrats on the promotion!"]
+            },
+            ursf:
+              "If you wanted to add a role to yourself, just use the discord client.",
+            role: "Please provide a role I can add to the specified member.",
+            done: (role: Role, member: GuildMember) =>
+              `{{action}} role ${role} \`(${role.id})\` to **${member}** \`(${member.id})\` for reason \`{{reason}}\``,
+            error: (role: Role, member: GuildMember) =>
+              `Sorry, I couldn't add role ${role} \`${role.id}\` to **${member} \`${member.id}\`.`
+          },
           ban: {
             desc: {
               content: "Bans a member from the server",
@@ -289,6 +333,20 @@ export default class English extends Language {
               `Deleted **{{deleted}}** messages in channel ${message.channel} \`(${message.channel.id})\` with reason **{{reason}}**`,
             error:
               "Sorry, I couldn't purge any messages... contact the developers to see what happened"
+          },
+          rr: {
+            desc: {
+              content: "Removes a role from a server member.",
+              usage: "<role> <member> [reason]",
+              examples: ["v!remove-role Admin @2D#5773 Admin Abuse!"]
+            },
+            ursf:
+              "If you wanted to remove a role from yourself, just use the discord client.",
+            role: "Please provide a role I can remove from the specified member.",
+            done: (role: Role, member: GuildMember) =>
+              `Removed role ${role} \`(${role.id})\` from **${member}** \`(${member.id})\` for reason \`{{reason}}\``,
+            error: (role: Role, member: GuildMember) =>
+              `Sorry, I couldn't remove role ${role} \`${role.id}\` from **${member} \`${member.id}\`.`
           },
           tb: {
             desc: {
@@ -431,7 +489,7 @@ export default class English extends Language {
           seek: {
             desc: {
               examples: ["!seek 5s"],
-              description: "Seeks to a position in the song",
+              content: "Seeks to a position in the song",
               usage: "<time>"
             },
             prompt:

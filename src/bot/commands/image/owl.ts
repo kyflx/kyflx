@@ -11,7 +11,7 @@ export default class extends Command {
 
   public async exec(message: Message) {
     const { data, error } = await get<ImgurHot>(
-      "https://www.imgur.com/r/owl/hot.json"
+      "https://www.imgur.com/r/owls/hot.json"
     );
     if (!data) {
       this.logger.error(error);
@@ -19,7 +19,6 @@ export default class extends Command {
     }
 
     const image = data.data[Math.floor(Math.random() * data.data.length)];
-    if (!image) return message.sem("cmds:img.owl.ohno", { t: true });
     return message.util.send(
       new VorteEmbed(message)
         .baseEmbed()

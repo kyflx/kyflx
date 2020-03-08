@@ -1,13 +1,29 @@
 import { Message, MessageEmbed, MessageReaction, User } from "discord.js";
 import fetch, { RequestInit } from "node-fetch";
 import { Counter, Registry } from "prom-client";
+import { Category, Command } from "discord-akairo";
+import { developers } from "./Constants";
 
 export { ConfigData, default as Config, IConfig } from "./Config";
 
 export * from "./functions";
 export * from "./Constants";
-export { default as QueueHook } from "./QueueHook"
+export { default as QueueHook } from "./QueueHook";
 
+export function CategoryPredicate(message: Message) {
+  return (c: Category<string, Command>) =>
+    ![
+      "flag",
+      ...(developers.includes(message.author.id)
+        ? []
+        : message.member.hasPermission("MANAGE_GUILD", {
+            checkAdmin: true,
+            checkOwner: true
+          })
+        ? ["developer"]
+        : ["staff", "settings", "developer"])
+    ].includes(c.id);
+}
 
 export function trunc(
   str: string,
@@ -33,6 +49,15 @@ export const get = async <T>(
       error => resolve({ error })
     );
   });
+};
+
+export const readPath = (object: string[], data: any): any => {
+  if (object.length > 0) {
+    data = data[object[0]];
+    if (!data) return;
+    return readPath(object.slice(1), data);
+  }
+  return data;
 };
 
 export function confirm(message: Message, content: string): Promise<Boolean> {
@@ -161,4 +186,4 @@ export type Stats = {
   commands: Counter<string>;
   messages: Counter<string>;
   register: Registry;
-} 
+};

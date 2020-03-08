@@ -25,13 +25,13 @@ export default class extends Command {
       return message.sem(message.t("cmds:eco.gb.insuf"), { type: "error" });
 
     const random = Math.random();
-    random > 0.6
+    random >= 0.5
       ? (message.profile.coins += amount)
       : (message.profile.coins -= amount);
     await message.profile.save();
 
     return message.sem(
-      message.t(`cmds:eco.gb.${random > 0.6 ? "win" : "lose"}`, {
+      message.t(`cmds:eco.gb.${random >= 0.5 ? "win" : "lose"}`, {
         coins: amount
       })
     );

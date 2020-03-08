@@ -1,7 +1,7 @@
-import { Command, paginate, trunc, VorteEmbed } from "../../../lib";
-import { Message, Util } from "discord.js";
-import ms = require("ms");
 import { decode } from "@lavalink/encoding";
+import { Message } from "discord.js";
+import { Command, paginate, trunc, VorteEmbed } from "../../../lib";
+import ms = require("ms");
 
 export default class extends Command {
   public constructor() {
@@ -35,11 +35,9 @@ export default class extends Command {
       ? (upNext += paginated.items
           .map(
             song =>
-              `${++index}. **[${trunc(
-                Util.escapeMarkdown(song.title),
-                30,
-                false
-              )}](${song.uri})** *${ms(Number(song.length))}*`
+              `${++index}. **[${trunc(song.title, 30, false)}](${
+                song.uri
+              })** *${ms(Number(song.length))}*`
           )
           .join("\n"))
       : (upNext = ``);

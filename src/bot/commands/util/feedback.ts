@@ -20,7 +20,6 @@ export default class FeedbackCommand extends Command {
 
   public async exec(message: Message, { feedback }: { feedback: string }) {
     const Feedback = new VorteEmbed(message)
-      .baseEmbed()
       .setAuthor(message.author.tag, message.author.displayAvatarURL())
       .setDescription(feedback)
       .addField(

@@ -1,6 +1,5 @@
 import { Message } from "discord.js";
-import { BassLevels, In, Command } from "../../../lib";
-import { developers } from "../../..";
+import { BassLevels, In, Command, developers } from "../../../lib";
 
 export default class extends Command {
   public constructor() {

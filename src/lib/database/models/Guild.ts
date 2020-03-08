@@ -18,6 +18,7 @@ export default class GuildEntity extends BaseEntity {
   @Column() public prefixes: string[] = ["v!"];
   @Column() public language: string = "en_US";
   @Column() public embedColor: number = 814543;
+  @Column() public games: Record<string, any> = {}
 
   @Column() public djRole: Snowflake = "";
   @Column() public muteRole: Snowflake = "";

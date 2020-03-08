@@ -30,7 +30,7 @@ export default class MessageDeleteListener extends Listener {
           ].join("\n")
         )
         .addField(
-          `Message Content`,
+          `Message Content:`,
           `${Util.escapeMarkdown(message.cleanContent.slice(0, 900))}`
         )
         .setTimestamp()

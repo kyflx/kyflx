@@ -1,5 +1,7 @@
 export const channelKeys = ["channel", "memberJoined", "memberLeave"];
 
+export const developers = ["396096412116320258", "464499620093886486"];
+
 export const logs = [
   "warn",
   "editMessage",

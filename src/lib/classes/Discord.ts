@@ -19,12 +19,12 @@ Structures.extend(
 
       public sem(
         content: string,
-        { type = "base", t = false } = {},
+        { type = "base", t = false, _new = false } = {},
         i: Record<string, any> = {}
       ): Promise<Message> {
         const e = (<any>new VorteEmbed(this))[`${type}Embed`]();
         e.setDescription(t ? this.t(content, i) : content);
-        return <Promise<Message>>this.util!.send(e);
+        return <Promise<Message>>this.util![_new ? "sendNew" : "send"](e);
       }
 
       public t<T extends any>(key: string, i: Record<string, any> = {}): T {

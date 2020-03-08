@@ -1,11 +1,12 @@
 import { Command, In } from "../../../lib";
 import { Message } from "discord.js";
+import ms = require("ms");
 
 export default class extends Command {
   public constructor() {
     super("seek", {
       aliases: ["seek"],
-      description: t => t(""),
+      description: t => t("cmds:music.seek.desc"),
       channel: "guild",
       args: [
         {
@@ -13,13 +14,13 @@ export default class extends Command {
           prompt: {
             start: (_: Message) => _.t("cmds:music.seek.prompt")
           },
-          type: /(.*)[m|s]/
+          type: (_, p) => (p ? ms(p) : null)
         }
       ]
     });
   }
 
-  public async exec(message: Message, { time }: { time: { match: number[] } }) {
+  public async exec(message: Message, { time }: { time: number }) {
     if (!message.guild.me.voice.channel)
       return message.sem(message.t("cmds:music.no_vc"), {
         type: "error"
@@ -34,7 +35,7 @@ export default class extends Command {
         type: "error"
       });
 
-    await message.player.seek(Number(time.match[1]) * 1000);
+    await message.player.seek(time);
     return message.sem(message.t("cmds:music.seek.res"));
   }
 }

@@ -12,7 +12,6 @@ export default class BotInfoCommand extends Command {
 
   public async exec(message: Message) {
     const emb = new VorteEmbed(message)
-      .baseEmbed()
       .setAuthor(
         `${this.client.user!.username} Bot Info`,
         this.client.user!.displayAvatarURL()

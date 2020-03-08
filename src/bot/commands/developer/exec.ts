@@ -1,6 +1,6 @@
-import { VorteEmbed, Command } from "../../../lib";
-import { Message } from "discord.js";
 import { exec } from "child_process";
+import { Message } from "discord.js";
+import { Command } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -21,22 +21,10 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { command }: { command: string }) {
-    const proc = exec(command, (error, stdout) => {
-      if (error)
-        return message.util.send(
-          new VorteEmbed(message)
-            .errorEmbed()
-            .addField("Input", `\`\`\`js\n${command}\`\`\``)
-            .addField("Error", `\`\`\`js\n${error}: ${error}\`\`\``)
-        );
-
-      return message.util.send(
-        new VorteEmbed(message)
-          .baseEmbed()
-          .addField("Input", `\`\`\`js\n${command}\`\`\``)
-          .addField("Output", `\`\`\`js\n${stdout}\`\`\``)
-      );
+    return exec(command, (error, stdout, stderr) => {
+      if (error) return message.util.send(`**Error:**\n\`\`\`bash\n${error}\`\`\``)
+      if (stderr) return message.util.send(`**Bash Error:**\n\`\`\`bash\n${stderr}\`\`\``)
+      return message.util.send(`**Output:**\n\`\`\`bash\n${stdout}\`\`\``)
     });
-    return proc.kill("SIGKILL");
   }
 }

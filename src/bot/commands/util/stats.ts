@@ -13,7 +13,6 @@ export default class StatsCommand extends Command {
   public async exec(message: Message) {
     return message.util.send(
       new VorteEmbed(message)
-        .baseEmbed()
         .addField(
           "General",
           [

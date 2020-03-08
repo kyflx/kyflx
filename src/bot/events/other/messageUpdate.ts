@@ -10,6 +10,8 @@ export default class MessageUpdateListener extends Listener {
   }
 
   public async exec(old_msg: Message, new_msg: Message) {
+    if (!old_msg.guild) return;
+
     const guild = await this.client.findOrCreateGuild(old_msg.guild!.id);
     const { enabled, channel } = guild.log("messageUpdate", "audit");
     if (!channel || !enabled) return;
@@ -32,7 +34,7 @@ export default class MessageUpdateListener extends Listener {
           ].join("\n")
         )
         .addField(`Old Message:`, old_content)
-        .addField(`New Message`, new_content)
+        .addField(`New Message:`, new_content)
         .setTimestamp()
     );
   }

@@ -10,7 +10,7 @@ import { join } from "path";
 import { Plugin, CommandHandler, Queue, VorteEmbed } from "./classes";
 import { Database, GuildEntity, ProfileEntity, TagEntity } from "./database";
 import { LanguageProvider } from "./i18n";
-import { Config, ConfigData, RadioObject } from "./util";
+import { Config, ConfigData, RadioObject, developers } from "./util";
 
 declare module "discord.js" {
   interface Message {
@@ -22,7 +22,7 @@ declare module "discord.js" {
 
     sem(
       content: string,
-      options?: { type?: "normal" | "error", t?: boolean },
+      options?: { type?: "normal" | "error", t?: boolean, _new?: boolean },
       i?: Record<string, any>
     ): Promise<Message>;
 
@@ -67,7 +67,7 @@ export default class VorteClient extends AkairoClient {
   public plugins: Map<string, Plugin> = new Map();
   public database = new Database(this);
 
-  public developers = ["396096412116320258", "464499620093886486"];
+  public developers = developers;
   public config: Config<ConfigData> = new Config();
   public maintenance: boolean = this.config.get("MAINTENANCE");
 
@@ -89,7 +89,7 @@ export default class VorteClient extends AkairoClient {
 
   public constructor(public directory: string) {
     super({
-      ownerID: ["396096412116320258", "464499620093886486"],
+      ownerID: developers,
       disableMentions: "everyone",
       messageCacheMaxSize: 10000,
       fetchAllMembers: true,
@@ -207,7 +207,7 @@ export default class VorteClient extends AkairoClient {
       return ProfileEntity.findOne({ where: { userId, guildId } }).then(
         profile => {
           if (profile) return resolve(profile);
-          else return resolve(ProfileEntity.create({ userId, guildId }));
+          return resolve(ProfileEntity.create({ userId, guildId }));
         }
       );
     });

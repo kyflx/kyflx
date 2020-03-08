@@ -1,8 +1,8 @@
-import { APIRouter, Get, Router, Guild } from "../../lib";
+import { Permissions } from "discord.js";
 import { Request, Response } from "express";
 import passport from "passport";
 import { Strategy } from "passport-discord";
-import { Permissions } from "discord.js";
+import { APIRouter, Get, Guild, Router } from "../../lib";
 
 declare module "express" {
   interface Request {

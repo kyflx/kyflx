@@ -1,7 +1,6 @@
-import { Command, VorteEmbed, In } from "../../../lib";
+import { Command, VorteEmbed, In, developers } from "../../../lib";
 import { Message } from "discord.js";
 import { Argument } from "discord-akairo";
-import { developers } from "../../..";
 
 export default class extends Command {
   public constructor() {

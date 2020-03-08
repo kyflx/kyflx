@@ -1,8 +1,8 @@
-import { Command, In, QueueHook, VorteEmbed, trunc, searchYT } from "../../../lib";
 import { Video } from "better-youtube-api";
 import { Argument } from "discord-akairo";
 import { Message, Util } from "discord.js";
 import { parse } from "url";
+import { Command, In, QueueHook, searchYT, trunc, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -54,11 +54,9 @@ export default class extends Command {
               .slice(0, 5)
               .map(
                 (song, index) =>
-                  `${++index}. **[${Util.escapeMarkdown(
-                    trunc(song.title, 50, false)
-                  )}](${song.url})** ${
-                    song instanceof Video ? "[Video]" : "Playlist"
-                  }`
+                  `${++index}. **[${trunc(song.title, 50, false)}](${
+                    song.url
+                  })** ${song instanceof Video ? "[Video]" : "[Playlist]"}`
               )
               .join("\n") + message.t("cmds:music.play.cancel")
           );
@@ -73,11 +71,14 @@ export default class extends Command {
             .then(async messages => {
               const msg = messages.first();
               if (msg.deletable) await msg.delete();
+
               if (msg.content.ignoreCase("cancel") || !msg)
                 return message.sem(message.t("cmds:music.play.cancelled"));
+
               const i = this.handler.resolver.type("number")(msg, msg.content);
-              if (!i || typeof results[i - 1] === "undefined")
+              if (!i || results[i - 1] === undefined)
                 return message.sem(message.t("cmds:music.play.cancelled"));
+
               return (response = await this.client.music.load(
                 results[i - 1].url
               ));
@@ -114,6 +115,6 @@ export default class extends Command {
       });
 
     if (!queue.player.playing && !queue.player.paused) await queue.start();
-    return message.sem(`Queued up **${Util.escapeMarkdown(msg)}** :)`);
+    return message.sem(`Queued up **${msg}** :)`);
   }
 }

@@ -18,9 +18,7 @@ export default class extends Command {
 
   public async exec(message: Message, { user }: { user: User }) {
     return message.util.send(
-      new VorteEmbed(message)
-        .baseEmbed()
-        .setImage(user.displayAvatarURL({ size: 2048 }))
+      new VorteEmbed(message).setImage(user.displayAvatarURL({ size: 2048 }))
     );
   }
 }

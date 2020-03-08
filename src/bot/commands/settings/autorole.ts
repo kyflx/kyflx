@@ -5,7 +5,7 @@ import { Flag } from "discord-akairo";
 export default class extends Command {
   public constructor() {
     super("autorole", {
-      aliases: ["auto-role", "ar"],
+      aliases: ["auto-role", "auto-roles"],
       description: t => t("cmds:conf.auto.desc"),
       channel: "guild",
       userPermissions: "MANAGE_ROLES",

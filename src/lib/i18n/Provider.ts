@@ -4,6 +4,7 @@ import { existsSync } from "fs";
 import { join } from "path";
 import Language from "./Language";
 import VorteClient from "../Client";
+import { readPath } from "../util";
 
 export default class LanguageProvider {
   public languages: Collection<string, Language> = new Collection();
@@ -65,15 +66,6 @@ export default class LanguageProvider {
         path: path.split(":")[1]
       };
     else data = { group: null, path };
-
-    const readPath = (object: string[], data: any): any => {
-      if (object.length > 0) {
-        data = data[object[0]];
-        if (!data) return;
-        return readPath(object.slice(1), data);
-      }
-      return data;
-    };
 
     return readPath(
       data.path.split("."),

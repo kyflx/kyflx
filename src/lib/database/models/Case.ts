@@ -23,7 +23,9 @@ export default class CaseEntity extends BaseEntity {
     | "kick"
     | "lockdown"
     | "slowmode"
-    | "warn";
+    | "warn"
+    | "roleAdd"
+    | "roleRemove";
 
   public constructor(
     id: number,

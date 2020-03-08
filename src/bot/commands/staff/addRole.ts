@@ -1,31 +1,32 @@
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
-import { GuildMember, Message, TextChannel } from "discord.js";
+import { GuildMember, Message, Role, TextChannel } from "discord.js";
+import { CaseEntity, Command, VorteEmbed } from "../../../lib";
 
-export default class extends Command {
+export default class AddRoleCommand extends Command {
   public constructor() {
-    super("ban", {
-      aliases: ["ban"],
+    super("add-role", {
+      aliases: ["add-role", "ar"],
       channel: "guild",
-      description: t => t("cmds:mod.ban.desc"),
-      userPermissions: ["BAN_MEMBERS"],
-      clientPermissions: ["BAN_MEMBERS"],
+      description: t => t("cmds:mod.ar.desc"),
       args: [
         {
-          id: "member",
+          id: "role",
+          type: "role",
           prompt: {
-            start: (_: Message) => _.t("cmds:mod.memb", { action: "ban" })
-          },
-          type: "member"
+            start: (_: Message) => _.t("cmds:mod.ar.role")
+          }
+        },
+        {
+          id: "member",
+          type: "member",
+          prompt: {
+            start: (_: Message) =>
+              _.t("cmds:mod.memb", { action: "add a role to" })
+          }
         },
         {
           id: "reason",
           default: "None given",
           match: "rest"
-        },
-        {
-          id: "yes",
-          match: "flag",
-          flag: ["-y", "--yes", ":y"]
         }
       ]
     });
@@ -35,14 +36,14 @@ export default class extends Command {
     message: Message,
     {
       member,
-      reason,
-      yes
-    }: { member: GuildMember; reason: string; yes: boolean }
+      role,
+      reason
+    }: { member: GuildMember; role: Role; reason: string }
   ) {
     if (message.deletable) await message.delete();
     if (member.id === message.member.id)
       return message
-        .sem(message.t("cmds:mod.ban.ursf"), { type: "error" })
+        .sem(message.t("cmds:mod.ar.ursf"), { type: "error" })
         .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
@@ -54,55 +55,44 @@ export default class extends Command {
         })
         .then(m => m.delete({ timeout: 6000 }));
 
-    if (!yes) {
-      const confirmed = await confirm(
-        message,
-        message.t("cmds:mod.confirm", { member, reason, action: "ban" })
-      );
-
-      if (!confirmed)
-        return message
-          .sem(message.t("cmds:mod.canc"))
-          .then(m => m.delete({ timeout: 6000 }));
-    }
-
     try {
-      await member.ban({ reason });
+      await member.roles.add(role);
       message
         .sem(
-          message.t("cmds:mod.done", {
+          message.t("cmds:mod.ar.done", {
+            role,
             member,
-            action: "Banned",
-            reason
+            reason,
+            action: "Added"
           })
         )
         .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
       this.logger.error(error, "ban");
       return message
-        .sem(message.t("cmds:mod.error", { member, action: "ban" }), {
+        .sem(message.t("cmds:mod.ar.error", { role, member }), {
           type: "error"
         })
         .then(m => m.delete({ timeout: 10000 }));
     }
 
-    const _case = new CaseEntity(++message._guild.cases, message.guild.id);
+    const _case = new CaseEntity(++message._guild.cases, member.guild.id);
     _case.reason = reason;
     _case.moderator = message.author.id;
     _case.subject = member.id;
-    _case.type = "ban";
+    _case.type = "roleAdd";
 
     await _case.save();
     await message._guild.save();
 
-    const { channel, enabled } = message._guild.log("ban", "audit");
+    const { channel, enabled } = message._guild.log("mute", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 
     return logs.send(
       new VorteEmbed(message)
         .setAuthor(
-          `Ban [ Case ID: ${_case.id} ]`,
+          `Role Add [ Case ID: ${_case.id} ]`,
           message.author.displayAvatarURL()
         )
         .setThumbnail(this.client.user.displayAvatarURL())
@@ -110,7 +100,8 @@ export default class extends Command {
           [
             `**Staff Member**: ${message.author} \`(${message.author.id})\``,
             `**Victim**: ${member.user} \`(${member.id})\``,
-            `**Reason**: ${reason}`
+            `**Reason**: ${reason}`,
+            `**Role:** ${role} \`(${role.id})\``
           ].join("\n")
         )
     );

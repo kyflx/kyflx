@@ -32,7 +32,6 @@ export default class extends Command {
         type: "error"
       });
 
-    //@ts-ignore
     const val = (message.queue.repeat[type] = !message.queue.repeat[type]);
     return message.sem(message.t("cmds:music.loop.res", { val, type }));
   }

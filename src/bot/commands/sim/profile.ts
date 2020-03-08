@@ -107,7 +107,6 @@ export default class extends Command {
           `RankCard-${message.author.username}.png`
         );
         const embed = new VorteEmbed(message)
-          .baseEmbed()
           .setTitle(message.author.username)
           .addField(
             "Economy",

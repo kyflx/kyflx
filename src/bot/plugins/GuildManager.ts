@@ -1,15 +1,15 @@
 import Logger from "@ayanaware/logger";
 import Discord from "discord.js";
-import ms = require("ms");
 import {
-  Plugin,
   CaseEntity,
+  formatString,
+  Plugin,
   ProfileEntity,
-  VorteEmbed,
   ReactionMenu,
   Subscribe,
-  formatString
+  VorteEmbed
 } from "../../lib";
+import ms = require("ms");
 
 export default class GuildManagerPlugin extends Plugin {
   public name: string = "guild_manager";
@@ -31,14 +31,17 @@ export default class GuildManagerPlugin extends Plugin {
             switch (x.type) {
               case "ban":
                 if ((await guild.fetchBans()).has(x.subject))
-                  await guild.members.unban(x.subject, "Times Up");
+                  await guild.members.unban(x.subject, "Time's Up");
                 break;
               case "mute":
                 const muteRole = guild.roles.resolve(_guild.muteRole);
-                guild.members
-                  .resolve(x.subject)
-                  .roles.remove(muteRole)
-                  .catch(null);
+                if (muteRole)
+                  guild.members
+                    .resolve(x.subject)
+                    .roles.remove(muteRole)
+                    .catch(e =>
+                      this.log.error(e, `unmute (G${guild.id} U${x.subject})`)
+                    );
                 break;
             }
 
@@ -52,8 +55,10 @@ export default class GuildManagerPlugin extends Plugin {
               chan.send(
                 new Discord.MessageEmbed()
                   .setColor(_guild.embedColor)
-                  .setTitle(`Temp. ${x.type.capitalize()} [ Case ID: ${x.id} ]`)
-                  .setDescription(
+                  .setAuthor(
+                    `Temp. ${x.type.capitalize()} [ Case ID: ${x.id} ]`
+                  )
+                  .setDescription(  
                     `**<@${x.subject}>** \`(${x.subject})\` is now ${
                       x.type === "ban" ? "unbanned" : "unmuted"
                     }.`
@@ -68,13 +73,12 @@ export default class GuildManagerPlugin extends Plugin {
   }
 
   public async checkWarns(message: Discord.Message, profile: ProfileEntity) {
-    const warns = profile.warns;
-    const punishment = message._guild.warnPunishments[warns];
+    const punishment = message._guild.warnPunishments[profile.warns];
     if (punishment) {
       const _case = new CaseEntity(++message._guild.cases, message.guild.id);
       _case.subject = profile.userId;
       _case.moderator = this.client.user.id;
-      _case.reason = `Reached ${warns} warns.`;
+      _case.reason = `Reached ${profile.warns} warns.`;
       _case.type = punishment.type;
       _case.other = punishment.duration
         ? {
@@ -95,7 +99,7 @@ export default class GuildManagerPlugin extends Plugin {
             [
               `**Staff Member**: ${this.client.user}`,
               `**Victim**: <@${profile.userId}> \`(${profile.userId})\``,
-              `**Reason**: Reached \`${warns}\` warns.`,
+              `**Reason**: Reached \`${profile.warns}\` warns.`,
               punishment.duration
                 ? `**Duration**: ${ms(punishment.duration, {
                     long: true
@@ -123,7 +127,7 @@ export default class GuildManagerPlugin extends Plugin {
 
       embed.setAuthor(
         `${
-          punishment.duration ? `Temp ` : ""
+          punishment.duration ? `Temp. ` : ""
         }${punishment.type.capitalize()} [ Case ID: ${_case.id} ]`
       );
 
@@ -225,16 +229,19 @@ export default class GuildManagerPlugin extends Plugin {
     const { channel, enabled } = guild.log("memberJoined", "audit");
     if (enabled && channel) {
       const tc = member.guild.channels.resolve(channel) as Discord.TextChannel;
-      if (tc) {
-        await tc.send(formatString(guild.welcomeMessage, member));
+      if (tc) tc.send(formatString(guild.welcomeMessage, member));
+    }
+
+    if (guild.verification.type) {
+      switch (guild.verification.type) {
+        case "captcha":
+          break;
+        case "command":
+          break;
       }
     }
 
-    if (guild.verification.type)
-      switch (guild.verification.type) {
-        case "captcha":
-        case "command":
-      }
+    if (guild.autoRoles.length > 0) await member.roles.add(guild.autoRoles);
   }
 
   @Subscribe("guildBanAdd")

@@ -19,7 +19,6 @@ export default class UserInfoCommand extends Command {
 
   public async exec(message: Message, { member }: { member: GuildMember }) {
     const infoEmbed = new VorteEmbed(message)
-      .baseEmbed()
       .setDescription(
         [
           `**Name**: ${member.user.tag} (${member.id})`,

@@ -1,4 +1,4 @@
-import { Listener } from "../../../lib";
+import { Listener, ProfileEntity } from "../../../lib";
 import DBL from "dblapi.js";
 import WebServer from "../../../web/server";
 
@@ -12,14 +12,24 @@ export default class BotReady extends Listener {
 
   async exec(client = this.client) {
     (this.client as any).guild_manager.onReady();
-    // new WebServer(client).init();
-    client.user!.setPresence({
-      activity: {
-        name: "VorteKore | v!help",
-        type: "STREAMING",
-        url: "https://twitch.tv/vortekore"
-      }
-    });
+    const server = new WebServer(client);
+    await server.init();
+
+    let activities = [
+        `${client.guilds.cache.size} guilds!`,
+        `${
+          client.commands.modules.filter(c => c.categoryID !== "flag").size
+        } commands!`,
+        `${client.users.cache.size} users!`
+      ],
+      i = 0;
+    setInterval(() =>
+      client.user.setActivity(
+        `VorteKore | ${activities[i++ % activities.length]}`,
+        { type: "STREAMING", url: "https://twitch.tv/melike2d" }
+      ),
+      10000
+    );
 
     if (process.env.NODE_ENV === "production") {
       const dbl = new DBL(client.config.get("DBL_TOKEN"), this.client);

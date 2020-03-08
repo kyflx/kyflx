@@ -1,4 +1,10 @@
-import { Command, CommandDescription, VorteEmbed } from "../../../lib";
+import {
+  Command,
+  CommandDescription,
+  VorteEmbed,
+  developers,
+  CategoryPredicate
+} from "../../../lib";
 import { Message } from "discord.js";
 
 export default class HelpCommand extends Command {
@@ -16,7 +22,7 @@ export default class HelpCommand extends Command {
   }
 
   public async exec(message: Message, { command }: { command: Command }) {
-    const helpEmbed = new VorteEmbed(message).baseEmbed();
+    const helpEmbed = new VorteEmbed(message);
 
     if (!command) {
       helpEmbed.setAuthor("All Commands", message.author.displayAvatarURL());
@@ -24,20 +30,19 @@ export default class HelpCommand extends Command {
         "**Syntax**: <Required> [Optional] <[Depends on Previous Argument]> "
       );
 
-      for (const [name, category] of this.client.commands.categories.filter(
-        c => c.id !== "flag"
-      )) {
-        if (category.size)
+      this.handler.categories
+        .filter(CategoryPredicate(message))
+        .each((category, name) =>
           helpEmbed.addField(
-            `**•** ${name.replace(/(\b\w)/gi, lc => lc.toUpperCase())} [ ${
+            `**•** ${name.replace(/(\b\w)/gi, lc => lc.toUpperCase())} (${
               category.size
-            } ]`,
+            })`,
             category
               .filter(c => (c.aliases ? c.aliases.length > 0 : false))
               .map(c => `\`${c.aliases[0]}\``)
-              .join(", ") || "oof"
-          );
-      }
+              .join(", ")
+          )
+        );
 
       return message.util.send(helpEmbed);
     }
