@@ -39,7 +39,7 @@ export enum SFW_LINKS {
   neko = `https://nekos.life/api/v2/img/neko`,
   nekoGif = `https://nekos.life/api/v2/img/ngif`,
   owl = "https://www.reddit.com/r/owls.json?limit=100",
-  panda = "https://www.imgur.com/r/panda.json?limit=100",
+  panda = "https://www.imgur.com/r/panda/hot.json?limit=100",
   pat = `https://nekos.life/api/v2/img/pat`,
   penguin = "https://www.reddit.com/r/penguin.json?limit=100",
   poke = `https://nekos.life/api/v2/img/poke`,
