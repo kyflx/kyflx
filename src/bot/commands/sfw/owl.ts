@@ -4,7 +4,7 @@ import { Message } from "discord.js";
 export default class extends Command {
   public constructor() {
     super("owl", {
-      aliases: ["meme", "joke"],
+      aliases: ["owl"],
       description: t => t("cmds:sfw.owl.desc")
     });
   }
