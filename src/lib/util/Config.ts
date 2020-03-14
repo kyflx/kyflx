@@ -15,6 +15,7 @@ export interface ConfigData {
   YOUTUBE_API_KEY: string;
   DBL_TOKEN: string;
   EXCLUDED_COMMANDS: string[]
+  "BOTLIST.SPACE-TOKEN": string;
 }
 
 export type IConfig<T = ConfigData> = Record<

@@ -1,5 +1,5 @@
-import { Listener, ProfileEntity } from "../../../lib";
 import DBL from "dblapi.js";
+import { Listener } from "../../../lib";
 import WebServer from "../../../web/server";
 
 export default class BotReady extends Listener {

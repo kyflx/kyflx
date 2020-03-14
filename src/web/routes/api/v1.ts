@@ -60,7 +60,7 @@ export default class V1Router extends APIRouter {
     if (req.headers.authorization !== process.env.DBL_WEB)
       return res.status(400);
     if (req.body.type === "test") {
-      return this.server.logger.info("DBL Test Success!");
+      return this.client.logger.info("DBL Test Success!");
     }
 
     const user = this.client.users.resolve(req.body.user);
@@ -71,9 +71,31 @@ export default class V1Router extends APIRouter {
         `${
           user ? `**${user}** \`(${req.body.user})\`` : req.body.user
         } voted for VorteKore on [top.gg](https://top.gg/bot/634766962378932224/)!`
-      );
+      )
+      .setFooter("VorteKore")
+      .setTimestamp(new Date());
 
     logs.send(embed);
     return res.status(200);
+  }
+
+  @Post("/botls")
+  public async botlistSpaceVote(req: Request, res: Response) {
+    if (
+      req.headers.authorization ===
+      this.client.config.get("BOTLIST.SPACE-TOKEN")
+    ) {
+      const embed = new MessageEmbed()
+        .setColor("0c6dcf")
+        .setTitle("botlist.space vote")
+        .setDescription(
+          `<@${req.body.user.id}> \`(${req.body.user.id})\` voted for VorteKore on [botlist.space](https://botlist.space/bot/634766962378932224/)!`
+        )
+        .setFooter("VorteKore")
+        .setTimestamp(req.body.timestamp);
+
+      logs.send(embed);
+      return res.status(200);
+    }
   }
 }
