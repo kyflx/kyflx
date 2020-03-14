@@ -125,7 +125,7 @@ export function Post(
     descriptor: TypedPropertyDescriptor<any>
   ) {
     applyDecorator(
-      RESTMethod.GET,
+      RESTMethod.POST,
       path,
       target,
       propertyKey,
@@ -150,7 +150,7 @@ export function Put(
     descriptor: TypedPropertyDescriptor<any>
   ) {
     applyDecorator(
-      RESTMethod.GET,
+      RESTMethod.PUT,
       path,
       target,
       propertyKey,
@@ -175,7 +175,7 @@ export function Patch(
     descriptor: TypedPropertyDescriptor<any>
   ) {
     applyDecorator(
-      RESTMethod.GET,
+      RESTMethod.PATCH,
       path,
       target,
       propertyKey,
@@ -195,7 +195,7 @@ export function Delete(
     descriptor: TypedPropertyDescriptor<any>
   ) {
     applyDecorator(
-      RESTMethod.GET,
+      RESTMethod.DELETE,
       path,
       target,
       propertyKey,

@@ -27,7 +27,7 @@ export default class MissingPermissionsListener extends Listener {
     } else if (clientOrUser === "user") {
       if (missing === "DJ")
         return message.sem(
-          `Sorry, you need the role <@&${message._guild.muteRole}> to run this command`,
+          `Sorry, you need the role <@&${message._guild.djRole}> to run this command`,
           { type: "error" }
         );
       return message.sem(

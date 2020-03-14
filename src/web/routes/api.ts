@@ -18,10 +18,10 @@ export default class V1Router extends APIRouter {
     return res.status(200).json(stats.register.getMetricsAsJSON());
   }
 
-  @Post("/dbl", (req, res, next) =>
-    req.headers.authorization === process.env.DBL_WEB ? next() : res.status(400)
-  )
+  @Post("/dbl")
   public async dblVote(req: Request, res: Response) {
+    if (req.headers.authorization !== process.env.DBL_WEB)
+      return res.status(400);
     if (req.body.type === "test") {
       return this.server.logger.info("DBL Test Success!");
     }
