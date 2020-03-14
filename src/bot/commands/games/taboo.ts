@@ -1,26 +1,5 @@
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, VorteEmbed, wordArr } from "../../../lib";
 import { Message } from "discord.js";
-import ms = require("ms");
-
-let wordArr: string[] = [
-  "computer",
-  "laptop",
-  "internet",
-  "discord",
-  "food",
-  "water",
-  "cow",
-  "cat",
-  "dog",
-  "sheep",
-  "jester",
-  "math",
-  "global",
-  "information",
-  "game",
-  "video",
-  "example"
-];
 
 export default class TabooGameCommand extends Command {
   public constructor() {
@@ -60,7 +39,7 @@ export default class TabooGameCommand extends Command {
       .awaitMessages((message: Message) => message.content.ignoreCase(word), {
         max: 1,
         errors: ["time"],
-        time: ms("2m")
+        time: 120000
       })
       .then(
         async all => {
@@ -68,7 +47,7 @@ export default class TabooGameCommand extends Command {
           if (first.author.id === message.author.id)
             return message.sem(message.t("cmds:fun.tab.cheat"), { _new: true });
 
-          const amount = Math.floor(Math.random() * 100) + 5;
+          const amount = Math.floor(Math.random() * 100) + 25;
           const profile = await this.client.findOrCreateProfile(
             first.author.id,
             first.guild.id

@@ -7,11 +7,12 @@ import {
 } from "discord.js";
 import ms from "ms";
 import { Language, logs, GuildEntity, WarnPunishment, PUNS } from "../../lib";
+import { MafiaWins } from "../commands/games/mafia/end";
 
 export default class English extends Language {
   public constructor() {
     super("en_US", {
-      authors: ["MeLike2D"],
+      authors: ["MeLike2D", "Chaos_Phoe"],
       displayName: "English",
       aliases: ["en", "english", "ingles"]
     });
@@ -210,6 +211,62 @@ export default class English extends Language {
               `Okay! ${_.author} has started a game of taboo! They can choose to give you hints.`,
             dm: `The word is \`{{word}}\`, you can choose to give them hints. *make sure you don't say the word!*`,
             cheat: `Really, the host has cheated... smh`
+          }
+        },
+        games: {
+          maf: {
+            desc: {
+              content: "Play mafia in your discord server!",
+              usage: "",
+              examples: []
+            },
+            alr: (m: Message) =>
+              `A game has already been started, use \`${m.util.parsed.prefix}mafia end\` to end it.`,
+            conf: "You have to configure mafia before starting a game.",
+            start: (m: Message) =>
+              `Okay, I started a game of mafia! Use \`${m.util.parsed.prefix}mafia join\` to join.`,
+            create: (m: Message) =>
+              `There isn't an active mafia game, use \`${m.util.parsed.prefix}mafia create\` to create a game.`,
+            end: (wins: MafiaWins) =>
+              `The **${wins[0]}** wons!!\n Congrats ${wins[1]
+                .map(p => `**<@${p.id}>**`)
+                .join(", ")}`,
+            cancel: "Okay, I cancelled the game.",
+            wait: "The game hasn't started yet, please wait until then.",
+            it: "Sorry, you can only investigate a player once per night.",
+            investi: (u: GuildMember, r: boolean) =>
+              `Suspect **${u.user.tag}** is ${r ? "a" : "not a"} mafia member.`,
+            urm: "Mafia moderators can't be apart of the game, sorry :/",
+            alrj: (m: Message) =>
+              `You have already joined the game, if you want to leave, use \`${m.util.parsed.prefix}mafia leave\`.`,
+            joined:
+              "Added you to the player list, your role will be DMed when the game starts! Use `m!leave` to leave the lobby.",
+            uprompt: "Provide someone that's alive and is apart of the game.",
+            ckm1: "Sorry, you can't kill more than 1 person.",
+            pend: (u: GuildMember) =>
+              `**${u.user.tag}** now has a pending kill. *It can be stopped if they are investigated"`,
+            join: "You haven't joined the game.",
+            left: "Okay! I removed you from the lobby.",
+            csm1: "You can't save more than one person per night.",
+            alrs:
+              "The game has already started, please wait until the moderator has started a new one.",
+            finish:
+              "Sorry, the game is in progress. Please wait until it's over.",
+            saved: (p: GuildMember) =>
+              `**${p.user.tag}** is protected for tonight.`,
+            prompt: [
+              "Play a game of mafia in your discord server!",
+              "**• create (mod)**: Create a game of mafia.",
+              "**• end (mod)**: End/cancel an active game of mafia",
+              "**• investigate (detective)**: Investigate a player within the game.",
+              "**• join**: Joins the player lobby.",
+              "**• kill (mafia)**: Kill a living player.",
+              "**• leave**: Leave the lobby before it starts.",
+              "**• save (doctor)**: Save a player from being killed by the mafia.",
+              "**• sleep (mod)**: Makes the channel's mafia role sleep, i.e. #detective `v!mafia sleep`",
+              "**• start (mod)**: Starts the game of mafia.",
+              "**• wake (mod)**: Like sleep, but it wakes them up instead."
+            ]
           }
         },
         sfw: {
@@ -665,6 +722,19 @@ export default class English extends Language {
             perms: (roles: Role[]) =>
               `The following roles cannot be used: ${roles.join(", ")}`
           },
+          chan: {
+            desc: {
+              content: "Configure the game channels.",
+              usage: "[daytime|detective|doctor|mafia] <[channel]>",
+              examples: [
+                "v!mafia-channels detective #detective-talk",
+                "v!mafia-channels daytime #daytime-talk"
+              ]
+            },
+            cur: (_: Message) => `oof...`,
+            set: (_: TextChannel) =>
+              `Okay! I set the **{{id}}** channel to ${_} \`(${_.id})\``
+          },
           dj: {
             desc: {
               content: [
@@ -700,6 +770,24 @@ export default class English extends Language {
             res: (lang: Language) =>
               `Okay, I changed the language to ${lang.displayName} \`(${lang.id})\`.`
           },
+          lims: {
+            desc: {
+              content: "Manage the role limits for the mafia game.",
+              usage: "[detective|doctor|mafia|villager] <[limit]>",
+              examples: ["v!mafia-limits detective 2", "v!mafia-limits mafia 5"]
+            },
+            cur(message: Message) {
+              const guild = message._guild.games.mafia;
+              return [
+                `The current limits are:`,
+                `**1.** Detective: ${guild.detectiveLimit}`,
+                `**2.** Doctor: ${guild.doctorLimit}`,
+                `**3.** Mafia: ${guild.mafiaLimit}`,
+                `**4.** Villager: ${guild.villagerLimit}`
+              ].join("\n");
+            },
+            limit: "Please provide a limit for the **{{role}}** role"
+          },
           logs: {
             desc: {
               content: [
@@ -726,7 +814,7 @@ export default class English extends Language {
                   : `the void...`
               }\n **Enabled Events**: ${Object.keys(message._guild.logs)
                 .filter(k => !channelKeys.includes(k) && message._guild.logs[k])
-                .map(key => `\`${key}\``) 
+                .map(key => `\`${key}\``)
                 .join(", ") || "Wow nothing"}`,
             chief: "Sorry, can't do anything about that chief...",
             de: (filtered: string[], action: string, all: boolean) =>
@@ -776,6 +864,22 @@ export default class English extends Language {
             disable:
               "Okay, I disabled level up messages! Do `lum enable` to enable them again."
           },
+          modr: {
+            desc: {
+              content: "Sets the moderator role for the guild.",
+              usage: "[mention|name|id]",
+              examples: [
+                "v!moderatorRole Mafia Moderator",
+                "v!moderatorRole @Mafia Moderator",
+                "v!moderatorRole 655607092891353109"
+              ]
+            },
+            cur: ({ _guild: { games } }: Message) =>
+              games.mafia.moderatorRole
+                ? `The current mafia moderator role is **<@&${games.mafia.moderatorRole}>**.`
+                : "There is no mafia moderator role setup. Use `v!mafia-moderator` to set it.",
+            new: "Configured the moderator role to **{{moderator}}**."
+          },
           mtr: {
             desc: {
               content: [
@@ -800,7 +904,24 @@ export default class English extends Language {
             clear:
               "Okay, I cleared the mute role! To set a new one do `muterole set <role>`!",
             set: (role: Role) =>
-              `Okay, I set the mute role to ${role} \`(${role.id})\``
+              `Okay, I set the mute role to ${role} \`(${role.id})\``,
+            new: `Configured the player role to **{{}}**.`
+          },
+          play: {
+            desc: {
+              content: "Sets the player role for the guild.",
+              usage: "[mention|name|id]",
+              examples: [
+                "v!playerRole player",
+                "v!playerRole @player",
+                "v!playerRole 655607092891353109"
+              ]
+            },
+            cur: ({ _guild: { games } }: Message) =>
+              games.mafia.playerRole
+                ? `The current player role is **<@&${games.mafia.playerRole}>**.`
+                : "There is no player role setup. Use `m!playerRole` to set it.",
+            new: `Configured the player role to **{{player}}**.`
           },
           prf: {
             desc: {

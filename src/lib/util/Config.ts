@@ -14,6 +14,7 @@ export interface ConfigData {
   MAINTENANCE: boolean;
   YOUTUBE_API_KEY: string;
   DBL_TOKEN: string;
+  EXCLUDED_COMMANDS: string[]
 }
 
 export type IConfig<T = ConfigData> = Record<

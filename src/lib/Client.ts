@@ -7,10 +7,11 @@ import Node, { Player } from "lavalink";
 import { join } from "path";
 
 /* Custom Classes */
-import { Plugin, CommandHandler, Queue, VorteEmbed } from "./classes";
-import { Database, GuildEntity, ProfileEntity, TagEntity } from "./database";
+import { Plugin, CommandHandler, Queue, VorteEmbed, GameManager } from "./classes";
+import { GuildEntity, ProfileEntity, TagEntity } from "./database";
 import { LanguageProvider } from "./i18n";
 import { Config, ConfigData, developers } from "./util";
+import Database from "../bot/plugins/Database";
 
 declare module "discord.js" {
   interface Message {
@@ -22,7 +23,7 @@ declare module "discord.js" {
 
     sem(
       content: string,
-      options?: { type?: "normal" | "error", t?: boolean, _new?: boolean },
+      options?: { type?: "normal" | "error"; t?: boolean; _new?: boolean },
       i?: Record<string, any>
     ): Promise<Message>;
 
@@ -33,6 +34,7 @@ declare module "discord.js" {
 declare module "discord-akairo" {
   interface AkairoClient {
     plugins: Map<string, Plugin>;
+    games: GameManager;
     commands: CommandHandler;
     events: ListenerHandler;
     config: Config<ConfigData>;
@@ -64,6 +66,7 @@ declare module "lavalink" {
 
 export default class VorteClient extends AkairoClient {
   public plugins: Map<string, Plugin> = new Map();
+  public games: GameManager = new GameManager(this);
   public database = new Database(this);
 
   public developers = developers;
@@ -113,7 +116,11 @@ export default class VorteClient extends AkairoClient {
       handleEdits: true,
       commandUtil: true,
       allowMention: true,
-      loadFilter: () => !this.maintenance,
+      loadFilter: f => {
+        if (this.maintenance) return false;
+        let excluded = this.config.get("EXCLUDED_COMMANDS").map(c => join(this.directory, "commands", c));
+        return excluded.length > 0 ? !excluded.some(e => f.includes(e)) : true;
+      },
       argumentDefaults: {
         prompt: {
           modifyStart: (_: Message, p: string) =>
@@ -183,7 +190,7 @@ export default class VorteClient extends AkairoClient {
     this.commands.loadAll();
     this.events.loadAll();
 
-    await this.database.onReady();
+    this.once("ready", () => this.plugins.forEach(p => p.onReady()));
 
     return super.login(token);
   }

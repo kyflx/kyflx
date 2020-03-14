@@ -77,10 +77,10 @@ export default class extends Command {
         const ctx = canvas.getContext("2d");
         const xpNeed = 2 * (75 * level);
         const image = await loadImage(
-          join(process.cwd(), "images/rank-card.png")
+          join(process.cwd(), "assets/rank-card.png")
         );
         const pfp = await loadImage(
-          message.author.displayAvatarURL().replace(".webp", ".png")
+          message.author.displayAvatarURL({ format: "png" })
         );
         const lineLength = Math.round((xp / xpNeed) * 458);
 

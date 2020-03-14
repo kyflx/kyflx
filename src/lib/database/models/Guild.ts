@@ -5,8 +5,23 @@ import {
   GuildEntityChannels,
   GuildLogsMap,
   WarnPunishment,
-  VerifySettings
+  VerifySettings,
+  GamesObject
 } from ".";
+
+export const MafiaDefault = {
+  daytime: "",
+  detective: "",
+  doctor: "",
+  mafia: "",
+  detectiveLimit: 1,
+  doctorLimit: 1,
+  mafiaLimit: 2,
+  villagerLimit: 3,
+  playerRole: "",
+  moderatorRole: "",
+  configured: false
+};
 
 @Entity()
 export default class GuildEntity extends BaseEntity {
@@ -16,9 +31,11 @@ export default class GuildEntity extends BaseEntity {
   @Column() public lvlUpChannel: Snowflake = "";
   @Column() public lvlUpMsg: boolean = true;
   @Column() public prefixes: string[] = ["v!"];
-  @Column() public language: string = "en_US";
+  @Column() public language = "en_US";
   @Column() public embedColor: number = 814543;
-  @Column() public games: Record<string, any> = {}
+  @Column() public games: GamesObject = {
+    mafia: MafiaDefault
+  };
 
   @Column() public djRole: Snowflake = "";
   @Column() public muteRole: Snowflake = "";

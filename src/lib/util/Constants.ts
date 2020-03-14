@@ -49,6 +49,34 @@ export enum SFW_LINKS {
   wolf = "https://www.reddit.com/r/wolves.json?limit=100",
 }
 
+export const wordArr: string[] = [
+  "computer",
+  "laptop",
+  "internet",
+  "discord",
+  "food",
+  "water",
+  "cow",
+  "cat",
+  "dog",
+  "sheep",
+  "jester",
+  "math",
+  "global",
+  "information",
+  "game",
+  "video",
+  "example",
+  "paper",
+  "rock",
+  "mutual",
+  "risk",
+  "joker",
+  "Coco-Cola",
+  "message",
+  "email"
+];
+
 export enum FUN_LINKS {
   why = `https://nekos.life/api/v2/why`,
   catText = `https://nekos.life/api/v2/cat`,
@@ -80,7 +108,7 @@ export const Presences: Record<string, string> = {
 };
 
 export enum LogChannels {
-  GUILDS = "613827877015650304"
+  BOT_LOGS = "613827877015650304"
 }
 
 export enum PUNS {

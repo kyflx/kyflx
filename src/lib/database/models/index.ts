@@ -1,4 +1,5 @@
 import { Snowflake } from "discord.js";
+import { MafiaDBObject } from "../../games";
 
 export { default as CaseEntity } from "./Case";
 export { default as GuildEntity } from "./Guild";
@@ -9,6 +10,14 @@ export interface CaseEdit {
   date: number;
   moderation: string;
   props: string;
+}
+
+export interface GamesObject extends Record<string, {}> {
+  mafia: MafiaDBObject;
+  taboo?: {
+    host: Snowflake;
+    word: string;
+  }
 }
 
 export interface GuildLogsMap {
@@ -44,7 +53,7 @@ export interface Verify {
   type: "captcha" | "reaction" | "command" | "message";
   role: string[];
   channel: string;
-  onFail: "kick" | "ban"
+  onFail: "kick" | "ban";
 }
 
 export interface VerifyReaction extends Verify {

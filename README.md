@@ -12,7 +12,8 @@ VorteKore is a multi-purpose discord bot focusing on Music and Staff (Moderation
 
 ⚙️ Guild Configuration  
 📟 Over 80 Commands  
-🐛 Daily Bug Fixes, Updates and new features.  
+🐛 Daily Bug Fixes, Updates and new features.
+🗣️ Support for more languages.
 
 ### Commands
 
@@ -31,6 +32,7 @@ Things that are coming soon:
 - Reaction Role Setup
 - Case Management
 - Sim Commands
+- More Languages (German, Romanian).
 
 #### "Automod"
 

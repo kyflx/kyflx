@@ -6,6 +6,7 @@ import {
   Listener as AkairoListener
 } from "discord-akairo";
 import { Message } from "discord.js";
+import VorteClient from "../Client";
 
 export type Translatable<T extends any> = (
   translate: (path: string, i?: Record<string, any>) => any
@@ -23,6 +24,7 @@ interface ExtendedOptions extends CommandOptions {
 
 export class Command extends AkarioCommand {
   public logger: Logger = Logger.get(Command);
+  public client: VorteClient;
 
   public constructor(id: string, options: ExtendedOptions = {}) {
     super(id, options);

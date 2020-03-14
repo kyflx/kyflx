@@ -2,7 +2,6 @@ import {
   Command,
   CommandDescription,
   VorteEmbed,
-  developers,
   CategoryPredicate
 } from "../../../lib";
 import { Message } from "discord.js";

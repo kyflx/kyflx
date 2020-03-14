@@ -1,5 +1,6 @@
-import { Guild, MessageEmbed, TextChannel } from "discord.js";
-import { GuildEntity, Listener, LogChannels } from "../../../lib";
+import { Guild, MessageEmbed } from "discord.js";
+import { logs } from "../../..";
+import { GuildEntity, Listener } from "../../../lib";
 
 export default class GuildDeleteListener extends Listener {
   public constructor() {
@@ -11,8 +12,6 @@ export default class GuildDeleteListener extends Listener {
 
   async exec(guild: Guild) {
     await GuildEntity.delete({ guildId: guild.id });
-
-    const logs = <TextChannel>this.client.channels.resolve(LogChannels.GUILDS);
     return logs.send(
       new MessageEmbed({
         thumbnail: guild.iconURL() ? { url: guild.iconURL()! } : {}

@@ -1,9 +1,13 @@
 import Logger from "@ayanaware/logger";
 import { createConnection } from "typeorm";
-import Plugin from "../classes/Plugin";
-import GuildProvider from "./GuildProvider";
-import { CaseEntity, GuildEntity, ProfileEntity } from "./models";
-import TagEntity from "./models/Tag";
+import {
+  CaseEntity,
+  GuildEntity,
+  ProfileEntity,
+  TagEntity,
+  GuildProvider,
+  Plugin
+} from "../../lib";
 
 export default class Database extends Plugin {
   public name = "database";

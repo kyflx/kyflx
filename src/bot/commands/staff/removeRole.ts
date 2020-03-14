@@ -41,10 +41,6 @@ export default class RemoveRoleCommand extends Command {
     }: { member: GuildMember; role: Role; reason: string }
   ) {
     if (message.deletable) await message.delete();
-    if (member.id === message.member.id)
-      return message
-        .sem(message.t("cmds:mod.rr.ursf"), { type: "error" })
-        .then(m => m.delete({ timeout: 6000 }));
 
     const mh = member.roles.highest,
       uh = message.member.roles.highest;
