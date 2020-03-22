@@ -1,10 +1,10 @@
+import { Message } from "discord.js";
 import {
+  CategoryPredicate,
   Command,
   CommandDescription,
-  VorteEmbed,
-  CategoryPredicate
+  VorteEmbed
 } from "../../../lib";
-import { Message } from "discord.js";
 
 export default class HelpCommand extends Command {
   public constructor() {
@@ -59,7 +59,7 @@ export default class HelpCommand extends Command {
     helpEmbed.setDescription(
       [
         description.content ? `${description.content}\n` : null,
-        `**Aliases**: ${(command.aliases as string[])
+        `**Aliases**: ${command.aliases
           .slice(1)
           .map(a => `\`${a}\``)
           .join(", ") || "None"}`

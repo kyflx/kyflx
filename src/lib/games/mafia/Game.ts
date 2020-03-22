@@ -1,48 +1,45 @@
-import { Collection } from "discord.js";
+import { Collection, TextChannel } from "discord.js";
+import { MafiaEmbed, VorteClient } from "../../../lib";
+import { GuildSettings } from "../../database";
 import { MafiaNight } from "./Night";
 import { MafiaPlayer } from "./Player";
-import { TextChannel } from "discord.js";
-import { GuildEntity, VorteClient, MafiaEmbed } from "../..";
 
 export type MafiaRole = "villager" | "doctor" | "detective" | "mafia";
 
-const Roles: MafiaRole[] = ["villager", "doctor", "detective", "mafia"];
+const roles: Array<MafiaRole> = ["villager", "doctor", "detective", "mafia"];
 export type MafiaChannel = "doctor" | "detective" | "mafia" | "daytime";
 
 export class MafiaGame {
   public night: number = 0;
-  public nights: Collection<number, MafiaNight>;  
+  public nights: Collection<number, MafiaNight>;
   public channels: Collection<MafiaChannel, TextChannel>;
-  public sorted: Collection<MafiaRole, MafiaPlayer[]>;
+  public sorted: Collection<MafiaRole, Array<MafiaPlayer>>;
   public started: boolean = false;
-  public entry: GuildEntity;
+  public entry: GuildSettings;
 
   public constructor(public client: VorteClient, public guild: string) {
     let i = 0;
 
-    this.entry = client.database.guilds.items.get(guild);
+    this.entry = client.ensureGuild(guild);
     this.nights = new Collection();
     this.channels = new Collection();
     this.sorted = new Collection(
       Array(4)
         .fill(null)
-        .map(() => [Roles[i++], []])
+        .map(() => [roles[i++], []])
     );
   }
 
-  public get players(): MafiaPlayer[] {
+  public get players(): Array<MafiaPlayer> {
     const players = [];
     for (const role of this.sorted.array()) players.push(...role);
     return players;
   }
 
   public setupChannels(channel: (role: MafiaChannel) => TextChannel): void {
-    for (const ch of <MafiaChannel[]>[
-      "doctor",
-      "detective",
-      "mafia",
-      "daytime"
-    ])
+    for (const ch of ["doctor", "detective", "mafia", "daytime"] as Array<
+      MafiaChannel
+    >)
       this.channels.set(ch, channel(ch));
   }
 
@@ -68,7 +65,7 @@ export class MafiaGame {
     const night = new MafiaNight(this, this.night);
 
     this.sorted.forEach(async (p, r) => {
-      const channel = this.channels.get(<MafiaChannel>r);
+      const channel = this.channels.get(r as MafiaChannel);
       p.forEach(async ({ id }) => {
         if (channel)
           await channel.updateOverwrite(id, {
@@ -87,7 +84,7 @@ export class MafiaGame {
     });
 
     this.nights.set(night.count, night);
-    daytime.updateOverwrite(this.entry.games.mafia.playerRole, {
+    await daytime.updateOverwrite(this.entry.games.mafia.playerRole, {
       SEND_MESSAGES: false,
       VIEW_CHANNEL: true
     });
@@ -101,9 +98,9 @@ export class MafiaGame {
   }
 
   public async sleep(role?: "detective" | "doctor" | "mafia") {
-    let channel = this.channels.get(role || "daytime"),
+    const channel = this.channels.get(role || "daytime"),
       daytime = this.channels.get("daytime");
-    let overwrite = { SEND_MESSAGES: false, VIEW_CHANNEL: true };
+    const overwrite = { SEND_MESSAGES: false, VIEW_CHANNEL: true };
 
     switch (role) {
       case "detective":
@@ -112,26 +109,27 @@ export class MafiaGame {
         this.sorted
           .get(role)
           .forEach(({ id }) => channel.createOverwrite(id, overwrite));
-        daytime.send(
-          MafiaEmbed(`Sleep ${role.capitalize()}.`)
-        );
-        channel.send(MafiaEmbed("Sleep!", this.entry));
+        await daytime.send(MafiaEmbed(`Sleep ${role.capitalize()}.`));
+        await channel.send(MafiaEmbed("Sleep!", this.entry));
         break;
       default:
         this.night++;
         this.nights.set(this.night, new MafiaNight(this, this.night));
 
-        daytime.createOverwrite(this.entry.games.mafia.playerRole, overwrite);
-        daytime.send(
+        await daytime.createOverwrite(
+          this.entry.games.mafia.playerRole,
+          overwrite
+        );
+        await daytime.send(
           MafiaEmbed(`It's now **Night ${this.night}**, you cannot talk now.`)
         );
         break;
     }
   }
   public async wake(role?: "detective" | "doctor" | "mafia") {
-    let channel = this.channels.get(role || "daytime"),
+    const channel = this.channels.get(role || "daytime"),
       daytime = this.channels.get("daytime");
-    let overwrite = { SEND_MESSAGES: true, VIEW_CHANNEL: true };
+    const overwrite = { SEND_MESSAGES: true, VIEW_CHANNEL: true };
 
     switch (role) {
       case "detective":
@@ -140,19 +138,22 @@ export class MafiaGame {
         this.sorted
           .get(role)
           .forEach(({ id }) => channel.createOverwrite(id, overwrite));
-        daytime.send(
-          MafiaEmbed(`Wakeup ${role.capitalize()}.`)
-        );
-        channel.send(MafiaEmbed("Wake Up!"));
+        await daytime.send(MafiaEmbed(`Wakeup ${role.capitalize()}.`));
+        await channel.send(MafiaEmbed("Wake Up!"));
         break;
       default:
-        daytime.createOverwrite(this.entry.games.mafia.playerRole, overwrite);
+        await daytime.createOverwrite(
+          this.entry.games.mafia.playerRole,
+          overwrite
+        );
         const wakeup = [
           "🎵 *Rise and Shine!!* 🎵",
           "Good Morning Players!",
           "WAKE UP!!!!"
         ];
-        daytime.send(MafiaEmbed(wakeup[Math.floor(Math.random() * wakeup.length)]));
+        await daytime.send(
+          MafiaEmbed(wakeup[Math.floor(Math.random() * wakeup.length)])
+        );
         break;
     }
   }
@@ -166,7 +167,7 @@ export class MafiaGame {
     };
   }
 
-  private get available(): MafiaRole[] {
+  private get available(): Array<MafiaRole> {
     const _ = [
       ["mafia", this.entry.games.mafia.mafiaLimit],
       ["villager", this.entry.games.mafia.villagerLimit],
@@ -175,7 +176,11 @@ export class MafiaGame {
     ];
 
     return this.sorted.reduce(
-      (a: MafiaRole[], v: MafiaPlayer[] | MafiaPlayer, k: MafiaRole) =>
+      (
+        a: Array<MafiaRole>,
+        v: Array<MafiaPlayer> | MafiaPlayer,
+        k: MafiaRole
+      ) =>
         Array.isArray(v)
           ? _.some(r => r[0] === k)
             ? v.length < _.find(r => r[0] === k)[1]

@@ -6,7 +6,7 @@ import {
   TextChannel
 } from "discord.js";
 import ms from "ms";
-import { Language, logs, GuildEntity, WarnPunishment, PUNS } from "../../lib";
+import { GuildEntity, GuildSettings, Language, logs, PUNS, WarnPunishment } from "../../lib";
 import { MafiaWins } from "../commands/games/mafia/end";
 
 export default class English extends Language {
@@ -29,7 +29,9 @@ export default class English extends Language {
       },
       automod: {
         warns: {
-          error: ""
+          error: "Oh no, `Automod` has ran into an error:\n```js\n{{error}}```",
+          mtr: "Could I create a mute role to perform an automated mute?",
+          cancelled: "An automod action was cancelled for reason: `{{reason}}`"
         }
       },
       evts: {
@@ -156,12 +158,12 @@ export default class English extends Language {
               "As I see it, yes."
             ]
           },
-          fact: {
+          "fact": {
             desc: {
               content: "Sends a random fact."
             }
           },
-          lmg: {
+          "lmg": {
             desc: {
               content: "Sends a lmgtfy url.",
               usage: "<query>",
@@ -169,7 +171,7 @@ export default class English extends Language {
             },
             prompt: "Are you gonna provide something?"
           },
-          owo: {
+          "owo": {
             desc: {
               content: "Owoify's your message",
               usage: "<message>",
@@ -177,7 +179,7 @@ export default class English extends Language {
             },
             prompt: "Provide some text I can uwuify."
           },
-          rps: {
+          "rps": {
             desc: {
               content: "Play rock paper scisssors with VorteKore",
               examples: ["v!rps rock", "v!rps scissors"],
@@ -189,7 +191,7 @@ export default class English extends Language {
             win: "I picked **{{bot}}**, you lost! muhahah",
             lost: "I picked **{{bot}}**... you won... 😭"
           },
-          spo: {
+          "spo": {
             desc: {
               content: "Makes each letter a spoiler to mess with people.",
               usage: "<content>",
@@ -197,7 +199,7 @@ export default class English extends Language {
             },
             prompt: "Can you give me something to make hard to read?"
           },
-          tab: {
+          "tab": {
             desc: {
               content: "Play taboo in the server you are in.",
               examples: ["v!taboo"]
@@ -468,14 +470,14 @@ export default class English extends Language {
             purp: "Please provide a duration for this mute."
           },
           pin: {
-            desc: {
+            "desc": {
               content: "Pins a message of your choice.",
               usage: "<message id>",
               examples: ["v!pin 535585397435006987"]
             },
-            alr: "That message is already pinned.",
+            "alr": "That message is already pinned.",
             "can't": "Sorry, I'm not able to pin that message.",
-            prompt: "Please provide a message to {{action}}"
+            "prompt": "Please provide a message to {{action}}"
           },
           purge: {
             desc: {
@@ -715,11 +717,11 @@ export default class English extends Language {
             nothing: "Sorry chief, there's nothing to {{action}}.",
             already:
               "These roles are already being used, if you want to remove them do `ar rm <role>`",
-            set: (roles: Role[]) =>
+            set: (roles: Array<Role>) =>
               `Okay, I created some new auto roles: ${roles.join(", ")}`,
-            deleted: (roles: Role[]) =>
+            deleted: (roles: Array<Role>) =>
               `Okay, I removed some of the auto roles: ${roles.join(", ")}`,
-            perms: (roles: Role[]) =>
+            perms: (roles: Array<Role>) =>
               `The following roles cannot be used: ${roles.join(", ")}`
           },
           chan: {
@@ -807,7 +809,7 @@ export default class English extends Language {
             prompt: `Provide some valid log types...\n${logs
               .map(l => `\`${l}\``)
               .join(", ")}`,
-            curr: (message: Message, channelKeys: string[]) =>
+            curr: (message: Message, channelKeys: Array<string>) =>
               `Logs are sent to ${
                 message._guild.channels.audit
                   ? `<#${message._guild.channels.audit}> \`(${message._guild.channels.audit})\`.`
@@ -817,7 +819,7 @@ export default class English extends Language {
                 .map(key => `\`${key}\``)
                 .join(", ") || "Wow nothing"}`,
             chief: "Sorry, can't do anything about that chief...",
-            de: (filtered: string[], action: string, all: boolean) =>
+            de: (filtered: Array<string>, action: string, all: boolean) =>
               `Okay, I \`${action}d\` ${
                 all
                   ? `all of the events.`
@@ -852,8 +854,8 @@ export default class English extends Language {
               !message._guild.lvlUpMsg
                 ? `Level up messages are currently disabled, do \`lum enable\` to enable them`
                 : `Level up messages are enabled${
-                    message._guild.lvlUpChannel
-                      ? ` and are directed to <#${message._guild.lvlUpChannel}> (\`${message._guild.lvlUpChannel}\`)`
+                    message._guild.channels.lvlUp
+                      ? ` and are directed to <#${message._guild.channels.lvlUp}> (\`${message._guild.channels.lvlUp}\`)`
                       : ""
                   }.`,
             reset: `Okay, the messages are no longer redirected.`,
@@ -924,7 +926,7 @@ export default class English extends Language {
             new: `Configured the player role to **{{player}}**.`
           },
           prf: {
-            desc: {
+            "desc": {
               content: [
                 "Manages up to 5 prefixes for this guild.",
                 "**• add**: Adds a prefix.",
@@ -933,18 +935,18 @@ export default class English extends Language {
               usage: "[add|remove] <[prefix]>",
               examples: ["v!prefix add b!", "v!prefix remove b!", "v!prefix"]
             },
-            start: "Provide a prefix with 1-5 characters in length.",
-            retry: "Cmon... provide a prefix with 1-5 characters in length.",
-            curr: (message: Message) =>
+            "start": "Provide a prefix with 1-5 characters in length.",
+            "retry": "Cmon... provide a prefix with 1-5 characters in length.",
+            "curr": (message: Message) =>
               `This guilds current prefixes are\n${message._guild.prefixes
                 .map((prefix, i) => `**${++i}.** ${prefix}`)
                 .join("\n")}`,
-            exists: "Sorry, this prefix already exists.",
+            "exists": "Sorry, this prefix already exists.",
             "5prf": "Sorry, you can only have 5 prefixes :p",
             "5ch": "Prefixes can only be 5 characters in length.",
-            added: "Successfully added `{{prefix}}` to the list of prefixes",
+            "added": "Successfully added `{{prefix}}` to the list of prefixes",
             "!exists": "Sorru, that prefix doesn't exist.",
-            rmed: (guild: GuildEntity) =>
+            "rmed": (guild: GuildSettings) =>
               `Successfully removed \`{{prefix}}\` from the list of prefixes.${
                 guild.prefixes.length > 0
                   ? ""
@@ -985,7 +987,9 @@ export default class English extends Language {
                 p.duration ? ` for **${ms(p.duration, { long: true })}**` : ""
               }.`,
             del: `Users will not be punished when they exceed **{{level}} warns**.`,
-            del_prompt: "Please provide a level."
+            del_prompt: "Please provide a level.",
+            confirm: "Are you sure you want to clear all the punishments?",
+            cancelled: ""
           }
         },
         util: {

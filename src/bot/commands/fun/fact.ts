@@ -1,5 +1,5 @@
-import { Command, get, VorteEmbed, FUN_LINKS } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, FUN_LINKS, get, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -9,7 +9,7 @@ export default class extends Command {
     });
   }
 
-  public async exec(message: Message, { question }: { question: string }) {
+  public async exec(message: Message) {
     const { error, data } = await get<{ fact: string }>(FUN_LINKS.fact);
     if (error || !data) {
       const answers = message.t("cmds:fun.8b.answers");

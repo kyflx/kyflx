@@ -1,19 +1,18 @@
 import { YouTube } from "better-youtube-api";
+import { WebhookClient } from "discord.js";
 import { config } from "dotenv";
 import { join } from "path";
 import { Counter, register } from "prom-client";
-import { Stats, VorteClient } from "./lib";
-import { WebhookClient } from "discord.js";
-import { Webhook } from "discord.js";
+import { Config, Stats, VorteClient } from "./lib";
 
 config({ path: join(process.cwd(), ".env") });
 const bot = new VorteClient(join(__dirname, "bot"));
 
 export const logs = new WebhookClient(
-  process.env.BOT_LOGS_ID,
-  process.env.BOT_LOGS_AUTH
+  Config.get("wh_logs"),
+  Config.get("wh_logs_token")
 );
-export const api = new YouTube(bot.config.get("YOUTUBE_API_KEY"));
+export const api = new YouTube(Config.get("apis.youtube"));
 export const stats: Stats = {
   commands: new Counter({
     name: "commands_ran",
@@ -26,4 +25,6 @@ export const stats: Stats = {
   register
 };
 
-bot.login(bot.config.get("TOKEN"));
+(async () => {
+  await bot.login(Config.getEnv("token"));
+})().catch(error => bot.logger.error(error));

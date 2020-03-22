@@ -1,5 +1,6 @@
-import express from "express";
 import { AkairoClient } from "discord-akairo";
+import express from "express";
+// tslint:disable-next-line: no-implicit-dependencies
 import { RequestHandler } from "express-serve-static-core";
 import WebServer from "../../web/server";
 
@@ -18,7 +19,7 @@ export type MethodShit = (
   next: express.NextFunction
 ) => Promise<void>;
 
-export type Handlers = RequestHandler[];
+export type Handlers = Array<RequestHandler>;
 
 export const REST_COMPONENT_SYMBOL = Symbol("RESTComponent");
 
@@ -31,7 +32,7 @@ export interface IRESTDecoratorDefinition {
 
 export interface IRouteObject {
   name: string;
-  routes: IRESTDecoratorDefinition[];
+  routes: Array<IRESTDecoratorDefinition>;
 }
 
 /**
@@ -43,6 +44,7 @@ export interface IRouteObject {
  * @param descriptor - Property descriptor
  * @param handlers - The provided request handlers
  */
+// tslint:disable-next-line: parameters-max-number
 export function applyDecorator(
   method: RESTMethod,
   path: string,

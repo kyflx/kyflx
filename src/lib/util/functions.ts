@@ -1,4 +1,4 @@
-import { TrackInfo } from "@lavalink/encoding";
+import { decode } from "@lavalink/encoding";
 import { Playlist, Video } from "better-youtube-api";
 import { Category, Command } from "discord-akairo";
 import {
@@ -7,21 +7,29 @@ import {
   Message,
   MessageEmbed,
   MessageReaction,
+  Snowflake,
   User
 } from "discord.js";
-import { developers } from ".";
-import { GuildEntity } from "..";
-import { api } from "../..";
-import { Queue } from "../classes";
-import { Language } from "../i18n";
+// tslint:disable-next-line: no-implicit-dependencies
 import fetch, { RequestInit } from "node-fetch";
+
+import { developers } from ".";
+import { api } from "../..";
+import { NowPlaying } from "../classes";
+import { GuildEntityChannels, GuildLogsMap, GuildSettings } from "../database";
+import { Language } from "../i18n";
+import { PaginateResults } from "../typings";
 
 export async function searchYT(
   input: string,
   maxResults: number = 10
-): Promise<(Video | Playlist)[]> {
+): Promise<Array<Video | Playlist>> {
   const { results } = await api.search([Video, Playlist], input, maxResults);
-  return <(Video | Playlist)[]>results;
+  return results as Array<Video | Playlist>;
+}
+
+export function ArrToBands(bands: Array<number>) {
+  return bands.map((gain, band) => ({ band, gain }));
 }
 
 export function formatString(message: string, member: GuildMember) {
@@ -31,7 +39,11 @@ export function formatString(message: string, member: GuildMember) {
     "{{server}}": member.guild.name,
     "{{memberCount}}": member.guild.memberCount.toLocaleString()
   };
-  return message.replace(new RegExp(Object.keys(obj).join("|")), m => obj[m]);
+  return message.replace(
+    // tslint:disable-next-line: tsr-detect-non-literal-regexp
+    new RegExp(`${Object.keys(obj).join("|")}`),
+    m => obj[m]
+  );
 }
 
 export const formatNumber = (n: number) =>
@@ -41,7 +53,7 @@ export function CategoryPredicate(message: Message) {
   return (c: Category<string, Command>) =>
     ![
       "flag",
-      ...(developers.includes(message.author.id)
+      ...(developers.includes(message.author.id) || !message.guild
         ? []
         : message.member.hasPermission("MANAGE_GUILD", {
             checkAdmin: true,
@@ -51,14 +63,13 @@ export function CategoryPredicate(message: Message) {
         : ["staff", "settings", "developer"])
     ].includes(c.id);
 }
-
 export function trunc(
   str: string,
   n: number,
   useWordBoundary: boolean
 ): string {
   if (str.length <= n) return str;
-  let subString = str.substr(0, n - 1);
+  const subString = str.substr(0, n - 1);
   return (
     (useWordBoundary
       ? subString.substr(0, subString.lastIndexOf(" "))
@@ -66,11 +77,34 @@ export function trunc(
   );
 }
 
+export function DJP(message: Message) {
+  if (
+    developers.includes(message.author.id) ||
+    message.member.hasPermission("ADMINISTRATOR")
+  )
+    return;
+  if (
+    message._guild.djRole &&
+    message.member.roles.resolve(message._guild.djRole)
+  )
+    return "DJ";
+}
+
+export function log(
+  settings: GuildSettings,
+  type: keyof GuildLogsMap,
+  chan: keyof GuildEntityChannels
+): { channel: Snowflake; enabled: boolean } {
+  const channel = settings.channels[chan];
+  const enabled = !!settings.logs[type];
+  return { channel, enabled };
+}
+
 export const get = async <T>(
   url: string,
   options?: RequestInit
 ): Promise<{ data?: T; error?: Error }> => {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     return fetch(url, options).then(
       async res => resolve({ data: await res.json() }),
       error => resolve({ error })
@@ -78,24 +112,18 @@ export const get = async <T>(
   });
 };
 
-export const readPath = (object: string[], data: any): any => {
-  if (object.length > 0) {
-    data = data[object[0]];
-    if (!data) return;
-    return readPath(object.slice(1), data);
-  }
-  return data;
-};
-
-export function MafiaEmbed(content: string, guild?: GuildEntity) {
+export function MafiaEmbed(content: string, settings?: GuildSettings) {
   return new MessageEmbed()
-    .setColor(guild ? guild.embedColor : "#0c6dcf")
+    .setColor(settings ? settings.embedColor : "#0c6dcf")
     .setDescription(content)
     .setFooter("VorteKore Mafia (BETA)")
     .setTimestamp(new Date());
 }
 
-export function confirm(message: Message, content: string): Promise<Boolean> {
+export async function confirm(
+  message: Message,
+  content: string
+): Promise<boolean> {
   return new Promise(async (resolve, reject) => {
     try {
       const embed = new MessageEmbed()
@@ -103,7 +131,7 @@ export function confirm(message: Message, content: string): Promise<Boolean> {
           .setAuthor(message.author.username, message.author.displayAvatarURL())
           .setDescription(content),
         emotes = ["✅", "❌"],
-        m = <Message>await message.util!.send(embed);
+        m = await message.util.send(embed);
       await Promise.all(emotes.map(m.react.bind(m)));
 
       m.awaitReactions(
@@ -128,15 +156,8 @@ export function confirm(message: Message, content: string): Promise<Boolean> {
   });
 }
 
-export interface PaginateResults<T> {
-  items: T[];
-  page: number;
-  maxPage: number;
-  pageLength: number;
-}
-
 export function paginate<T>(
-  items: T[],
+  items: Array<T>,
   page = 1,
   pageLength = 10
 ): PaginateResults<T> {
@@ -165,10 +186,10 @@ export function isPromise(value: any): boolean {
 }
 
 export function getVolumeIcon(volume: number) {
-  if (volume == 0) return "\uD83D\uDD07";
-  else if (volume < 33) return "\uD83D\uDD08";
-  else if (volume < 67) return "\uD83D\uDD09";
-  else return "\uD83D\uDD0A";
+  if (volume === 0) return "\uD83D\uDD07";
+  if (volume < 33) return "\uD83D\uDD08";
+  if (volume < 67) return "\uD83D\uDD09";
+  return "\uD83D\uDD0A";
 }
 
 export function formatTime(duration: number) {
@@ -178,33 +199,32 @@ export function formatTime(duration: number) {
   return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 }
 
-export function playerEmbed(
-  queue: Queue,
-  { np, position }: { np: TrackInfo; position: number }
-) {
-  return `${progressBar(position / Number(np.length))} \`[${formatTime(
-    position
+export function playerEmbed(current: NowPlaying) {
+  const np = decode(current.song);
+  return `${progressBar(current.position / Number(np.length))} \`[${formatTime(
+    current.position
   )}/${formatTime(Number(np.length))}]\``;
 }
 
 export function progressBar(percent: number, length = 20) {
   let str = "";
   for (let i = 0; i < length; i++) {
-    if (i == Math.round(percent * length)) str += "▬";
+    if (i === Math.round(percent * length)) str += "▬";
     else str += "―";
   }
   return str;
 }
 
-export const In = (member: GuildMember) =>
-  member.voice.channel
+export function In(member: GuildMember) {
+  return member.voice.channel
     ? member.voice.channel.members.has(member.guild.me.id)
     : false;
+}
 
-export function getLanguageKeys(message: Message): string[][] {
+export function getLanguageKeys(message: Message): Array<Array<string>> {
   return new Collection<string, Language>(
-    <any>message.client.i18n.languages.entries()
-  ).reduce<string[][]>((keys, language) => {
+    message.client.i18n.languages.entries() as any
+  ).reduce<Array<Array<string>>>((keys, language) => {
     keys.push([language.id, ...language.aliases]);
     return keys;
   }, []);

@@ -1,5 +1,11 @@
-import { Command, confirm, Language, VorteEmbed, getLanguageKeys } from "../../../lib";
 import { Message } from "discord.js";
+import {
+  Command,
+  confirm,
+  getLanguageKeys,
+  Language,
+  VorteEmbed
+} from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -41,9 +47,7 @@ export default class extends Command {
     if (!confirmation)
       return message.sem(message.t("cmds:conf.lang.cancelled"));
 
-    message._guild.language = lang.id;
-    await message._guild.save();
-
+    await this.updateDb(message.guild, "language", lang.id);
     return message.sem(message.t("cmds:conf.lang.res", { lang }));
   }
 }

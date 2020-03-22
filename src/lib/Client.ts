@@ -1,77 +1,33 @@
 /* Modules */
 import Logger from "@ayanaware/logger";
+import { decode, TrackInfo } from "@lavalink/encoding";
 import { AkairoClient, Flag, ListenerHandler } from "discord-akairo";
 import { Message, Util } from "discord.js";
 import { existsSync } from "fs";
-import Node, { Player } from "lavalink";
+import Node from "lavalink";
 import { join } from "path";
-
-/* Custom Classes */
-import { Plugin, CommandHandler, Queue, VorteEmbed, GameManager } from "./classes";
-import { GuildEntity, ProfileEntity, TagEntity } from "./database";
-import { LanguageProvider } from "./i18n";
-import { Config, ConfigData, developers } from "./util";
 import Database from "../bot/plugins/Database";
 
-declare module "discord.js" {
-  interface Message {
-    client: VorteClient;
-    _guild: GuildEntity;
-    profile: ProfileEntity;
-    player: Player;
-    queue: Queue;
-
-    sem(
-      content: string,
-      options?: { type?: "normal" | "error"; t?: boolean; _new?: boolean },
-      i?: Record<string, any>
-    ): Promise<Message>;
-
-    t<T extends any>(key: string, i?: Record<string, any>): T;
-  }
-}
-
-declare module "discord-akairo" {
-  interface AkairoClient {
-    plugins: Map<string, Plugin>;
-    games: GameManager;
-    commands: CommandHandler;
-    events: ListenerHandler;
-    config: Config<ConfigData>;
-    music: Node;
-
-    logger: Logger;
-    database: Database;
-
-    maintenance: boolean;
-    developers: string[];
-    directory: string;
-
-    findOrCreateGuild(guildId: string): GuildEntity;
-
-    findOrCreateProfile(
-      userId: string,
-      guildId: string
-    ): Promise<ProfileEntity>;
-  }
-}
-
-declare module "lavalink" {
-  interface Player {
-    bass: "high" | "medium" | "low" | "none";
-    queue: Queue;
-    volume: number;
-  }
-}
+/* Custom Classes */
+import { CommandHandler, Plugin, VorteEmbed } from "./classes";
+import {
+  GuildProvider,
+  GuildSettings,
+  ProfileEntity,
+  TagEntity
+} from "./database";
+import { GameManager } from "./games";
+import { LanguageProvider } from "./i18n";
+import { Config, developers } from "./util";
 
 export default class VorteClient extends AkairoClient {
   public plugins: Map<string, Plugin> = new Map();
   public games: GameManager = new GameManager(this);
   public database = new Database(this);
+  public _guilds: GuildProvider;
 
   public developers = developers;
-  public config: Config<ConfigData> = new Config();
-  public maintenance: boolean = this.config.get("MAINTENANCE");
+  public maintenance: boolean = Config.get("maintenance_mode");
 
   public i18n: LanguageProvider = new LanguageProvider();
   public commands: CommandHandler;
@@ -79,9 +35,9 @@ export default class VorteClient extends AkairoClient {
 
   public logger: Logger = Logger.get(VorteClient);
   public music: Node = new Node({
-    password: this.config.get("NODE_AUTH"),
-    host: this.config.get("NODE_HOST"),
-    userID: this.config.get("USER_ID"),
+    password: Config.get("lavalink_pass"),
+    host: Config.getEnv("lavalink_host"),
+    userID: Config.getEnv("user_id"),
     send: (guildId: string, packet) => {
       const guild = this.guilds.resolve(guildId);
       if (guild) guild.shard.send(packet);
@@ -109,8 +65,11 @@ export default class VorteClient extends AkairoClient {
       aliasReplacement: /-/g,
       automateCategories: true,
       prefix: async (message: Message) => {
-        if (!message.guild) return this.config.get("DEFAULT_PREFIX");
-        return this.database.guilds.get(message.guild.id, "prefixes", ["v!"]);
+        const prefix = Config.getEnv<string>("prefix");
+        if (!message.guild) return prefix;
+        return this._guilds.get<Array<string>>(message.guild.id, "prefixes", [
+          prefix
+        ]);
       },
       defaultCooldown: 5000,
       handleEdits: true,
@@ -118,9 +77,13 @@ export default class VorteClient extends AkairoClient {
       allowMention: true,
       loadFilter: f => {
         if (this.maintenance) return false;
-        let excluded = this.config.get("EXCLUDED_COMMANDS").map(c => join(this.directory, "commands", c));
+        const excluded = Config.getEnv<Array<string>>("load_filter").map(c =>
+          join(this.directory, "commands", c)
+        );
         return excluded.length > 0 ? !excluded.some(e => f.includes(e)) : true;
       },
+      ignorePermissions: developers,
+      ignoreCooldown: developers,
       argumentDefaults: {
         prompt: {
           modifyStart: (_: Message, p: string) =>
@@ -164,9 +127,9 @@ export default class VorteClient extends AkairoClient {
       });
 
       const [tag] = tags.filter(
-        tag =>
-          tag.aliases.some(n => n.toLowerCase() === phrase) ||
-          tag.name.toLowerCase() === phrase
+        t =>
+          t.aliases.some(n => n.toLowerCase() === phrase) ||
+          t.name.toLowerCase() === phrase
       );
       return tag || Flag.fail(phrase);
     });
@@ -174,6 +137,8 @@ export default class VorteClient extends AkairoClient {
     this.ws.on("VOICE_SERVER_UPDATE", _ => this.music.voiceServerUpdate(_));
     this.ws.on("VOICE_STATE_UPDATE", _ => this.music.voiceStateUpdate(_));
   }
+
+  public decode = decode;
 
   public async login(token: string): Promise<string> {
     this.commands.useListenerHandler(this.events);
@@ -185,37 +150,38 @@ export default class VorteClient extends AkairoClient {
       music: this.music
     });
 
-    this._loadPlugins();
+    await this._loadPlugins();
     this.i18n.init(this);
     this.commands.loadAll();
     this.events.loadAll();
 
-    this.once("ready", () => this.plugins.forEach(p => p.onReady()));
+    this.once("ready", () => this.plugins.forEach(async p => p.onReady()));
 
     return super.login(token);
   }
 
-  public findOrCreateGuild(guildId: string): GuildEntity {
-    let item = this.database.guilds.items.get(guildId);
-    if (!item) {
-      item = GuildEntity.create({ guildId });
-      this.database.guilds.items.set(guildId, item);
-    }
+  public ensureGuild(guildId: string): GuildSettings {
+    let item = this._guilds.items.get(guildId);
+    if (!item) item = this._guilds.create(guildId);
     return item;
   }
 
-  public findOrCreateProfile(
+  public async ensureProfile(
     userId: string,
     guildId: string
   ): Promise<ProfileEntity> {
     return new Promise(async (resolve, reject) => {
       if (!this.database.ready) return reject();
-      return ProfileEntity.findOne({ where: { userId, guildId } }).then(
-        profile => {
-          if (profile) return resolve(profile);
-          return resolve(ProfileEntity.create({ userId, guildId }));
+
+      return ProfileEntity.findOne({
+        where: {
+          userId,
+          guildId
         }
-      );
+      }).then(profile => {
+        if (profile) return resolve(profile);
+        return resolve(ProfileEntity.create({ userId, guildId }));
+      });
     });
   }
 
@@ -226,6 +192,7 @@ export default class VorteClient extends AkairoClient {
           join(this.directory, "plugins")
         )) {
           try {
+            // tslint:disable-next-line: tsr-detect-non-literal-require
             const mod = (_ => _.default || _)(require(file));
             if (!mod) return;
 

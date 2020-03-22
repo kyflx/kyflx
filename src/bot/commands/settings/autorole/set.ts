@@ -18,7 +18,7 @@ export default class extends Command {
     });
   }
 
-  public async exec(message: Message, { roles }: { roles: Role[] }) {
+  public async exec(message: Message, { roles }: { roles: Array<Role> }) {
     const filtered = roles.filter(
       r => !message._guild.autoRoles.includes(r.id)
     );
@@ -26,8 +26,7 @@ export default class extends Command {
       return message.sem(message.t("cmds:conf.auto.already"));
 
     message._guild.autoRoles.push(...filtered.map(r => r.id));
-    await message._guild.save();
-
+    await this.updateDb(message.guild, "autoRoles", message._guild.autoRoles);
     return message.sem(message.t("cmds:conf.auto.set", { roles: filtered }));
   }
 }

@@ -1,6 +1,6 @@
-import { Command, VorteEmbed } from "../../../lib";
 import { Message } from "discord.js";
 import OSUtils, { NetStatMetrics } from "node-os-utils";
+import { Command, VorteEmbed } from "../../../lib";
 
 export default class StatsCommand extends Command {
   public constructor() {

@@ -1,5 +1,5 @@
-import { Listener, Command } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, Listener } from "../../../lib";
 
 export default class CooldownListener extends Listener {
   public constructor() {

@@ -1,62 +1,96 @@
 import { Provider } from "discord-akairo";
-import { Collection } from "discord.js";
-import { GuildEntity } from "./models";
+import { Guild } from "discord.js";
+import * as _ from "dot-prop";
+import { DeleteResult, Repository, UpdateResult } from "typeorm";
+import { guildDefaults, GuildEntity, GuildSettings } from "./models";
 
-export default class GuildProvider extends Provider {
-  public items: Collection<string, GuildEntity> = new Collection();
-
-  public async init() {
-    for (const guild of await GuildEntity.find({}))
-      this.items.set(guild.guildId, guild);
+export default class SettingsProvider extends Provider {
+  public constructor(public repo: Repository<GuildEntity>) {
+    super();
   }
 
-  public async clear(id: string): Promise<boolean> {
-    if (!this.items.has(id)) return false;
-    await GuildEntity.delete({ guildId: id });
-    return true;
+  public async init(): Promise<void> {
+    const settings = await this.repo.find();
+    for (const setting of settings)
+      this.items.set(setting.guildId, setting.settings);
   }
 
-  public create(id: string): GuildEntity {
-    return GuildEntity.create({
-      guildId: id
+  public get<T>(guild: string | Guild, key: string, defaultValue: any): T {
+    const id = SettingsProvider.getGuildId(guild);
+    if (this.items.has(id)) {
+      const value = _.get(this.items.get(id), key);
+      return value ?? defaultValue;
+    }
+
+    return defaultValue as T;
+  }
+
+  public create(guild: string | Guild): GuildEntity {
+    const guildId = SettingsProvider.getGuildId(guild);
+    const item = GuildEntity.create({
+      guildId,
+      settings: guildDefaults as any
     });
+    this.items.set(guildId, item.settings);
+    return item.settings;
   }
 
-  public async delete<K extends keyof GuildEntity>(
-    id: string,
-    key: K
-  ): Promise<GuildEntity> {
-    const item = this.items.get(id) || this.create(id);
-
-    delete item[key];
-    await GuildEntity.update({ guildId: id }, item);
-    this.items.set(id, item);
-
-    return item;
+  public getRaw(guild: string | Guild): GuildSettings {
+    const guildId = SettingsProvider.getGuildId(guild);
+    return this.items.get(guildId) || this.create(guild);
   }
 
-  public get<K extends keyof GuildEntity>(
-    id: string,
-    key: K,
-    defaultValue: GuildEntity[K]
-  ): GuildEntity[K] {
-    let item = this.items.get(id);
-    if (!item) item = this.create(id);
-    return item[key] === undefined ? defaultValue : item[key];
+  public async set(
+    guild: string | Guild,
+    key: string,
+    value: any
+  ): Promise<UpdateResult> {
+    const guildId = SettingsProvider.getGuildId(guild);
+    const data = this.items.get(guildId) || this.create(guild);
+
+    _.set(data, key, value);
+    this.items.set(guildId, data);
+
+    return this.repo
+      .createQueryBuilder()
+      .insert()
+      .into(GuildEntity)
+      .values({ guildId, settings: data })
+      .onConflict('("guildId") DO UPDATE SET "settings" = :settings')
+      .setParameter("settings", data)
+      .execute();
   }
 
-  public async set<K extends keyof GuildEntity>(
-    id: string,
-    key: K,
-    value: GuildEntity[K]
-  ): Promise<GuildEntity> {
-    let item = this.items.get(id);
-    if (!item) item = this.create(id);
+  public async delete(guild: string | Guild, key: string) {
+    const guildId = SettingsProvider.getGuildId(guild);
+    const data = this.items.get(guildId) || {};
 
-    item[key] = value;
-    await GuildEntity.update({ guildId: id }, item);
-    this.items.set(id, item);
+    _.delete(data, key);
+    this.items.set(guildId, data);
 
-    return item;
+    return this.repo
+      .createQueryBuilder()
+      .insert()
+      .into(GuildEntity)
+      .values({ guildId, settings: data })
+      .onConflict('("guildId") DO UPDATE SET "settings" = :settings')
+      .setParameter("settings", data)
+      .execute();
+  }
+
+  public async clear(guild: string | Guild): Promise<DeleteResult> {
+    const guildId = SettingsProvider.getGuildId(guild);
+    this.items.delete(guildId);
+    return this.repo.delete(guildId);
+  }
+
+  public static getGuildId(guild: string | Guild): string {
+    if (guild instanceof Guild) return guild.id;
+    if (guild === "global" || guild === null) return "0";
+    if (typeof guild === "string" && /^\d+$/.test(guild)) return guild;
+
+    throw new TypeError(
+      'Guild instance is undefined. Valid instances: guildID, "global" or null.'
+    );
   }
 }

@@ -1,5 +1,5 @@
-import { Message, TextChannel } from "discord.js";
-import { Command, get, FUN_LINKS } from "../../../lib";
+import { Message } from "discord.js";
+import { Command, FUN_LINKS, get } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -20,22 +20,19 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { content }: { content: string }) {
-    if (message.deletable) message.delete();
+    if (message.deletable) await message.delete();
 
     const { error, data } = await get<{ owo: string }>(
       `${FUN_LINKS.owoify}?text=${encodeURIComponent(content)}`
     );
 
-    if (error || !data) return message.sem(message.t("cmds:fun.owo.error"))
+    if (error || !data) return message.sem(message.t("cmds:fun.owo.error"));
     if (message.channel.type !== "text") return message.sem(content);
 
-    const hook = await (<TextChannel>message.channel).createWebhook(
-      message.author.username,
-      {
-        avatar: message.author.displayAvatarURL(),
-        reason: "owoify command"
-      }
-    );
+    const hook = await message.channel.createWebhook(message.author.username, {
+      avatar: message.author.displayAvatarURL(),
+      reason: "owoify command"
+    });
 
     await hook.send(data.owo);
     return hook.delete("End");

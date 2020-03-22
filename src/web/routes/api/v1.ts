@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
 import { Request, Response } from "express";
-import { stats, logs } from "../../..";
-import { APIRouter, Get, Post, Router } from "../../../lib";
+import { logs, stats } from "../../..";
+import { APIRouter, Config, Get, Post, Router } from "../../../lib";
 
 @Router("/api/v1")
 export default class V1Router extends APIRouter {
@@ -57,7 +57,7 @@ export default class V1Router extends APIRouter {
 
   @Post("/voted")
   public async dblVote(req: Request, res: Response) {
-    if (req.headers.authorization !== process.env.DBL_WEB)
+    if (req.headers.authorization !== Config.get("bot_lists.dbl_webhook"))
       return res.status(400);
     if (req.body.type === "test") {
       return this.client.logger.info("DBL Test Success!");
@@ -75,16 +75,13 @@ export default class V1Router extends APIRouter {
       .setFooter("VorteKore")
       .setTimestamp(new Date());
 
-    logs.send(embed);
+    await logs.send(embed);
     return res.status(200);
   }
 
   @Post("/botls")
   public async botlistSpaceVote(req: Request, res: Response) {
-    if (
-      req.headers.authorization ===
-      this.client.config.get("BOTLIST.SPACE-TOKEN")
-    ) {
+    if (req.headers.authorization === Config.get("bot_lists.botlist-space")) {
       const embed = new MessageEmbed()
         .setColor("0c6dcf")
         .setTitle("botlist.space vote")
@@ -94,7 +91,7 @@ export default class V1Router extends APIRouter {
         .setFooter("VorteKore")
         .setTimestamp(req.body.timestamp);
 
-      logs.send(embed);
+      await logs.send(embed);
       return res.status(200);
     }
   }

@@ -1,6 +1,7 @@
-import { Command, VorteEmbed } from "../../../lib";
 import { Message, TextChannel } from "discord.js";
+// tslint:disable-next-line: no-implicit-dependencies
 import fetch from "node-fetch";
+import { Command, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {

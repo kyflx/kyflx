@@ -1,9 +1,11 @@
 import { Collection, Snowflake } from "discord.js";
 import VorteClient from "../Client";
-import { MafiaGame } from "../games/mafia";
+import { TabooGame } from "../games";
+import { MafiaGame } from "./mafia";
 
 export interface GuildGames {
   mafia?: MafiaGame;
+  taboo?: TabooGame;
 }
 
 export default class GameManager {
@@ -26,7 +28,7 @@ export default class GameManager {
     name: K,
     game: GuildGames[K]
   ): Collection<Snowflake, GuildGames> {
-    let games = this.games.get(guild) || {};
+    const games = this.games.get(guild) || {};
     games[name] = game;
     return this.set(guild, games);
   }
@@ -44,7 +46,7 @@ export default class GameManager {
     const games = this.games.get(guild);
     if (!games) return false;
 
-    delete games[name];
+    games[name] = null;
     this.games.set(guild, games);
 
     return true;

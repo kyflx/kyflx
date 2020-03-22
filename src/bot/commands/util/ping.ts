@@ -1,5 +1,5 @@
-import { Command } from "../../../lib";
 import { Message } from "discord.js";
+import { Command } from "../../../lib";
 
 export default class PingCommand extends Command {
   public constructor() {
@@ -13,10 +13,11 @@ export default class PingCommand extends Command {
   public async exec(message: Message) {
     const start = Date.now();
     return new Promise(resolve => {
-      (<any>this.client["api"]).channels[message.channel.id].typing
+      // tslint:disable-next-line: no-string-literal
+      (this.client["api"] as any).channels[message.channel.id].typing
         .post()
         .then(() => {
-          return resolve(
+          resolve(
             message.sem(
               message.t("cmds:util.ping.res", {
                 bot: this.client.ws.ping,

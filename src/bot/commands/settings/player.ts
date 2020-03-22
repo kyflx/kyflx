@@ -20,11 +20,7 @@ export default class PlayerRole extends Command {
   }
 
   public async exec(message: Message, { player }: { player: Role }) {
-    const guild = message._guild.games.mafia;
-
-    guild.playerRole = player.id;
-    await message._guild.save();
-
+    await this.updateDb(message.guild, "games.mafia.playerRole", player.id);
     return message.sem(message.t("cmds:conf.play.new", { player }));
   }
 }

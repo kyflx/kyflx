@@ -1,5 +1,5 @@
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 import { GuildMember, Message, TextChannel } from "discord.js";
+import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -67,7 +67,7 @@ export default class extends Command {
 
     try {
       await member.kick(reason);
-      message
+      await message
         .sem(
           message.t("cmds:mod.done", {
             member,
@@ -92,11 +92,11 @@ export default class extends Command {
     _case.type = "kick";
 
     await _case.save();
-    await message._guild.save();
+    await this.updateDb(message.guild, "cases", message._guild.cases);
 
-    const { channel, enabled } = message._guild.log("kick", "audit");
+    const { channel, enabled } = this.log(message._guild, "kick", "audit");
     if (!channel || !enabled) return;
-    const logs = (await message.guild.channels.resolve(channel)) as TextChannel;
+    const logs = message.guild.channels.resolve(channel) as TextChannel;
 
     return logs.send(
       new VorteEmbed(message)

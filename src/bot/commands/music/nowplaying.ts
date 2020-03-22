@@ -1,6 +1,5 @@
-import { decode } from "@lavalink/encoding";
-import { Message } from "discord.js";
-import { Command, playerEmbed, VorteEmbed } from "../../../lib";
+import { Message, MessageEmbed } from "discord.js";
+import { Command, playerEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -21,19 +20,12 @@ export default class extends Command {
         type: "error"
       });
 
-    const np = decode(current.song),
-      playingEmbed = new VorteEmbed(message)
-        .setAuthor("Now Playing", message.author.displayAvatarURL())
-        .setDescription(
-          `**Song Name**: [${np.title}](${np.uri})\n**Author**: ${np.author}`
-        )
-        .addField(
-          "\u200B",
-          playerEmbed(message.queue, {
-            np,
-            position: current.position
-          })
-        );
+    const np = this.client.decode(current.song),
+      playingEmbed = new MessageEmbed()
+        .setAuthor(np.author)
+        .setColor(message._guild.embedColor)
+        .setDescription(`[${np.title}](${np.uri})\n${playerEmbed(current)}`)
+        .setThumbnail(`https://i.ytimg.com/vi/${np.identifier}/hqdefault.jpg`);
     return message.util.send(playingEmbed);
   }
 }

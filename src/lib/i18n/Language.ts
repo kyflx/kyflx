@@ -1,10 +1,10 @@
-import LanguageProvider from "./Provider";
 import VorteClient from "../Client";
+import LanguageProvider from "./Provider";
 
 export interface LanguageOptions {
   displayName: string;
-  aliases?: string[];
-  authors?: string[];
+  aliases?: Array<string>;
+  authors?: Array<string>;
 }
 
 /**
@@ -16,13 +16,13 @@ export default abstract class Language {
   public provider: LanguageProvider;
 
   public displayName: string;
-  public aliases: string[];
-  public authors: string[];
+  public aliases: Array<string>;
+  public authors: Array<string>;
 
   /**
    * Initalizes this Class.
-   * @param {string} id - The language ID, used for identifying it.
-   * @param {LanguageOptions} options - Display Name, aliases, and authors.
+   * @param id - The language ID, used for identifying it.
+   * @param options - Display Name, aliases, and authors.
    */
   protected constructor(public id: string, options: LanguageOptions) {
     this.displayName = options.displayName;
@@ -32,11 +32,10 @@ export default abstract class Language {
 
   /**
    * Used for defining language translations.
-   * @abstract
    */
   public abstract get data(): Record<string, any>;
 
-  _init(provider: LanguageProvider, client: VorteClient) {
+  public _init(provider: LanguageProvider, client: VorteClient) {
     this.client = client;
     this.provider = provider;
   }

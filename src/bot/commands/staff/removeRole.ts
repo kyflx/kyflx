@@ -53,7 +53,7 @@ export default class RemoveRoleCommand extends Command {
 
     try {
       await member.roles.remove(role);
-      message
+      await message
         .sem(
           message.t("cmds:mod.rr.done", {
             role,
@@ -79,9 +79,9 @@ export default class RemoveRoleCommand extends Command {
     _case.type = "roleRemove";
 
     await _case.save();
-    await message._guild.save();
+    await this.updateDb(message.guild, "cases", message._guild.cases);
 
-    const { channel, enabled } = message._guild.log("mute", "audit");
+    const { channel, enabled } = this.log(message._guild, "mute", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 

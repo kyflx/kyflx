@@ -15,17 +15,18 @@ export default class JoinGame extends Command {
         type: "error"
       });
 
-    if (message.member.roles.cache.get(game.entry.games.mafia.moderatorRole))
+    if (
+      message.member.roles.cache.get(message._guild.games.mafia.moderatorRole)
+    )
       return message.sem(message.t("cmds:games.maf.urm"));
 
-    if (game.started)
-      return message.sem(message.t("cmds:games.maf.alrs"));
+    if (game.started) return message.sem(message.t("cmds:games.maf.alrs"));
 
     if (game.getPlayer(message.author.id))
       return message.sem(message.t("cmds:games.maf.alrj", { message }));
 
-    await message.member.roles.add(game.entry.games.mafia.playerRole);
-    await game.addPlayer(message.author.id);
+    await message.member.roles.add(message._guild.games.mafia.playerRole);
+    game.addPlayer(message.author.id);
 
     return message.sem(message.t("cmds:games.maf.joined"));
   }

@@ -1,17 +1,13 @@
 import { Logger } from "@ayanaware/logger";
 import bodyParser from "body-parser";
-import MongoStore from "connect-mongo";
 import { AkairoClient, AkairoHandler } from "discord-akairo";
 import express, { NextFunction, Request, Response } from "express";
-import session from "express-session";
-import passport from "passport";
-import { Strategy as DiscordStrategy } from "passport-discord";
 import { join } from "path";
 import { APIRouter, getRouteObject } from "../lib";
 
 export default class WebServer {
   public app: express.Application = express();
-  public modules: APIRouter[] = [];
+  public modules: Array<APIRouter> = [];
   public logger = Logger.get(WebServer);
 
   public constructor(public client: AkairoClient) {}
@@ -20,6 +16,8 @@ export default class WebServer {
     this.app.use(
       express.static(join(process.cwd(), "public"), { maxAge: 86400000 })
     );
+
+    // tslint:disable: deprecation
 
     this.app.use(bodyParser.json({ limit: "5mb" }));
     this.app.use(
@@ -32,42 +30,44 @@ export default class WebServer {
 
     this.app.set("view engine", "ejs");
 
-    this.app.use(
-      session({
-        store: new (MongoStore(session))({
-          url: this.client.config.get("URI"),
-          secret: process.env.API_SESSION_SECRET
-        }),
-        secret: process.env.API_SESSION_SECRET!,
-        resave: false,
-        saveUninitialized: false
-      })
-    );
+    // this.app.use(
+    //   session({
+    //     store: new (PgStore(session))({
+    //       pool: new Pool({
+    //         connectionString: Config.getEnv("uri"),
 
-    passport.use(
-      new DiscordStrategy(
-        {
-          callbackURL: "/callback",
-          clientID: this.client.user.id,
-          clientSecret: process.env.CLIENT_SECRET!,
-          scope: ["identify", "guilds"]
-        },
-        async (accessToken, refreshToken, profile, done) => {
-          return done(null, profile);
-        }
-      )
-    );
+    //       })
+    //     }),
+    //     secret: Config.get("session_secret"),
+    //     resave: false,
+    //     saveUninitialized: false
+    //   })
+    // );
 
-    passport.serializeUser((user: any, done) => {
-      delete user.email;
-      done(null, user);
-    });
-    passport.deserializeUser((id, done) => {
-      done(null, id);
-    });
+    // passport.use(
+    //   new DiscordStrategy(
+    //     {
+    //       callbackURL: "/callback",
+    //       clientID: this.client.user.id,
+    //       clientSecret: Config.get<string>("client_secret"),
+    //       scope: ["identify", "guilds"]
+    //     },
+    //     async (accessToken, refreshToken, profile, done) => {
+    //       return done(null, profile);
+    //     }
+    //   )
+    // );
 
-    this.app.use(passport.initialize());
-    this.app.use(passport.session());
+    // passport.serializeUser((user: any, done) => {
+    //   delete user.email;
+    //   done(null, user);
+    // });
+    // passport.deserializeUser((id, done) => {
+    //   done(null, id);
+    // });
+
+    // this.app.use(passport.initialize());
+    // this.app.use(passport.session());
 
     await this.loadAll();
 
@@ -79,6 +79,7 @@ export default class WebServer {
     for (const path of AkairoHandler.readdirRecursive(
       join(__dirname, "routes")
     )) {
+      // tslint:disable-next-line: tsr-detect-non-literal-require
       const routeMod: typeof APIRouter = (_ => _.default || _)(require(path)),
         routeInstance = new routeMod(this.client);
 
@@ -86,7 +87,7 @@ export default class WebServer {
       if (!router) return;
 
       for (const route of router.routes)
-        (<Function>routeInstance.router[route.method].apply)(
+        (routeInstance.router[route.method].apply as Function)(
           routeInstance.router,
           [
             route.path,
@@ -108,7 +109,7 @@ export default class WebServer {
           ]
         );
 
-      this.modules.push(Object.assign(routeInstance, { routeObject: router }));
+      this.modules.push({ ...routeInstance });
       this.app.use(router.name, routeInstance.router);
     }
   }

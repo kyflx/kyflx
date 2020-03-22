@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { Command } from "../../../../lib";
 
-export default class leaveGame extends Command {
+export default class LeaveGame extends Command {
   public constructor() {
     super("mafia-leave", {
       category: "flag"
@@ -19,12 +19,11 @@ export default class leaveGame extends Command {
     if (message.member.roles.cache.get(entry.moderatorRole))
       return message.sem(message.t("cmds:games.maf.urm"));
 
-    if (game.started)
-      return message.sem(message.t("cmds:games.maf.finish"))
+    if (game.started) return message.sem(message.t("cmds:games.maf.finish"));
 
     if (!game.getPlayer(message.author.id))
       return message.sem(message.t("cmds:games.maf.join"));
-    await game.addPlayer(message.author.id);
+    game.addPlayer(message.author.id);
 
     return message.sem(message.t("cmds:games.maf.left"));
   }

@@ -20,8 +20,11 @@ export default class ModeratorRole extends Command {
   }
 
   public async exec(message: Message, { moderator }: { moderator: Role }) {
-    message._guild.games.mafia.moderatorRole = moderator.id;
-    await message._guild.save();
+    await this.updateDb(
+      message.guild,
+      "games.mafia.moderatorRole",
+      moderator.id
+    );
     return message.sem(message.t("cmds:conf.modr.new", { moderator }));
   }
 }

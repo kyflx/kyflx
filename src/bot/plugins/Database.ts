@@ -1,12 +1,13 @@
 import Logger from "@ayanaware/logger";
-import { createConnection } from "typeorm";
+import { createConnection, getRepository } from "typeorm";
 import {
   CaseEntity,
+  Config,
   GuildEntity,
-  ProfileEntity,
-  TagEntity,
   GuildProvider,
-  Plugin
+  Plugin,
+  ProfileEntity,
+  TagEntity
 } from "../../lib";
 
 export default class Database extends Plugin {
@@ -14,23 +15,20 @@ export default class Database extends Plugin {
   public logger: Logger = Logger.get(Database);
   public ready: boolean = false;
 
-  public guilds: GuildProvider = new GuildProvider();
-
   public async onReady() {
     createConnection({
-      url: this.client.config.get("URI")!,
+      url: Config.getEnv<string>("uri"),
       entities: [GuildEntity, ProfileEntity, CaseEntity, TagEntity],
-      type: "mongodb",
-      extra: {
-        useUnifiedTopology: true
-      }
+      type: "postgres",
+      synchronize: true
     }).then(
       async c => {
-        this.logger.info("Connected to MongoDB", `c: ${c.name}`);
-        await this.guilds.init();
+        this.client._guilds = new GuildProvider(getRepository(GuildEntity));
+        await this.client._guilds.init();
+        this.logger.info("Connected to the database", `c: ${c.name}`);
         this.ready = true;
       },
-      reason => this.logger.error(reason, `Database`)
+      reason => this.logger.error(reason)
     );
   }
 }

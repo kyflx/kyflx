@@ -1,6 +1,6 @@
-import { Command } from "../../../../lib";
-import { Message } from "discord.js";
 import { Argument } from "discord-akairo";
+import { Message } from "discord.js";
+import { Command } from "../../../../lib";
 
 export default class DepositCommand extends Command {
   public constructor() {

@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import { Command, MafiaPlayer } from "../../../../lib";
 
-export type MafiaWins = ["villagers" | "mafia", MafiaPlayer[]];
+export type MafiaWins = ["villagers" | "mafia", Array<MafiaPlayer>];
 
 export default class EndGame extends Command {
   public constructor() {
@@ -23,16 +23,16 @@ export default class EndGame extends Command {
         type: "error"
       });
 
-    game.channels.forEach(channel => {
+    game.channels.forEach(async channel => {
       channel.permissionOverwrites
         .filter(p => p.type === "member")
-        .forEach(p => {
+        .forEach(p =>
           channel.updateOverwrite(p.id, {
             VIEW_CHANNEL: false,
             SEND_MESSAGES: false
-          });
-        });
-      channel.bulkDelete(100, true);
+          })
+        );
+      await channel.bulkDelete(100, true);
     });
 
     this.client.games.deleteGame(message.guild.id, "mafia");
@@ -50,7 +50,7 @@ export default class EndGame extends Command {
 
       if (mafiaAlive.length > villagerAlive.length)
         return ["mafia", mafiaAlive];
-      else return ["villagers", villagerAlive];
+      return ["villagers", villagerAlive];
     };
 
     return message.sem(message.t("cmds:games.maf.end", { wins: winner() }));

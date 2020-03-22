@@ -5,15 +5,15 @@ export * from "./Player";
 export * from "./Night";
 
 export interface MafiaDBObject {
-	daytime: Snowflake;
-	detective: Snowflake;
-	doctor: Snowflake;
-	mafia: Snowflake;
-	detectiveLimit: number;
-	doctorLimit: number;
-	mafiaLimit: number;
-	villagerLimit: number;
-	playerRole: Snowflake;
-	moderatorRole: Snowflake;
-	configured: boolean;
+  daytime: Snowflake;
+  detective: Snowflake;
+  doctor: Snowflake;
+  mafia: Snowflake;
+  detectiveLimit: number;
+  doctorLimit: number;
+  mafiaLimit: number;
+  villagerLimit: number;
+  playerRole: Snowflake;
+  moderatorRole: Snowflake;
+  configured: boolean;
 }

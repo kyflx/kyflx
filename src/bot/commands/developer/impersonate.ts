@@ -1,5 +1,5 @@
-import { Command } from "../../../lib";
 import { Message, TextChannel, User } from "discord.js";
+import { Command } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -34,16 +34,13 @@ export default class extends Command {
     message: Message,
     { user, content }: { user: User; content: string }
   ) {
-    if (message.deletable) message.delete();
+    if (message.deletable) await message.delete();
     if (message.channel.type !== "text") return message.sem(content);
 
-    const hook = await (<TextChannel>message.channel).createWebhook(
-      user.username,
-      {
-        avatar: user.displayAvatarURL(),
-        reason: "Impersonation"
-      }
-    );
+    const hook = await message.channel.createWebhook(user.username, {
+      avatar: user.displayAvatarURL(),
+      reason: "Impersonation"
+    });
 
     await hook.send(content);
     return hook.delete("Impersonation end.");

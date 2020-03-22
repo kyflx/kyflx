@@ -1,6 +1,6 @@
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 import { GuildMember, Message, TextChannel } from "discord.js";
 import ms = require("ms");
+import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 
 export default class TempBanCommand extends Command {
   public constructor() {
@@ -73,7 +73,7 @@ export default class TempBanCommand extends Command {
 
     try {
       await member.ban({ reason });
-      message
+      await message
         .sem(
           message.t("cmds:mod.done", {
             member,
@@ -103,9 +103,9 @@ export default class TempBanCommand extends Command {
     };
 
     await _case.save();
-    await message._guild.save();
+    await this.updateDb(message.guild, "cases", message._guild.cases);
 
-    const { channel, enabled } = message._guild.log("ban", "audit");
+    const { channel, enabled } = this.log(message._guild, "ban", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 

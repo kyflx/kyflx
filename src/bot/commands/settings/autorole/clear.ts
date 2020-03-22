@@ -1,5 +1,5 @@
-import { Command } from "../../../../lib";
 import { Message } from "discord.js";
+import { Command } from "../../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -12,8 +12,7 @@ export default class extends Command {
         message.t("cmds:conf.auto.nothing", { action: "clear" })
       );
 
-    message._guild.autoRoles = [];
-    await message._guild.save();
+    await message.update("autoRoles", []);
     return message.sem(message.t("cmds:conf.auto.cleared"));
   }
 }

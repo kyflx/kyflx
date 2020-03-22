@@ -1,8 +1,8 @@
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 import { GuildMember, Message, TextChannel } from "discord.js";
+import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
-  constructor() {
+  public constructor() {
     super("warn", {
       description: t => t("cmds:mod.warn.desc"),
       channel: "guild",
@@ -64,13 +64,13 @@ export default class extends Command {
           .then(m => m.delete({ timeout: 6000 }));
     }
 
-    const profile = await this.client.findOrCreateProfile(
+    const profile = await this.client.ensureProfile(
       member.id,
       member.guild.id
     );
     ++profile.warns;
 
-    message
+    await message
       .sem(message.t("cmds:mod.done", { member, reason, action: "Warned" }))
       .then(m => m.delete({ timeout: 6000 }));
 
@@ -82,12 +82,12 @@ export default class extends Command {
 
     await profile.save();
     await _case.save();
-    await message._guild.save();
+    await this.updateDb(message.guild, "cases", message._guild.cases);
 
-    const log = (<any>this.client).guild_manager.checkWarns(message, profile);
+    const log = (this.client as any).guild_manager.checkWarns(message, profile);
     if (!log) return;
 
-    const { channel, enabled } = message._guild.log("warn", "audit");
+    const { channel, enabled } = this.log(message._guild, "warn", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 

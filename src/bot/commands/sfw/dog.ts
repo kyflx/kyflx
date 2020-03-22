@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, get, ImgurHot, VorteEmbed, SFW_LINKS } from "../../../lib";
+import { Command, get, ImgurHot, SFW_LINKS, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {

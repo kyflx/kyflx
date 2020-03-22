@@ -36,7 +36,11 @@ export default class SetupBot extends Command {
     { id, channel }: { id: MafiaChannel; channel: TextChannel }
   ) {
     message._guild.games.mafia[id] = channel.id;
-    await message._guild.save();
+    await this.updateDb(
+      message.guild,
+      "games.mafia",
+      message._guild.games.mafia
+    );
     return message.sem(message.t("cmds:conf.chan.set", { channel, id }));
   }
 }

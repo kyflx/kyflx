@@ -1,5 +1,5 @@
-import { Command, VorteEmbed, Presences } from "../../../lib";
 import { GuildMember, Message } from "discord.js";
+import { Command, presences, VorteEmbed } from "../../../lib";
 
 export default class UserInfoCommand extends Command {
   public constructor() {
@@ -22,12 +22,12 @@ export default class UserInfoCommand extends Command {
       .setDescription(
         [
           `**Name**: ${member.user.tag} (${member.id})`,
-          `**Joined At**: ${member.joinedAt!.toLocaleDateString()}`,
+          `**Joined At**: ${member.joinedAt.toLocaleDateString()}`,
           `**Created At**: ${member.user.createdAt.toLocaleDateString()}`,
-          `**Status**: ${Presences[member.presence.status]}`,
+          `**Status**: ${presences[member.presence.status]}`,
           `**Game**: ${
-            member.presence!.activities.length
-              ? member.presence!.activities[0].name
+            member.presence.activities.length
+              ? member.presence.activities[0].name
               : "None"
           }`,
           `**Roles**: ${member.roles.cache

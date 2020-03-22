@@ -1,5 +1,5 @@
-import { Command } from "../../../lib";
 import { Message, TextChannel } from "discord.js";
+import { Command } from "../../../lib";
 
 export default class LevelUpMessageCommand extends Command {
   public constructor() {
@@ -36,19 +36,16 @@ export default class LevelUpMessageCommand extends Command {
 
     switch (action) {
       case "reset":
-        message._guild.lvlUpChannel = "";
-        await message._guild.save();
+        await this.updateDb(message.guild, "channels.lvlUp", "");
         await message.sem(message.t("cmds:conf.lum.reset"));
         break;
       case "redirect":
-        message._guild.lvlUpChannel = channel.id;
-        await message._guild.save();
+        await this.updateDb(message.guild, "channels.lvlUp", channel.id);
         await message.sem(message.t("cmds:conf.lum.red", { channel }));
         break;
       case "enable":
       case "disable":
-        message._guild.lvlUpMsg = action === "enable";
-        await message._guild.save();
+        await this.updateDb(message.guild, "lvlUpMessage", action === "enable");
         await message.sem(message.t(`cmds:conf.lum.${action}`));
         break;
     }

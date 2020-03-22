@@ -8,8 +8,7 @@ export default class ClientError extends Listener {
     });
   }
 
-  async exec(error: Error, bot = this.client) {
-    return bot.logger.error(error);
+  public async exec(error: Error, bot = this.client) {
+    bot.logger.error(error);
   }
 }
-  

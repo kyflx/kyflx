@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
- 
+
 export default class VorteEmbed extends MessageEmbed {
-  constructor(public message: Message) {
+  public constructor(public message: Message) {
     super();
     this.setAuthor(
       this.message.author.username,
@@ -20,11 +20,10 @@ export default class VorteEmbed extends MessageEmbed {
     return this;
   }
 
-
   public addField(name: any, value: any, inline: boolean = false): this {
     return this.addFields({ name, value, inline });
   }
-  
+
   public errorEmbed(error?: string): this {
     const embed = this.setAuthor(
       "Error",

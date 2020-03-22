@@ -1,5 +1,5 @@
 import { Message, TextChannel, Util } from "discord.js";
-import { Listener, VorteEmbed } from "../../../lib";
+import { Listener, log, VorteEmbed } from "../../../lib";
 
 export default class MessageDeleteListener extends Listener {
   public constructor() {
@@ -9,16 +9,16 @@ export default class MessageDeleteListener extends Listener {
     });
   }
 
-  async exec(message: Message) {
+  public async exec(message: Message) {
     if (!message.guild) return;
 
-    const guild = await this.client.findOrCreateGuild(message.guild!.id);
-    const { enabled, channel } = guild.log("messageDelete", "audit");
+    const guild = this.client.ensureGuild(message.guild.id);
+    const { enabled, channel } = log(guild, "messageDelete", "audit");
 
     if (message.author.bot) return;
     if (!enabled || !channel) return;
 
-    const chan = message.guild!.channels.resolve(channel) as TextChannel;
+    const chan = message.guild.channels.resolve(channel) as TextChannel;
 
     return chan.send(
       new VorteEmbed(message)

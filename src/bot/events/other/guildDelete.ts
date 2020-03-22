@@ -10,7 +10,7 @@ export default class GuildDeleteListener extends Listener {
     });
   }
 
-  async exec(guild: Guild) {
+  public async exec(guild: Guild) {
     await GuildEntity.delete({ guildId: guild.id });
     return logs.send(
       new MessageEmbed({

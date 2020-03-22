@@ -1,5 +1,5 @@
-import { Command, MafiaRole, VorteEmbed } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, MafiaRole, VorteEmbed } from "../../../lib";
 
 export default class ModeratorRole extends Command {
   public constructor() {
@@ -39,8 +39,7 @@ export default class ModeratorRole extends Command {
 
     // @ts-ignore
     guild[`${role}Limit`] = limit;
-    await message._guild.save();
-
+    await this.updateDb(message.guild, "games.mafia", guild);
     return message.sem(`Configured the role limits.`);
   }
 }

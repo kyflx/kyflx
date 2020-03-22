@@ -1,5 +1,5 @@
-import { Command, VorteEmbed } from "../../../lib";
 import { Message, User } from "discord.js";
+import { Command, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {

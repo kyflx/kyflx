@@ -28,7 +28,7 @@ export class MafiaNight {
     const player = this.game.getPlayer(id);
     if (!player) throw new Error("Player doesn't exist.");
 
-    if ((this.killed = id)) {
+    if (this.killed === id) {
       player.killed = false;
       delete player.killedon;
     }
@@ -42,7 +42,7 @@ export class MafiaNight {
     const player = this.game.getPlayer(id);
     if (!player) throw new Error("Player doesn't exist.");
 
-    const result: boolean = player.role === "mafia" ? true : false;
+    const result: boolean = player.role === "mafia";
     this.investigated = { target: id, mafia: result };
 
     return result;

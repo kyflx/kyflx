@@ -1,7 +1,7 @@
-import { Command } from "../../../../lib";
 import { Argument } from "discord-akairo";
 import { Message } from "discord.js";
 import ms = require("ms");
+import { Command } from "../../../../lib";
 
 export default class PunishmentsRemove extends Command {
   public constructor() {
@@ -15,7 +15,7 @@ export default class PunishmentsRemove extends Command {
           },
           type: Argument.validate(
             "number",
-            (_, p: string) => !_._guild.warnPunishments[<any>p]
+            (_, p: string) => !_._guild.warnPunishments[p as any]
           )
         },
         {
@@ -44,7 +44,7 @@ export default class PunishmentsRemove extends Command {
   ) {
     const data = { type, duration };
     message._guild.warnPunishments[level] = data;
-    await message._guild.save();
+    await message.update("warnPunishments", message._guild.warnPunishments);
     return message.sem(message.t("cmds:conf.puns.new", { p: data, level }));
   }
 }

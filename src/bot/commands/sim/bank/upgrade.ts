@@ -1,6 +1,6 @@
-import { Command, confirm } from "../../../../lib";
 import { Argument } from "discord-akairo";
 import { Message } from "discord.js";
+import { Command, confirm } from "../../../../lib";
 
 export default class UpgradeCommand extends Command {
   public constructor() {
@@ -25,7 +25,7 @@ export default class UpgradeCommand extends Command {
     message: Message,
     { amount, yes }: { amount: number; yes: boolean }
   ) {
-    const cost = 200 * amount;
+    const cost = amount * 200;
 
     if (!yes) {
       const verification = await confirm(
@@ -39,7 +39,7 @@ export default class UpgradeCommand extends Command {
       return message.sem(message.t("cmds:eco.bk.insuf"));
 
     message.profile.coins -= cost;
-    message.profile.upgrades.bank += 500 * amount;
+    message.profile.upgrades.bank += amount * 500;
     await message.profile.save();
 
     return message.sem(

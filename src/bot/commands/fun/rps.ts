@@ -1,5 +1,5 @@
-import { Command, results, RPS_Types } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, results, rpsTypes } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -19,11 +19,11 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { selected }: { selected: string }) {
-    const bot = RPS_Types[Math.floor(Math.random() * RPS_Types.length)];
+    const bot = rpsTypes[Math.floor(Math.random() * rpsTypes.length)];
     return message.sem(
       message.t(
         `cmds:fun.rps.${
-          results[bot][RPS_Types.findIndex(c => c === selected)]
+          results[bot][rpsTypes.findIndex(c => c === selected)]
         }`,
         { bot }
       )

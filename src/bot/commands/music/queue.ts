@@ -1,7 +1,6 @@
-import { decode } from "@lavalink/encoding";
 import { Message } from "discord.js";
-import { Command, paginate, trunc, VorteEmbed } from "../../../lib";
 import ms = require("ms");
+import { Command, paginate, trunc, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -23,12 +22,13 @@ export default class extends Command {
     if (!tracks.length)
       return message.sem(message.t("cmds:music.queue.empty", { message }));
 
-    const decoded = tracks.map(decode);
-    const np = decode(message.queue.np.song);
+    const decoded = tracks.map(this.client.decode);
+    const np = this.client.decode(message.queue.np.song);
 
-    let total = decoded.reduce((prev, song) => prev + Number(song.length), 0),
-      paginated = paginate(decoded, page),
-      index = (paginated.page - 1) * 10,
+    const total = decoded.reduce((prev, song) => prev + Number(song.length), 0),
+      paginated = paginate(decoded, page);
+
+    let index = (paginated.page - 1) * 10,
       upNext = "";
 
     paginated.items.length

@@ -1,5 +1,5 @@
-import { Command } from "../../../lib";
 import { Message } from "discord.js";
+import { Command } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -20,14 +20,12 @@ export default class extends Command {
   public async exec(message: Message, { color }: { color: number }) {
     if (!color)
       return message.sem(
-        `The current color for this guild is **${(<any>(
+        `The current color for this guild is **${((
           message._guild.embedColor
-        )).toString(16)}**`
+        ) as any).toString(16)}**`
       );
 
-    (message._guild.embedColor as any) = color;
-    await message._guild.save();
-
+    await this.updateDb(message.guild, "embedColor", color);
     return message.sem(
       `Okay I set the embed color to **#${color.toString(16)}**`
     );

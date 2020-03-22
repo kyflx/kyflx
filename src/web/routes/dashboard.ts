@@ -7,7 +7,7 @@ import { APIRouter, Get, Guild, Router } from "../../lib";
 declare module "express" {
   interface Request {
     user: Strategy.Profile & {
-      guilds: Guild[];
+      guilds: Array<Guild>;
     };
   }
 }
@@ -22,10 +22,9 @@ export default class MainRouter extends APIRouter {
         _guild = this.client.guilds.resolve(guild.id);
       if (permissions.has("ADMINISTRATOR") || guild.owner)
         acc.push(
-          Object.assign(guild, {
+          {...guild,
             joined: !!_guild,
-            _guild: _guild ? _guild.toJSON() : null
-          })
+            _guild: _guild ? _guild.toJSON() : null}
         );
       return acc;
     }, []);
@@ -53,7 +52,7 @@ export default class MainRouter extends APIRouter {
 
     res.status(200).json({
       discord_guild: guild.toJSON(),
-      database_guild: this.client.findOrCreateGuild(guild.id),
+      database_guild: this.client.ensureGuild(guild.id),
       code: 200,
       isAuthenticated: true,
       user: req.user

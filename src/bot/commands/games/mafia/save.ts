@@ -26,7 +26,7 @@ export default class InvestigateSomeone extends Command {
               )
                 return false;
               if (!player || player.killed) return false;
-              else return true;
+              return true;
             }
           ),
           prompt: {
@@ -57,7 +57,7 @@ export default class InvestigateSomeone extends Command {
         type: "error"
       });
 
-    await night.save(person.id);
+    night.save(person.id);
     return message.sem(message.t("cmds:games.maf.saved", { person }));
   }
 }

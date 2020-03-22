@@ -1,5 +1,5 @@
-import { Command, VorteEmbed, wordArr } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, VorteEmbed, wordArr } from "../../../lib";
 
 export default class TabooGameCommand extends Command {
   public constructor() {
@@ -15,11 +15,10 @@ export default class TabooGameCommand extends Command {
       return message.sem(message.t("cmds:fun.tab.alr"));
 
     const word = wordArr[Math.floor(Math.random() * wordArr.length)];
-    message._guild.games.taboo = {
+    await message.update("games.taboo", {
       host: message.author.id,
       word
-    };
-    await message._guild.save();
+    });
 
     message.author
       .send(
@@ -27,16 +26,16 @@ export default class TabooGameCommand extends Command {
           message.t("cmds:fun.tab.dm", { word })
         )
       )
-      .catch(() => {
-        return message.sem(
+      .catch(() =>
+        message.sem(
           `Sorry, ${message.author}. Please open your DMs before starting a game.`
-        );
-      });
+        )
+      );
 
-    message.sem(message.t("cmds:fun.tab.new", { message }));
+    await message.sem(message.t("cmds:fun.tab.new", { message }));
 
     await message.channel
-      .awaitMessages((message: Message) => message.content.ignoreCase(word), {
+      .awaitMessages((m: Message) => m.content.ignoreCase(word), {
         max: 1,
         errors: ["time"],
         time: 120000
@@ -48,7 +47,7 @@ export default class TabooGameCommand extends Command {
             return message.sem(message.t("cmds:fun.tab.cheat"), { _new: true });
 
           const amount = Math.floor(Math.random() * 100) + 25;
-          const profile = await this.client.findOrCreateProfile(
+          const profile = await this.client.ensureProfile(
             first.author.id,
             first.guild.id
           );
@@ -63,7 +62,6 @@ export default class TabooGameCommand extends Command {
         () => message.sem(message.t("cmds:fun.tab.timesup"))
       );
 
-    delete message._guild.games.taboo;
-    return message._guild.save();
+    return message.update("games.taboo", null);
   }
 }

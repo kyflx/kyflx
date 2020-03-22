@@ -1,25 +1,13 @@
-import { Command, VorteEmbed, In, developers } from "../../../lib";
-import { Message } from "discord.js";
 import { Argument } from "discord-akairo";
+import { Message } from "discord.js";
+import { Command, DJP, In, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
     super("volume", {
       aliases: ["volume", "vol"],
       description: t => t("cmds:music.vol.desc"),
-      userPermissions(message: Message) {
-        if (
-          developers.includes(message.author.id) ||
-          message.member!.hasPermission("ADMINISTRATOR")
-        )
-          return;
-        else if (
-          message._guild!.djRole &&
-          message.member!.roles.resolve(message._guild!.djRole)
-        )
-          return "DJ";
-        return;
-      },
+      userPermissions: DJP,
       channel: "guild",
       args: [
         {
@@ -38,7 +26,7 @@ export default class extends Command {
         type: "error"
       });
 
-    if (!In(message.member!))
+    if (!In(message.member))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });

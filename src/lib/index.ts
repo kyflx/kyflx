@@ -1,10 +1,90 @@
 import "./classes/Discord";
 import "./util/Logging";
 
+import Logger from "@ayanaware/logger";
+import { TrackInfo } from "@lavalink/encoding";
+import Node, { Player } from "lavalink";
+import { UpdateResult } from "typeorm";
+import Database from "../bot/plugins/Database";
+import { Plugin, Queue } from "./classes";
+import VorteClient from "./Client";
+import { GuildProvider, GuildSettings, ProfileEntity } from "./database";
+import { GameManager } from "./games";
+import { BassLevels } from "./typings";
+
 export * from "./classes";
 export * from "./database";
 export * from "./games";
 export * from "./i18n";
-export * from "./interfaces";
+export * from "./typings";
 export * from "./util";
 export { default as VorteClient } from "./Client";
+
+declare global {
+  interface String {
+    capitalize(): string;
+    ignoreCase(value: string): boolean;
+    trunc(n: number, useWordBoundary?: boolean): String;
+  }
+
+  interface ObjectConstructor {
+    keys<T extends object>(o: T): Array<keyof T>;
+  }
+
+  function when<
+    O extends Record<string, () => any>,
+    K extends Exclude<keyof O, "else">
+  >(query: K, obj: O): any;
+}
+
+declare module "discord.js" {
+  interface Message {
+    client: VorteClient;
+    _guild: GuildSettings;
+    profile: ProfileEntity;
+    player: Player;
+    queue: Queue;
+
+    update(key: string, value: any): Promise<UpdateResult>;
+    sem(
+      content: string,
+      options?: { type?: "normal" | "error"; t?: boolean; _new?: boolean },
+      i?: Record<string, any>
+    ): Promise<Message>;
+
+    t<T extends any>(key: string, i?: Record<string, any>): T;
+  }
+}
+
+declare module "discord-akairo" {
+  interface AkairoClient {
+    plugins: Map<string, Plugin>;
+    games: GameManager;
+    commands: CommandHandler;
+    events: ListenerHandler;
+    music: Node;
+
+    logger: Logger;
+    database: Database;
+    _guilds: GuildProvider;
+
+    maintenance: boolean;
+    developers: Array<string>;
+    directory: string;
+
+    decode(track: string): TrackInfo;
+    ensureGuild(guildId: string): GuildSettings;
+    ensureProfile(
+      userId: string,
+      guildId: string
+    ): Promise<ProfileEntity>;
+  }
+}
+
+declare module "lavalink" {
+  interface Player {
+    bass: BassLevels;
+    queue: Queue;
+    volume: number;
+  }
+}

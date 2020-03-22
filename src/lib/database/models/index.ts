@@ -1,5 +1,6 @@
 import { Snowflake } from "discord.js";
-import { MafiaDBObject } from "../../games";
+import { MafiaDBObject, TabooGame } from "../../games";
+import { mafiaDefault } from "./Guild";
 
 export { default as CaseEntity } from "./Case";
 export { default as GuildEntity } from "./Guild";
@@ -14,10 +15,7 @@ export interface CaseEdit {
 
 export interface GamesObject extends Record<string, {}> {
   mafia: MafiaDBObject;
-  taboo?: {
-    host: Snowflake;
-    word: string;
-  }
+  taboo?: TabooGame;
 }
 
 export interface GuildLogsMap {
@@ -36,22 +34,106 @@ export interface GuildLogsMap {
   memberLeave?: string;
 }
 
-export type GuildEntityChannels = Record<"member" | "audit", Snowflake>;
-export type ReactionMenu = {
-  roles: Record<Snowflake, string>;
-  type: "switch" | "multi";
+export interface GuildSettings {
+  /* Staff */
+  warnPunishments: Record<number, WarnPunishment>;
+  cases: number;
+  verification: Partial<VerifySettings>;
+  logs: GuildLogsMap;
+
+  /* Basic */
+  lvlUpMsg: boolean;
+  announceNextTrack: boolean;
+  prefixes: Array<string>;
+  language: string;
+  embedColor: number;
+
+  /* Games */
+  games: GamesObject;
+
+  /* Roles */
+  djRole: Snowflake;
+  reactionRoles: Record<Snowflake, ReactionMenu>;
+  muteRole: Snowflake;
+  autoRoles: Array<Snowflake>;
+
+  welcomeMessage: string;
+  farewellMessage: string;
+
+  channels: GuildEntityChannels;
+}
+
+export const guildDefaults: GuildSettings = {
+  /* Staff */
+  warnPunishments: {},
+  cases: Number(0),
+  verification: {},
+  logs: {
+    messageDelete: false,
+    messageUpdate: false,
+    ban: true,
+    kick: true,
+    mute: true,
+    warn: true,
+    lockdown: true,
+    slowmode: false,
+    roleRemove: false,
+    roleAdd: false,
+    purge: false,
+    memberJoined: "",
+    memberLeave: ""
+  },
+
+  /* Basic */
+  lvlUpMsg: true,
+  announceNextTrack: true,
+  prefixes: ["v!"],
+  language: "en_US",
+  embedColor: 814543,
+
+  /* Games */
+  games: {
+    mafia: mafiaDefault,
+    tabbo: null
+  },
+
+  /* Roles */
+  djRole: "",
+  reactionRoles: {},
+  muteRole: "",
+  autoRoles: [],
+
+  welcomeMessage:
+    "Welcome **{{mention}}** to **{{server}}**!\n\n**{{server}}** now has {{memberCount}} members!",
+  farewellMessage:
+    "Goodbye **{{mention}}**, **{{server}}** says farewell!\n\n**{{server}}** now has {{memberCount}} members!",
+
+  channels: {
+    member: "",
+    audit: "",
+    lvlUp: ""
+  }
 };
 
-export type WarnPunishment = {
-  type: "ban" | "kick" | "warn" /* ? */ | "mute";
+export type GuildEntityChannels = Record<
+  "member" | "audit" | "lvlUp",
+  Snowflake
+>;
+export interface ReactionMenu {
+  roles: Record<Snowflake, string>;
+  type: "switch" | "multi";
+}
+
+export interface WarnPunishment {
+  type: "ban" | "kick" | "mute";
   duration?: number;
-};
+}
 
 export type VerifySettings = Verify | VerifyReaction | VerifyMessage;
 
 export interface Verify {
   type: "captcha" | "reaction" | "command" | "message";
-  role: string[];
+  role: Array<string>;
   channel: string;
   onFail: "kick" | "ban";
 }

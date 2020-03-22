@@ -1,5 +1,5 @@
-import { Command, channelKeys, logs } from "../../../lib";
 import { Message, TextChannel } from "discord.js";
+import { channelKeys, Command, logs } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -60,13 +60,19 @@ export default class extends Command {
         message._guild.channels.audit = "";
 
         await message.sem(message.t("cmds:conf.logs.reset"));
-        break;
+        return this.updateDb(
+          message.guild,
+          "channels",
+          message._guild.channels
+        );
       case "set":
         message._guild.channels.audit = (value as TextChannel).id;
-        console.log((<TextChannel>value).id, message._guild.channels);
-
         await message.sem(message.t("cmds:conf.logs.set", { message, value }));
-        break;
+        return this.updateDb(
+          message.guild,
+          "channels",
+          message._guild.channels
+        );
       case "disable":
       case "enable":
         const filtered =
@@ -90,8 +96,11 @@ export default class extends Command {
             all: value === "all"
           })
         );
-        break;
+        return this.updateDb(
+          message.guild,
+          "logs",
+          message._guild.logs
+        );
     }
-    return message._guild.save();
   }
 }

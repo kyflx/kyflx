@@ -28,7 +28,9 @@ export default abstract class Plugin {
     };
   }
 
-  public onLoad(): any {}
+  public onLoad(): any {
+    return;
+  }
 
   public onReady(): any {
     this._listen();
@@ -45,7 +47,7 @@ export default abstract class Plugin {
   }
 }
 
-function getAllListeners(target: any): SubscribedEvent[] {
+function getAllListeners(target: any): Array<SubscribedEvent> {
   if (target.constructor == null) return [];
   const methods = target.constructor[SUBSCRIBED_EVENTS_SYMBOL];
   if (!Array.isArray(methods)) return [];

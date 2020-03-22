@@ -8,7 +8,7 @@ export default class BotWarning extends Listener {
     });
   }
 
-  async exec(error: Error) {
-    return this.logger.warn(error);
+  public async exec(error: Error) {
+    this.logger.warn(error);
   }
 }

@@ -1,7 +1,5 @@
 export const channelKeys = ["channel", "memberJoined", "memberLeave"];
-
 export const developers = ["396096412116320258", "464499620093886486"];
-
 export const logs = [
   "warn",
   "editMessage",
@@ -13,13 +11,6 @@ export const logs = [
   "roleRemove",
   "ban"
 ];
-
-export const BassLevels: Record<string, number> = {
-  high: 0.2,
-  medium: 0.1,
-  low: 0.05,
-  none: 0
-};
 
 export enum SFW_LINKS {
   baka = "https://nekos.life/api/v2/img/baka",
@@ -49,7 +40,7 @@ export enum SFW_LINKS {
   wolf = "https://www.reddit.com/r/wolves.json?limit=100",
 }
 
-export const wordArr: string[] = [
+export const wordArr: Array<string> = [
   "computer",
   "laptop",
   "internet",
@@ -72,7 +63,7 @@ export const wordArr: string[] = [
   "mutual",
   "risk",
   "joker",
-  "Coco-Cola",
+  "Coca-Cola",
   "message",
   "email"
 ];
@@ -86,21 +77,21 @@ export enum FUN_LINKS {
   fact = `https://nekos.life/api/v2/fact`
 }
 
-export const results: Record<"rock" | "paper" | "scissors", string[]> = {
+export const results: Record<"rock" | "paper" | "scissors", Array<string>> = {
     rock: ["tie", "lost", "win"],
     paper: ["win", "tie", "lost"],
     scissors: ["lost", "win", "tie"]
   },
-  RPS_Types = Object.keys(results);
+  rpsTypes = Object.keys(results);
 
-export const MC_Emotes: Record<string, string> = {
+export const mcEmotes: Record<string, string> = {
   idle: "<:idle:677400656855826442>",
   dnd: "<:dnd:677400656906027008>",
   online: "<:online:677400656897900547>",
   offline: "<:offline:677400656696442902>"
 };
 
-export const Presences: Record<string, string> = {
+export const presences: Record<string, string> = {
   dnd: "Do Not Disturb",
   online: "Online",
   idle: "Idling",

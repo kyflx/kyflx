@@ -1,5 +1,5 @@
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 import { GuildMember, Message, TextChannel } from "discord.js";
+import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -82,11 +82,11 @@ export default class extends Command {
               .then(m => m.delete({ timeout: 6000 }));
         }
 
-        muteRole = (<any>this.client).guild_manager.createMuteRole(message);
+        muteRole = (this.client as any).guild_manager.createMuteRole(message);
       }
 
       await member.roles.add(muteRole, reason);
-      message
+      await message
         .sem(message.t("cmds:mod.done", { member, action: "Muted", reason }))
         .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
@@ -105,9 +105,9 @@ export default class extends Command {
     _case.type = "mute";
 
     await _case.save();
-    await message._guild.save();
+    await this.updateDb(message.guild, "cases", message._guild.cases);
 
-    const { channel, enabled } = message._guild.log("mute", "audit");
+    const { channel, enabled } = this.log(message._guild, "mute", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 

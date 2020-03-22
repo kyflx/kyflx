@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { In, Command } from "../../../lib";
+import { Command, In } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -14,7 +14,7 @@ export default class extends Command {
     if (!message.guild.me.voice.channel)
       return message.sem(message.t("cmds:music.no_vc"), { type: "error" });
 
-    if (!In(message.member!))
+    if (!In(message.member))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });

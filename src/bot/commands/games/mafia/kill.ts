@@ -23,7 +23,7 @@ export default class InvestigateSomeone extends Command {
               if (!game) return true;
               if (value.id !== message.author.id && (!player || player.killed))
                 return false;
-              else return true;
+              return true;
             }
           ),
           prompt: {
@@ -50,7 +50,7 @@ export default class InvestigateSomeone extends Command {
     if (night.killed)
       return message.sem(message.t("cmds:games.maf.ckm1"), { type: "error" });
 
-    await night.kill(suspect.id);
+    night.kill(suspect.id);
     return message.sem(message.t("cmds:games.maf.pend", { suspect }));
   }
 }

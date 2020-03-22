@@ -1,47 +1,28 @@
 import { Message } from "discord.js";
-import { BassLevels, In, Command, developers } from "../../../lib";
+import { ArrToBands, BassLevels, Command, DJP, In } from "../../../lib";
 
+const levels = ["earrape", "extreme", "hard", "soft", "off"];
 export default class extends Command {
   public constructor() {
     super("bassboost", {
-      aliases: ["bassboost", "bb"],
+      aliases: ["bassboost", "bb", "bass"],
       description: t => t("cmds:music.bb.desc"),
-      userPermissions(message: Message) {
-        if (
-          developers.includes(message.author.id) ||
-          message.member!.hasPermission("ADMINISTRATOR")
-        )
-          return;
-        else if (
-          message._guild!.djRole &&
-          message.member!.roles.resolve(message._guild!.djRole)
-        )
-          return "DJ";
-        return;
-      },
+      userPermissions: DJP,
       channel: "guild",
       args: [
         {
           id: "level",
-          type: [
-            ["high", "max"],
-            ["medium", "mid"],
-            ["low", "little"],
-            ["none", "0", "nada", "squat"]
-          ]
+          type: levels
         }
       ]
     });
   }
 
-  public async exec(
-    message: Message,
-    { level }: { level: "high" | "medium" | "low" | "none" }
-  ) {
+  public async exec(message: Message, { level }: { level: BassLevels }) {
     if (!message.guild.me.voice.channel)
       return message.sem(message.t("cmds:music.no_vc"), { type: "error" });
 
-    if (!In(message.member!))
+    if (!In(message.member))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
@@ -53,15 +34,16 @@ export default class extends Command {
         })
       );
 
-    let i = 0;
-    if (BassLevels[level.toLowerCase()] === undefined)
-      return message.sem(message.t("cmds:music.bb.lvls"));
+    const set = (...bands: Array<number>) =>
+      message.player.setEqualizer.bind(message.player, ArrToBands(bands));
+    await when(level, {
+      earrape: set(1, 0.75),
+      extreme: set(0.75, 0.5),
+      hard: set(0.5, 0.25),
+      soft: set(0.25, 0.15),
+      off: set(0, 0)
+    });
 
-    await message.player.setEqualizer(
-      Array(3)
-        .fill(null)
-        .map(() => ({ band: i++, gain: BassLevels[level.toLowerCase()] }))
-    );
     message.player.bass = level;
     return message.sem(message.t("cmds:music.bb.res", { level }));
   }

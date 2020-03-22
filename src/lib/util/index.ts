@@ -1,10 +1,6 @@
-import { Counter, Registry } from "prom-client";
-
-export { ConfigData, default as Config, IConfig } from "./Config";
+export { default as Config } from "./Config";
 export * from "./Constants";
 export * from "./functions";
-export { default as QueueHook } from "./QueueHook";
-
 
 String.prototype.capitalize = function() {
   return this.slice(0, 1).toUpperCase() + this.slice(1).toLowerCase();
@@ -27,20 +23,5 @@ String.prototype.ignoreCase = function(value: string): boolean {
   return this.toLowerCase() === value.toLowerCase();
 };
 
-declare global {
-  interface String {
-    capitalize(): string;
-    ignoreCase(value: string): boolean;
-    trunc(n: number, useWordBoundary?: boolean): String;
-  }
-
-  interface ObjectConstructor {
-    keys<T extends object>(o: T): (keyof T)[];
-  }
-}
-
-export type Stats = {
-  commands: Counter<string>;
-  messages: Counter<string>;
-  register: Registry;
-};
+(global as any).when = (q: string, o: Record<string, Function>): any =>
+  o[q.toLowerCase()] ? o[q.toLowerCase()]() : o.else ? o.else() : void 0;

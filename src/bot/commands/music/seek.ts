@@ -1,6 +1,6 @@
-import { Command, In } from "../../../lib";
 import { Message } from "discord.js";
 import ms = require("ms");
+import { Command, In } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -26,7 +26,7 @@ export default class extends Command {
         type: "error"
       });
 
-    if (!In(message.member!))
+    if (!In(message.member))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });

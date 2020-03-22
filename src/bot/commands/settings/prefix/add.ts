@@ -1,6 +1,6 @@
-import { Command } from "../../../../lib";
-import { Message } from "discord.js";
 import { Argument } from "discord-akairo";
+import { Message } from "discord.js";
+import { Command } from "../../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -36,7 +36,7 @@ export default class extends Command {
       });
 
     message._guild.prefixes.push(prefix);
-    await message._guild.save();
+    await this.updateDb(message.guild, "prefixes", message._guild.prefixes);
     return message.sem(message.t("cmds:conf.prf.added", { prefix }));
   }
 }

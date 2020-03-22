@@ -1,7 +1,5 @@
-import { Command } from "discord-akairo";
-import { Message } from "discord.js";
-import { Argument } from "discord-akairo";
-import { GuildMember } from "discord.js";
+import { Argument, Command } from "discord-akairo";
+import { GuildMember, Message } from "discord.js";
 
 export default class InvestigateSomeone extends Command {
   public constructor() {
@@ -24,7 +22,7 @@ export default class InvestigateSomeone extends Command {
               if (!game) return true;
               if (value.id !== message.author.id && (!player || player.killed))
                 return false;
-              else return true;
+              return true;
             }
           ),
           prompt: {

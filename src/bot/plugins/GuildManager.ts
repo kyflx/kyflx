@@ -1,17 +1,19 @@
 import Logger from "@ayanaware/logger";
 import Discord from "discord.js";
+import ms = require("ms");
 import {
   CaseEntity,
+  confirm,
   formatString,
+  log,
   Plugin,
   ProfileEntity,
   ReactionMenu,
   Subscribe,
   VorteEmbed
 } from "../../lib";
-import ms = require("ms");
 
-export default class GuildManagerPlugin extends Plugin {
+export default class GMP extends Plugin {
   public name: string = "guild_manager";
   public log: Logger = Logger.get("GuildManager");
 
@@ -23,10 +25,10 @@ export default class GuildManagerPlugin extends Plugin {
         if (x.other.duration <= Date.now()) {
           try {
             const guild = client.guilds.resolve(x.guildId);
-            if (!guild) CaseEntity.delete({ id: x.id });
+            if (!guild) await CaseEntity.delete({ id: x.id });
 
-            const _guild = await client.findOrCreateGuild(guild.id);
-            if (!_guild.muteRole) CaseEntity.delete({ id: x.id });
+            const _guild = client.ensureGuild(guild.id);
+            if (!_guild.muteRole) await CaseEntity.delete({ id: x.id });
 
             switch (x.type) {
               case "ban":
@@ -48,17 +50,17 @@ export default class GuildManagerPlugin extends Plugin {
             x.other.finished = true;
             await x.save();
 
-            const chan = <Discord.TextChannel>(
-              guild.channels.resolve(_guild.channels.audit)
-            );
+            const chan = guild.channels.resolve(
+              _guild.channels.audit
+            ) as Discord.TextChannel;
             if (chan)
-              chan.send(
+              await chan.send(
                 new Discord.MessageEmbed()
                   .setColor(_guild.embedColor)
                   .setAuthor(
                     `Temp. ${x.type.capitalize()} [ Case ID: ${x.id} ]`
                   )
-                  .setDescription(  
+                  .setDescription(
                     `**<@${x.subject}>** \`(${x.subject})\` is now ${
                       x.type === "ban" ? "unbanned" : "unmuted"
                     }.`
@@ -88,11 +90,9 @@ export default class GuildManagerPlugin extends Plugin {
           }
         : null;
 
-      const logs = <Discord.TextChannel>(
-          (message._guild.channels.audit
-            ? message.guild.channels.resolve(message._guild.channels.audit)
-            : null)
-        ),
+      const logs = (message._guild.channels.audit
+          ? message.guild.channels.resolve(message._guild.channels.audit)
+          : null) as Discord.TextChannel,
         embed = new VorteEmbed(message)
           .setThumbnail(this.client.user.displayAvatarURL())
           .setDescription(
@@ -117,12 +117,32 @@ export default class GuildManagerPlugin extends Plugin {
             break;
           case "mute":
             let muteRole = message.guild.roles.resolve(message._guild.muteRole);
+            if (!muteRole) {
+              const confirmed = await confirm(
+                message,
+                message.t("automod:warns.mtr")
+              );
+              if (!confirmed)
+                return message
+                  .sem(
+                    message.t("automod:warns.cancelled", {
+                      reason: "No mute role avaliable"
+                    })
+                  )
+                  .then(m => m.delete({ timeout: 6000 }));
+
+              await message.delete({ timeout: 6000 });
+              muteRole = await this.createMuteRole(message);
+              await message.update("muteRole", message._guild.muteRole);
+            }
             await member.roles.add(muteRole);
             break;
         }
       } catch (error) {
         this.log.error(error, `${message.guild.id} warn punishments`);
-        return message.sem(message.t("automod:warns.error", { action: "ban", error }));
+        return message.sem(
+          message.t("automod:warns.error", { action: "ban", error })
+        );
       }
 
       embed.setAuthor(
@@ -132,11 +152,17 @@ export default class GuildManagerPlugin extends Plugin {
       );
 
       await _case.save();
-      await message._guild.save();
+      await this.client._guilds.set(
+        message.guild,
+        "cases",
+        message._guild.cases
+      );
 
-      if (logs && message._guild.logs[punishment.type]) logs.send(embed);
+      if (logs && message._guild.logs[punishment.type]) await logs.send(embed);
       return false;
-    } else return true;
+    }
+
+    return true;
   }
 
   public async createMuteRole(message: Discord.Message): Promise<Discord.Role> {
@@ -150,7 +176,7 @@ export default class GuildManagerPlugin extends Plugin {
 
     message._guild.muteRole = muteRole.id;
     for (const [, c] of message.guild.channels.cache.filter(
-      c => c.type === "category"
+      _c => _c.type === "category"
     ))
       await c.createOverwrite(
         muteRole,
@@ -206,7 +232,7 @@ export default class GuildManagerPlugin extends Plugin {
       }
       await member.roles.add(role);
     } catch (error) {
-      return this.client.logger.info("Can't manage roles", message.guild.id);
+      this.client.logger.info("Can't manage roles", message.guild.id);
     }
   }
 
@@ -219,17 +245,17 @@ export default class GuildManagerPlugin extends Plugin {
       message = reaction.message;
     if (!data) return;
     const member = message.guild.member(user);
-    if (member.roles.resolve(data.role)) member.roles.remove(data.role);
+    if (member.roles.resolve(data.role)) await member.roles.remove(data.role);
   }
 
   @Subscribe("guildMemberAdd")
   public async newMember(member: Discord.GuildMember) {
-    const guild = await this.client.findOrCreateGuild(member.guild.id);
+    const guild = this.client.ensureGuild(member.guild.id);
 
-    const { channel, enabled } = guild.log("memberJoined", "audit");
+    const { channel, enabled } = log(guild, "memberJoined", "audit");
     if (enabled && channel) {
       const tc = member.guild.channels.resolve(channel) as Discord.TextChannel;
-      if (tc) tc.send(formatString(guild.welcomeMessage, member));
+      if (tc) await tc.send(formatString(guild.welcomeMessage, member));
     }
 
     if (guild.verification.type) {
@@ -245,14 +271,14 @@ export default class GuildManagerPlugin extends Plugin {
   }
 
   @Subscribe("guildBanAdd")
-  public newBan(guild: Discord.Guild, user: Discord.PartialUser) {
+  public async newBan(guild: Discord.Guild, user: Discord.PartialUser) {
     return CaseEntity.find({
       where: {
         guildId: guild.id,
         subject: user.id,
         type: "ban"
       }
-    }).then(cases => {
+    }).then(async cases => {
       const _case = cases[0];
       if (!_case || (_case.other && _case.other.temp))
         return ProfileEntity.findOneOrFail({
@@ -266,7 +292,7 @@ export default class GuildManagerPlugin extends Plugin {
 
   @Subscribe("guildMemberRemove")
   public async memberLeave(member: Discord.GuildMember) {
-    const guild = await this.client.findOrCreateGuild(member.guild.id);
+    const guild = this.client.ensureGuild(member.guild.id);
     const channel = guild.logs.memberJoined;
     if (!channel) return;
 

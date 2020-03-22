@@ -1,6 +1,6 @@
-import { Command, VorteEmbed } from "../../../lib";
-import { Message } from "discord.js";
 import { Flag } from "discord-akairo";
+import { Message } from "discord.js";
+import { Command, VorteEmbed } from "../../../lib";
 
 export default class PunishmentsCommand extends Command {
   public constructor() {
@@ -10,10 +10,7 @@ export default class PunishmentsCommand extends Command {
       channel: "guild",
       *args(_: Message) {
         const action = yield {
-          type: [
-            ["remove", "del", "delete"],
-            ["set", "add", "new"]
-          ],
+          type: [["remove", "del", "delete"], ["set", "add", "new"], "clear"],
           otherwise: new VorteEmbed(_).setDescription(
             _.t("cmds:conf.puns.curr", { _ })
           )

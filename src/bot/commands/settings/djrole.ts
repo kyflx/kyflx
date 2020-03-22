@@ -1,6 +1,6 @@
-import { Command } from "../../../lib";
-import { Message, Role } from "discord.js";
 import { Argument } from "discord-akairo";
+import { Message, Role } from "discord.js";
+import { Command } from "../../../lib";
 
 export default class DJRoleCommand extends Command {
   public constructor() {
@@ -21,13 +21,11 @@ export default class DJRoleCommand extends Command {
     if (!value) return message.sem(message.t("cmds:conf.dj.cur", { message }));
 
     if (value === "clear") {
-      message._guild.djRole = "";
-      await message._guild.save();
+      await this.updateDb(message.guild, "djRole", "");
       return message.sem(message.t("cmds:conf.dj.clr"));
     }
 
-    message._guild.djRole = value.id;
-    await message._guild.save();
+    await this.updateDb(message.guild, "djRole", value.id);
     return message.sem(message.t("cmds:conf.dj.done", { role: value }));
   }
 }

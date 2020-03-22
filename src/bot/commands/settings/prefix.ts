@@ -1,6 +1,6 @@
-import { Command, VorteEmbed } from "../../../lib";
-import { Message } from "discord.js";
 import { Flag } from "discord-akairo";
+import { Message } from "discord.js";
+import { Command, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -15,10 +15,9 @@ export default class extends Command {
             ["add", "new"],
             ["remove", "delete", "rm"]
           ],
-          otherwise: (_: Message) =>
-            new VorteEmbed(_).setDescription(
-              _.t("cmds:conf.prf.curr", { message: _ })
-            )
+          otherwise: new VorteEmbed(_).setDescription(
+            _.t("cmds:conf.prf.curr", { message: _ })
+          )
         };
 
         return Flag.continue(`prefix-${action}`);

@@ -1,5 +1,5 @@
-import { Command } from "../../../../lib";
 import { Message } from "discord.js";
+import { Command } from "../../../../lib";
 
 export default class CreateGame extends Command {
   public constructor() {
@@ -21,9 +21,7 @@ export default class CreateGame extends Command {
         type: "error"
       });
 
-    const role = <"doctor" | "mafia" | "detective" | "daytime">(
-      game.channels.findKey(tc => tc.id === message.channel.id)
-    );
+    const role = game.channels.findKey(tc => tc.id === message.channel.id);
     return game.wake(role === "daytime" ? undefined : role);
   }
 }

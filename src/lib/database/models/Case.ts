@@ -1,21 +1,26 @@
-import { BaseEntity, Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
-import { Snowflake } from "discord.js";
+import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
 import { CaseEdit } from ".";
 
-@Entity()
+@Entity("case")
 export default class CaseEntity extends BaseEntity {
-  @ObjectIdColumn() private _id!: ObjectID;
+  @PrimaryColumn()
+  public id: number = Number(0);
+  @PrimaryColumn("text")
+  public guildId: string = "0";
 
-  @Column() public id = Number(0);
-  @Column() public guildId: Snowflake;
+  @Column("json", { nullable: true })
+  public other: Record<string, any> = {};
+  @Column("simple-array")
+  public edited: Array<CaseEdit> = [];
 
-  @Column() public other: Record<string, any>;
-  @Column() public edited: CaseEdit[] = [];
-
-  @Column() public subject: any = "";
-  @Column() public moderator: Snowflake = "";
-  @Column() public reason = "None given.";
-  @Column() public type:
+  @Column()
+  public subject: string = "";
+  @Column()
+  public moderator: string = "";
+  @Column()
+  public reason: string = "None given.";
+  @Column()
+  public type:
     | "mute"
     | "unmute"
     | "ban"
@@ -27,11 +32,7 @@ export default class CaseEntity extends BaseEntity {
     | "roleAdd"
     | "roleRemove";
 
-  public constructor(
-    id: number,
-    guildId: Snowflake,
-    other?: Record<string, any>
-  ) {
+  public constructor(id: number, guildId: string, other?: Record<string, any>) {
     super();
 
     this.id = id;

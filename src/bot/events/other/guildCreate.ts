@@ -1,6 +1,6 @@
-import { Guild, MessageEmbed, TextChannel } from "discord.js";
-import { Listener, LogChannels } from "../../../lib";
+import { Guild, MessageEmbed } from "discord.js";
 import { logs } from "../../..";
+import { Listener } from "../../../lib";
 
 export default class GuildCreateListener extends Listener {
   public constructor() {
@@ -10,11 +10,11 @@ export default class GuildCreateListener extends Listener {
     });
   }
 
-  async exec(guild: Guild) {
-    await this.client.findOrCreateGuild(guild.id);
+  public async exec(guild: Guild) {
+    this.client.ensureGuild(guild.id);
     return logs.send(
       new MessageEmbed({
-        thumbnail: guild.iconURL() ? { url: guild.iconURL()! } : {}
+        thumbnail: guild.iconURL() ? { url: guild.iconURL() } : {}
       })
         .setColor("GREEN")
         .setTitle("New Guild!")

@@ -21,10 +21,14 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { command }: { command: string }) {
-    return exec(command, (error, stdout, stderr) => {
-      if (error) return message.util.send(`**Error:**\n\`\`\`bash\n${error}\`\`\``)
-      if (stderr) return message.util.send(`**Bash Error:**\n\`\`\`bash\n${stderr}\`\`\``)
-      return message.util.send(`**Output:**\n\`\`\`bash\n${stdout}\`\`\``)
+    return exec(command, async (error, stdout, stderr) => {
+      if (error)
+        return message.util.send(`**Error:**\n\`\`\`bash\n${error}\`\`\``);
+      if (stderr)
+        return message.util.send(
+          `**Bash Error:**\n\`\`\`bash\n${stderr}\`\`\``
+        );
+      return message.util.send(`**Output:**\n\`\`\`bash\n${stdout}\`\`\``);
     });
   }
 }

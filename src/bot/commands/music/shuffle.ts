@@ -1,23 +1,11 @@
-import { Command, In, developers } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, DJP, In } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
     super("shuffle", {
       aliases: ["shuffle"],
-      userPermissions(message: Message) {
-        if (
-          developers.includes(message.author.id) ||
-          message.member!.hasPermission("ADMINISTRATOR")
-        )
-          return;
-        else if (
-          message._guild!.djRole &&
-          message.member!.roles.resolve(message._guild!.djRole)
-        )
-          return "DJ";
-        return;
-      },
+      userPermissions: DJP,
       channel: "guild"
     });
   }
@@ -28,13 +16,13 @@ export default class extends Command {
         type: "error"
       });
 
-    if (!In(message.member!))
+    if (!In(message.member))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
 
     for (let i = message.queue.next.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(Math.random() * (i + 1));
       [message.queue.next[i], message.queue.next[j]] = [
         message.queue.next[j],
         message.queue.next[i]

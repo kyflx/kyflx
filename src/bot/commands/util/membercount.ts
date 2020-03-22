@@ -1,5 +1,5 @@
-import { Command, VorteEmbed, MC_Emotes, Presences } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, mcEmotes, presences, VorteEmbed } from "../../../lib";
 
 export default class MemberCountCommand extends Command {
   public constructor() {
@@ -35,7 +35,7 @@ export default class MemberCountCommand extends Command {
     embed.addField(
       "\u200b",
       Object.keys(statuses).map(
-        k => `**${MC_Emotes[k]} ${Presences[k]}** ${statuses[k]}`
+        k => `**${mcEmotes[k]} ${presences[k]}** ${statuses[k]}`
       )
     );
 

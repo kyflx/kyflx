@@ -1,5 +1,5 @@
-import { Command, In } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, In } from "../../../lib";
 
 export default class extends Command {
   public constructor() {

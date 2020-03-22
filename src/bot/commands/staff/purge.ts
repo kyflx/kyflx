@@ -1,5 +1,5 @@
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 import { Message, TextChannel } from "discord.js";
+import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -65,7 +65,7 @@ export default class extends Command {
     let deleted;
     try {
       deleted = (await message.channel.bulkDelete(messages, true)).size;
-      message
+      await message
         .sem(message.t("cmds:mod.purge.done", { message, deleted, reason }))
         .then(m => m.delete({ timeout: 6000 }));
     } catch (error) {
@@ -83,9 +83,9 @@ export default class extends Command {
     _case.other = { amount, deleted };
 
     await _case.save();
-    await message._guild.save();
+    await this.updateDb(message.guild, "cases", message._guild.cases);
 
-    const { channel, enabled } = message._guild.log("purge", "audit");
+    const { channel, enabled } = this.log(message._guild, "purge", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 

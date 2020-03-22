@@ -1,5 +1,5 @@
-import { Command, confirm, VorteEmbed } from "../../../lib";
 import { GuildMember, Message, TextChannel } from "discord.js";
+import { Command, confirm, VorteEmbed } from "../../../lib";
 
 export default class UnmuteCommand extends Command {
   public constructor() {
@@ -70,7 +70,7 @@ export default class UnmuteCommand extends Command {
         return message.sem(message.t("cmds:mod.un.mtr"));
 
       await member.roles.remove(message._guild.muteRole, "unmute");
-      message.sem(
+      await message.sem(
         message.t("cmds:mod.done", {
           member,
           action: "Unmuted",
@@ -90,7 +90,7 @@ export default class UnmuteCommand extends Command {
     // _case.subject = member.id;
     // _case.type = "";
 
-    const { channel, enabled } = message._guild.log("mute", "audit");
+    const { channel, enabled } = this.log(message._guild, "mute", "audit");
     if (!channel || !enabled) return;
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 

@@ -1,19 +1,27 @@
-import { BaseEntity, Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
-import { Snowflake } from "discord.js";
+import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export default class ProfileEntity extends BaseEntity {
-  @Column({ unique: true }) public userId: Snowflake;
-  @Column() public guildId: Snowflake;
-  @Column() public coins: number = 0;
-  @Column() public xp: number = 0;
-  @Column() public level: number = 1;
-  @Column() public last: { daily: number; weekly: number } = {
+  @PrimaryColumn("text")
+  public userId: string = "0";
+  @PrimaryColumn("text")
+  public guildId: string = "0";
+
+  @Column()
+  public coins: number = 0;
+  @Column()
+  public xp: number = 0;
+  @Column()
+  public level: number = 1;
+  @Column("json")
+  public last: { daily: number; weekly: number } = {
     daily: 0,
     weekly: 0
   };
-  @Column() public bank: number = 0;
-  @Column() public upgrades: {
+  @Column()
+  public bank: number = 0;
+  @Column("json")
+  public upgrades: {
     bank: number;
     maxGamble: number;
     boosters: { gamble: number; xp: number };
@@ -22,11 +30,10 @@ export default class ProfileEntity extends BaseEntity {
     maxGamble: 500,
     boosters: { gamble: 1, xp: 1 }
   };
-  @Column() public warns: number = 0;
-  @Column() public bio: string = "I'm a cool VorteKore user!";
-  @ObjectIdColumn() private _id!: ObjectID;
+  @Column()
+  public warns: number = 0;
 
-  public constructor(userId: Snowflake, guildId: Snowflake) {
+  public constructor(userId: string, guildId: string) {
     super();
 
     this.userId = userId;

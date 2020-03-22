@@ -1,6 +1,6 @@
-import { Command, get, VorteEmbed, GithubCommits } from "../../../lib";
 import { Message } from "discord.js";
 import ms from "ms";
+import { Command, get, GithubCommits, VorteEmbed } from "../../../lib";
 
 export default class BotInfoCommand extends Command {
   public constructor() {
@@ -13,8 +13,8 @@ export default class BotInfoCommand extends Command {
   public async exec(message: Message) {
     const emb = new VorteEmbed(message)
       .setAuthor(
-        `${this.client.user!.username} Bot Info`,
-        this.client.user!.displayAvatarURL()
+        `${this.client.user.username} Bot Info`,
+        this.client.user.displayAvatarURL()
       )
       .setDescription(message.t("cmds:util.bi.info"))
       .addField(
@@ -26,7 +26,7 @@ export default class BotInfoCommand extends Command {
             this.client.commands.modules.filter(cmd => cmd.aliases.length > 0)
               .size
           }`,
-          `**Uptime:** ${ms(this.client.uptime!, { long: true })}`,
+          `**Uptime:** ${ms(this.client.uptime, { long: true })}`,
           `[Invite](http://bit.ly/VorteKore) • [Github](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`
         ].join("\n")
       );
@@ -36,11 +36,14 @@ export default class BotInfoCommand extends Command {
   }
 
   private async getCommits() {
-    let { data, error } = await get<GithubCommits[]>(
-        "https://api.github.com/repos/VorteKore/Core/commits"
-      ),
-      str = "";
-    if (!data) return this.logger.error(error);
+    const { data, error } = await get<Array<GithubCommits>>(
+      "https://api.github.com/repos/VorteKore/Core/commits"
+    );
+    let str = "";
+    if (!data) {
+      this.logger.error(error);
+      return;
+    }
 
     for (const { sha, html_url, commit, author } of data
       .filter(c => c.author.type.ignoreCase("user"))

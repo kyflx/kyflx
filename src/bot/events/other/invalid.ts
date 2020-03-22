@@ -1,5 +1,5 @@
-import { Listener } from "../../../lib";
 import { Message } from "discord.js";
+import { Listener } from "../../../lib";
 
 export default class MessageInvalidListener extends Listener {
   public constructor() {
@@ -36,6 +36,7 @@ export default class MessageInvalidListener extends Listener {
         "volume",
         "vol"
       ].includes(message.util.parsed.alias)
+      && process.env.NODE_ENV === "production"
     ) {
       return message.sem(
         "Sorry, we're currently banned from youtube. If you would like to help us get a new vps, please visit our [patreon](https://www.patreon.com/user?u=24217294)"

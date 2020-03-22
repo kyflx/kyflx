@@ -1,8 +1,9 @@
+/* tslint:disable */
 import { Video } from "better-youtube-api";
 import { Argument } from "discord-akairo";
-import { Message, Util } from "discord.js";
+import { Message } from "discord.js";
 import { parse } from "url";
-import { Command, In, QueueHook, searchYT, trunc, VorteEmbed } from "../../../lib";
+import { Command, In, searchYT, trunc, VorteEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -26,7 +27,6 @@ export default class extends Command {
   }
 
   public async exec(message: Message, { search }: { search: string }) {
-    if (!message.queue.hook) message.queue.hook = new QueueHook(message.queue);
     if (message.guild.me.voice.channel && !In(message.member!))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
@@ -114,7 +114,8 @@ export default class extends Command {
         type: "error"
       });
 
-    if (!queue.player.playing && !queue.player.paused) await queue.start();
+    if (!queue.player.playing && !queue.player.paused)
+      await queue.start(message);
     return message.sem(`Queued up **${msg}** :)`);
   }
 }

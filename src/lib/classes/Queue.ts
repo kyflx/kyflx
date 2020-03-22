@@ -1,10 +1,10 @@
+import { Message, MessageEmbed } from "discord.js";
 import { EventEmitter } from "events";
 import { Player } from "lavalink";
-import EmitterHook from "./Hook";
 
 export interface NowPlaying {
   position?: number;
-  song?: string & { requester?: string };
+  song?: string;
   skips: Set<string>;
 }
 
@@ -14,11 +14,11 @@ export interface Repeat {
 }
 
 export default class Queue extends EventEmitter {
-  public next: string[] = [];
-  public previous: string[] = [];
+  public next: Array<string> = [];
+  public message: Message;
+  public previous: Array<string> = [];
   public repeat: Repeat = { queue: false, song: false };
   public np: NowPlaying = { position: 0, skips: new Set() };
-  public hook: EmitterHook;
 
   public constructor(public readonly player: Player) {
     super();
@@ -30,17 +30,37 @@ export default class Queue extends EventEmitter {
           d.type !== "TrackEndEvent" ||
           !["REPLACED", "STOPPED"].includes(d.reason)
         ) {
-          if (!this.repeat.song) this._next();
+          if (!this.repeat.song) await this._next();
           if (this.repeat.queue && !this.np.song) {
+            // tslint:disable-next-line: no-misleading-array-reverse
             const previous = this.previous.reverse();
-            this.clear();
+            await this.clear();
             this.add(...previous);
-            this._next();
+            await this._next();
           }
 
-          if (!this.np.song) return this.emit("finish");
+          if (!this.np.song) {
+            await this.message.sem(`No more songs in the queue. Bye 👋!`, {
+              _new: true
+            });
+            await this.player.leave();
+            await this.player.destroy();
+            return;
+          }
           this.emit("next", this.np);
           await this.player.play(this.np.song);
+          if (this.message._guild.announceNextTrack) {
+            const np = this.message.client.decode(this.np.song);
+            await this.message.channel.send(
+              new MessageEmbed()
+                .setAuthor(np.author)
+                .setColor(this.message._guild.embedColor)
+                .setDescription(`[${np.title}](${np.uri})`)
+                .setThumbnail(
+                  `https://i.ytimg.com/vi/${np.identifier}/hqdefault.jpg`
+                )
+            );
+          }
         }
       })
       .on("playerUpdate", d => {
@@ -48,7 +68,7 @@ export default class Queue extends EventEmitter {
       });
   }
 
-  public add(...songs: string[]): number {
+  public add(...songs: Array<string>): number {
     if (!songs.length) return 0;
     return this.next.push(...songs);
   }
@@ -59,26 +79,27 @@ export default class Queue extends EventEmitter {
     this.np = { song: next, position: 0, skips: new Set() };
   }
 
-  public async start(): Promise<boolean> {
-    if (!this.np.song) this._next();
-    await this.player.play(this.np.song!);
+  public async start(message: Message): Promise<boolean> {
+    this.message = message;
+    if (!this.np.song) await this._next();
+    await this.player.play(this.np.song);
     return this.emit("start", this.np);
   }
 
-  public stop(): Promise<void> {
+  public async stop(): Promise<void> {
     return this.player.stop();
   }
 
-  public setVolume(vol: number): Promise<void> {
+  public async setVolume(vol: number): Promise<void> {
     this.player.volume = vol;
     return this.player.setVolume(vol);
   }
 
-  public async move(from: number, to: number): Promise<string[]> {
+  public async move(from: number, to: number): Promise<Array<string>> {
     if (to >= this.next.length) {
       let k = to - this.next.length + 1;
       while (k--) {
-        this.next.push(<any>undefined);
+        this.next.push(undefined as any);
       }
     }
 
@@ -90,7 +111,7 @@ export default class Queue extends EventEmitter {
     return this.next.length;
   }
 
-  public sort(predicate?: (a: string, b: string) => number): string[] {
+  public sort(predicate?: (a: string, b: string) => number): Array<string> {
     return this.next.sort(predicate);
   }
 

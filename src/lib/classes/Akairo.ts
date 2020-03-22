@@ -5,18 +5,21 @@ import {
   CommandOptions,
   Listener as AkairoListener
 } from "discord-akairo";
-import { Message } from "discord.js";
+import { Guild, Message, Snowflake } from "discord.js";
+import { InsertResult, UpdateResult } from "typeorm";
+import { GuildEntityChannels, GuildLogsMap } from "..";
 import VorteClient from "../Client";
+import { GuildSettings } from "../database";
 
 export type Translatable<T extends any> = (
   translate: (path: string, i?: Record<string, any>) => any
 ) => T;
 
-export type CommandDescription = {
+export interface CommandDescription {
   content?: string | Translatable<string>;
   usage?: string;
-  examples?: string[];
-};
+  examples?: Array<string>;
+}
 
 interface ExtendedOptions extends CommandOptions {
   description?: CommandDescription | Translatable<CommandDescription>;
@@ -29,6 +32,24 @@ export class Command extends AkarioCommand {
   public constructor(id: string, options: ExtendedOptions = {}) {
     super(id, options);
   }
+
+  public async updateDb(
+    guild: string | Guild,
+    key: string,
+    value: any
+  ): Promise<UpdateResult> {
+    return this.client._guilds.set(guild, key, value);
+  }
+
+  public log(
+    settings: GuildSettings,
+    log: keyof GuildLogsMap,
+    chan: keyof GuildEntityChannels
+  ): { channel: Snowflake; enabled: boolean } {
+    const channel = settings.channels[chan];
+    const enabled = !!settings.logs[log];
+    return { channel, enabled };
+  }
 }
 
 export class Listener extends AkairoListener {
@@ -40,8 +61,8 @@ export class CommandHandler extends CMDHandler {
     if (message.guild) {
       if (!this.client.database.ready) return;
       try {
-        message._guild = this.client.findOrCreateGuild(message.guild.id);
-        message.profile = await this.client.findOrCreateProfile(
+        message._guild = this.client.ensureGuild(message.guild.id);
+        message.profile = await this.client.ensureProfile(
           message.author.id,
           message.guild.id
         );

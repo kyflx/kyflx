@@ -1,5 +1,5 @@
-import { Command, In, developers } from "../../../lib";
 import { Message } from "discord.js";
+import { Command, DJP, In } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -16,19 +16,7 @@ export default class extends Command {
           }
         }
       ],
-      userPermissions(message: Message) {
-        if (
-          developers.includes(message.author.id) ||
-          message.member!.hasPermission("ADMINISTRATOR")
-        )
-          return;
-        else if (
-          message._guild!.djRole &&
-          message.member!.roles.resolve(message._guild!.djRole)
-        )
-          return "DJ";
-        return;
-      },
+      userPermissions: DJP
     });
   }
 
@@ -38,7 +26,7 @@ export default class extends Command {
         type: "error"
       });
 
-    if (!In(message.member!))
+    if (!In(message.member))
       return message.sem(message.t("cmds:music.join"), {
         type: "error"
       });
@@ -55,7 +43,7 @@ export default class extends Command {
         type: "error"
       });
 
-    const decoded = await this.client.music.decode(tracks[i]);
+    const decoded = this.client.decode(tracks[i]);
     message.queue.next.splice(
       tracks.findIndex(s => s === tracks[i]),
       1
