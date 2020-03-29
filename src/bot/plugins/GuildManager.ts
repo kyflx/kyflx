@@ -28,8 +28,6 @@ export default class GMP extends Plugin {
             if (!guild) await CaseEntity.delete({ id: x.id });
 
             const _guild = client.ensureGuild(guild.id);
-            if (!_guild.muteRole) await CaseEntity.delete({ id: x.id });
-
             switch (x.type) {
               case "ban":
                 if ((await guild.fetchBans()).has(x.subject))

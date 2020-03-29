@@ -48,5 +48,5 @@ If you find any bugs or issues related to the bot please join the support server
 
 ## Author
 
-VorteKore Team &copy; 2019 - 2020
-[Chaos_Phoe](https://liodimatt.me) &bull; [MeLike2D](https://melike2d.me)
+VorteKore Team ©️ 2019 - 2020
+[Chaos_Phoe](https://liodimatt.me) • [MeLike2D](https://melike2d.me)

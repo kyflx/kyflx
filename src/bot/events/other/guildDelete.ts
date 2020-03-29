@@ -11,10 +11,10 @@ export default class GuildDeleteListener extends Listener {
   }
 
   public async exec(guild: Guild) {
-    await GuildEntity.delete({ guildId: guild.id });
+    await GuildEntity.delete({  guildId: guild.id });
     return logs.send(
       new MessageEmbed({
-        thumbnail: guild.iconURL() ? { url: guild.iconURL()! } : {}
+        thumbnail: guild.iconURL() ? { url: guild.iconURL() } : {}
       })
         .setColor("RED")
         .setTitle("Oh no :(")
