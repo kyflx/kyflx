@@ -24,7 +24,7 @@ export default class extends Command {
     if (!message.player.paused)
       return message.sem(message.t("cmds:music.res.alr"));
 
-    await message.player.pause(false);
+    await message.player.setPaused(false);
     return message.sem(message.t("cmds:music.res.res"));
   }
 }

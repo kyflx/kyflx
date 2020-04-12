@@ -1,24 +1,24 @@
-import "./classes/Discord";
-import "./util/Logging";
-
 import Logger from "@ayanaware/logger";
 import { TrackInfo } from "@lavalink/encoding";
-import Node, { Player } from "lavalink";
+import { Shoukaku, ShoukakuPlayer } from "shoukaku";
 import { UpdateResult } from "typeorm";
 import Database from "../bot/plugins/Database";
 import { Plugin, Queue } from "./classes";
+import "./classes/Discord";
 import VorteClient from "./Client";
 import { GuildProvider, GuildSettings, ProfileEntity } from "./database";
 import { GameManager } from "./games";
 import { BassLevels } from "./typings";
+import "./util/Logging";
+
 
 export * from "./classes";
+export { default as VorteClient } from "./Client";
 export * from "./database";
 export * from "./games";
 export * from "./i18n";
 export * from "./typings";
 export * from "./util";
-export { default as VorteClient } from "./Client";
 
 declare global {
   interface String {
@@ -42,7 +42,7 @@ declare module "discord.js" {
     client: VorteClient;
     _guild: GuildSettings;
     profile: ProfileEntity;
-    player: Player;
+    player: ShoukakuPlayer;
     queue: Queue;
 
     update(key: string, value: any): Promise<UpdateResult>;
@@ -62,7 +62,7 @@ declare module "discord-akairo" {
     games: GameManager;
     commands: CommandHandler;
     events: ListenerHandler;
-    music: Node;
+    music: Shoukaku;
 
     logger: Logger;
     database: Database;
@@ -74,15 +74,12 @@ declare module "discord-akairo" {
 
     decode(track: string): TrackInfo;
     ensureGuild(guildId: string): GuildSettings;
-    ensureProfile(
-      userId: string,
-      guildId: string
-    ): Promise<ProfileEntity>;
+    ensureProfile(userId: string, guildId: string): Promise<ProfileEntity>;
   }
 }
 
-declare module "lavalink" {
-  interface Player {
+declare module "shoukaku" {
+  interface ShoukakuPlayer {
     bass: BassLevels;
     queue: Queue;
     volume: number;

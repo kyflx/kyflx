@@ -19,8 +19,7 @@ export default class extends Command {
         type: "error"
       });
 
-    await message.player.destroy();
-    if (message.guild.me.voice.channel) await message.player.leave();
+      await message.client.music.getNode().leaveVoiceChannel(message.guild.id);
 
     return message.sem(message.t("cmds:music.leave.res"));
   }

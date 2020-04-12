@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 import { EventEmitter } from "events";
-import { Player } from "lavalink";
+import { ShoukakuPlayer } from "shoukaku";
 
 export interface NowPlaying {
   position?: number;
@@ -20,12 +20,12 @@ export default class Queue extends EventEmitter {
   public repeat: Repeat = { queue: false, song: false };
   public np: NowPlaying = { position: 0, skips: new Set() };
 
-  public constructor(public readonly player: Player) {
+  public constructor(public readonly player: ShoukakuPlayer) {
     super();
 
     this.player.queue = this;
     this.player
-      .on("event", async (d: { [key: string]: any }) => {
+      .on("end", async (d: { [key: string]: any }) => {
         if (
           d.type !== "TrackEndEvent" ||
           !["REPLACED", "STOPPED"].includes(d.reason)
@@ -40,15 +40,14 @@ export default class Queue extends EventEmitter {
           }
 
           if (!this.np.song) {
-            await this.message.sem(`No more songs in the queue. Bye 👋!`, {
-              _new: true
+            await this.message.client.music.getNode().leaveVoiceChannel(this.message.guild.id);
+            return this.message.sem("Nothing left in the queue. Bye!!!", {
+               _new: true
             });
-            await this.player.leave();
-            await this.player.destroy();
-            return;
           }
+
           this.emit("next", this.np);
-          await this.player.play(this.np.song);
+          await this.player.playTrack(this.np.song);
           if (this.message._guild.announceNextTrack) {
             const np = this.message.client.decode(this.np.song);
             await this.message.channel.send(
@@ -63,8 +62,8 @@ export default class Queue extends EventEmitter {
           }
         }
       })
-      .on("playerUpdate", d => {
-        this.np.position = d.state.position;
+      .on("playerUpdate", (d: any) => {
+        this.np.position = d.position;
       });
   }
 
@@ -82,17 +81,12 @@ export default class Queue extends EventEmitter {
   public async start(message: Message): Promise<boolean> {
     this.message = message;
     if (!this.np.song) await this._next();
-    await this.player.play(this.np.song);
+    await this.player.playTrack(this.np.song);
     return this.emit("start", this.np);
   }
 
-  public async stop(): Promise<void> {
-    return this.player.stop();
-  }
-
-  public async setVolume(vol: number): Promise<void> {
-    this.player.volume = vol;
-    return this.player.setVolume(vol);
+  public stop(): Promise<boolean> {
+    return this.player.stopTrack();
   }
 
   public async move(from: number, to: number): Promise<Array<string>> {

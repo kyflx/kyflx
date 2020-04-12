@@ -10,8 +10,8 @@ VorteKore is a multi-purpose discord bot focusing on Music and Staff (Moderation
 
 ## Features
 
-⚙️ Guild Configuration  
-📟 Over 80 Commands  
+⚙️ Guild Configuration
+📟 Over 80 Commands
 🐛 Daily Bug Fixes, Updates and new features.
 🗣️ Support for more languages.
 

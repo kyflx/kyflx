@@ -1,20 +1,20 @@
 /* Modules */
 import Logger from "@ayanaware/logger";
-import { decode, TrackInfo } from "@lavalink/encoding";
+import { decode } from "@lavalink/encoding";
 import { AkairoClient, Flag, ListenerHandler } from "discord-akairo";
 import { Message, Util } from "discord.js";
 import { existsSync } from "fs";
-import Node from "lavalink";
+import fetch from "node-fetch";
 import { join } from "path";
+import { LoadTrackResponse, Shoukaku } from "shoukaku";
 import Database from "../bot/plugins/Database";
-
 /* Custom Classes */
 import { CommandHandler, Plugin, VorteEmbed } from "./classes";
 import {
   GuildProvider,
   GuildSettings,
   ProfileEntity,
-  TagEntity
+  TagEntity,
 } from "./database";
 import { GameManager } from "./games";
 import { LanguageProvider } from "./i18n";
@@ -34,16 +34,18 @@ export default class VorteClient extends AkairoClient {
   public events: ListenerHandler;
 
   public logger: Logger = Logger.get(VorteClient);
-  public music: Node = new Node({
-    password: Config.get("lavalink_pass"),
-    host: Config.getEnv("lavalink_host"),
-    userID: Config.getEnv("user_id"),
-    send: (guildId: string, packet) => {
-      const guild = this.guilds.resolve(guildId);
-      if (guild) guild.shard.send(packet);
-      return;
-    }
-  });
+  public music: Shoukaku = new Shoukaku(
+    this,
+    [
+      {
+        name: "main",
+        auth: Config.get("lavalink_pass"),
+        host: Config.getEnv("lavalink_host"),
+        port: Config.get("lavalink_port"),
+      },
+    ],
+    {}
+  );
 
   public constructor(public directory: string) {
     super({
@@ -52,12 +54,12 @@ export default class VorteClient extends AkairoClient {
       messageCacheMaxSize: 10000,
       fetchAllMembers: true,
       messageCacheLifetime: 432000,
-      messageSweepInterval: 3600
+      messageSweepInterval: 3600,
     });
 
     this.events = new ListenerHandler(this, {
       directory: join(directory, "events"),
-      loadFilter: () => !this.maintenance
+      loadFilter: () => !this.maintenance,
     });
 
     this.commands = new CommandHandler(this, {
@@ -68,19 +70,21 @@ export default class VorteClient extends AkairoClient {
         const prefix = Config.getEnv<string>("prefix");
         if (!message.guild) return prefix;
         return this._guilds.get<Array<string>>(message.guild.id, "prefixes", [
-          prefix
+          prefix,
         ]);
       },
       defaultCooldown: 5000,
       handleEdits: true,
       commandUtil: true,
       allowMention: true,
-      loadFilter: f => {
+      loadFilter: (f) => {
         if (this.maintenance) return false;
-        const excluded = Config.getEnv<Array<string>>("load_filter").map(c =>
+        const excluded = Config.getEnv<Array<string>>("load_filter").map((c) =>
           join(this.directory, "commands", c)
         );
-        return excluded.length > 0 ? !excluded.some(e => f.includes(e)) : true;
+        return excluded.length > 0
+          ? !excluded.some((e) => f.includes(e))
+          : true;
       },
       ignorePermissions: developers,
       ignoreCooldown: developers,
@@ -110,9 +114,9 @@ export default class VorteClient extends AkairoClient {
               .setDescription(_.t("def:prompt_cancelled")),
           retry: (_: Message) => _.t("def:prompt_retry"),
           retries: 4,
-          time: 30000
-        }
-      }
+          time: 30000,
+        },
+      },
     });
 
     this.commands.resolver.addType("tag", async (message, phrase) => {
@@ -122,20 +126,30 @@ export default class VorteClient extends AkairoClient {
       phrase = Util.cleanContent(phrase.toLowerCase(), message);
       const tags = await TagEntity.find({
         where: {
-          guildId: message.guild.id
-        }
+          guildId: message.guild.id,
+        },
       });
 
       const [tag] = tags.filter(
-        t =>
-          t.aliases.some(n => n.toLowerCase() === phrase) ||
+        (t) =>
+          t.aliases.some((n) => n.toLowerCase() === phrase) ||
           t.name.toLowerCase() === phrase
       );
       return tag || Flag.fail(phrase);
     });
+  }
 
-    this.ws.on("VOICE_SERVER_UPDATE", _ => this.music.voiceServerUpdate(_));
-    this.ws.on("VOICE_STATE_UPDATE", _ => this.music.voiceStateUpdate(_));
+  public async load(query: string): Promise<LoadTrackResponse> {
+    return fetch(
+      `http://${Config.getEnv("lavalink_host")}:${Config.get(
+        "lavalink_port"
+      )}/loadtracks?identifier=${query}`,
+      {
+        headers: {
+          authorization: Config.get("lavalink_pass"),
+        },
+      }
+    ).then((res) => res.json());
   }
 
   public decode = decode;
@@ -147,7 +161,7 @@ export default class VorteClient extends AkairoClient {
       commands: this.commands,
       events: this.events,
       process,
-      music: this.music
+      music: this.music,
     });
 
     await this._loadPlugins();
@@ -155,7 +169,7 @@ export default class VorteClient extends AkairoClient {
     this.commands.loadAll();
     this.events.loadAll();
 
-    this.once("ready", () => this.plugins.forEach(async p => p.onReady()));
+    this.once("ready", () => this.plugins.forEach(async (p) => p.onReady()));
 
     return super.login(token);
   }
@@ -176,9 +190,9 @@ export default class VorteClient extends AkairoClient {
       return ProfileEntity.findOne({
         where: {
           userId,
-          guildId
-        }
-      }).then(profile => {
+          guildId,
+        },
+      }).then((profile) => {
         if (profile) return resolve(profile);
         return resolve(ProfileEntity.create({ userId, guildId }));
       });
@@ -193,7 +207,7 @@ export default class VorteClient extends AkairoClient {
         )) {
           try {
             // tslint:disable-next-line: tsr-detect-non-literal-require
-            const mod = (_ => _.default || _)(require(file));
+            const mod = ((_) => _.default || _)(require(file));
             if (!mod) return;
 
             const plugin = new mod(this);

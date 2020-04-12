@@ -31,7 +31,7 @@ export default class extends Command {
         type: "error"
       });
 
-    await message.player.seek(time);
+    await message.player.seekTo(time);
     return message.sem(message.t("cmds:music.seek.res"));
   }
 }

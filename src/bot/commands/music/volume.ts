@@ -31,7 +31,7 @@ export default class extends Command {
         type: "error"
       });
 
-    await message.queue.setVolume(volume);
+    await message.player.setVolume(volume);
     return message.sem(message.t("cmds:music.vol.res", { volume }));
   }
 }

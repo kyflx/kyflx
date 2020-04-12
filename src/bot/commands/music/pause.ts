@@ -22,7 +22,7 @@ export default class extends Command {
     if (message.player.paused)
       return message.sem(message.t("cmds:music.pause.alr"));
 
-    await message.player.pause();
+    await message.player.setPaused();
     return message.sem(message.t("cmds:music.pause.res"));
   }
 }

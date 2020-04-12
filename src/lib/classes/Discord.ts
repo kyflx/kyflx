@@ -1,21 +1,21 @@
 import { Message, Structures } from "discord.js";
-import { Player } from "lavalink";
-import { InsertResult, UpdateResult } from "typeorm";
+import { UpdateResult } from "typeorm";
 import Queue from "./Queue";
 import VorteEmbed from "./VorteEmbed";
 
 Structures.extend(
   "Message",
-  msg =>
+  (msg) =>
     class VorteMessage extends msg {
-      public get player(): Player {
+      public get player() {
         if (!this.guild) return null;
-        return this.client.music.players.get(this.guild.id);
+
+        return this.client.music.getPlayer(this.guild.id);
       }
 
-      public get queue(): Queue {
-        if (!this.guild || !this.player) return null;
-        return this.player.queue || new Queue(this.player);
+      public get queue() {
+        if (this.guild) return this.player.queue || new Queue(this.player);
+        return null;
       }
 
       public async update(key: string, value: any): Promise<UpdateResult> {

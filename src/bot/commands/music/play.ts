@@ -9,7 +9,7 @@ export default class extends Command {
   public constructor() {
     super("play", {
       aliases: ["play", "add"],
-      description: t => t("cmds:music.play.desc"),
+      description: (t) => t("cmds:music.play.desc"),
       channel: "guild",
       args: [
         {
@@ -18,18 +18,18 @@ export default class extends Command {
             str.replace(/<(.+)>/g, "$1")
           ),
           prompt: {
-            start: "Provide a playlist url, song title or url."
+            start: "Provide a playlist url, song title or url.",
           },
-          match: "rest"
-        }
-      ]
+          match: "rest",
+        },
+      ],
     });
   }
 
   public async exec(message: Message, { search }: { search: string }) {
     if (message.guild.me.voice.channel && !In(message.member!))
       return message.sem(message.t("cmds:music.join"), {
-        type: "error"
+        type: "error",
       });
 
     if (!message.member!.voice.channel)
@@ -37,18 +37,25 @@ export default class extends Command {
 
     if (!message.member.voice.channel.joinable)
       return message.sem(message.t("cmds:music.play.join"), {
-        type: "error"
+        type: "error",
       });
     if (!message.member.voice.channel.speakable)
       return message.sem(message.t("cmds:music.play.speak"), {
-        type: "error"
+        type: "error",
+      });
+
+    if (!message.guild.me.voice.channel)
+      await this.client.music.getNode().joinVoiceChannel({
+        guildID: message.guild.id,
+        voiceChannelID: message.member.voice.channel.id,
+        deaf: true,
       });
 
     let response,
       queue = message.queue;
     if (!["http:", "https:"].includes(parse(search).protocol!)) {
       await searchYT(search)
-        .then(async results => {
+        .then(async (results) => {
           const embed = new VorteEmbed(message).baseEmbed().setDescription(
             results
               .slice(0, 5)
@@ -63,12 +70,12 @@ export default class extends Command {
 
           const sent = (await message.util.send(embed)) as Message;
           return sent.channel
-            .awaitMessages(m => m.author.id === message.author.id, {
+            .awaitMessages((m) => m.author.id === message.author.id, {
               max: 1,
               errors: ["time"],
-              time: 10000
+              time: 10000,
             })
-            .then(async messages => {
+            .then(async (messages) => {
               const msg = messages.first();
               if (msg.deletable) await msg.delete();
 
@@ -79,9 +86,7 @@ export default class extends Command {
               if (!i || results[i - 1] === undefined)
                 return message.sem(message.t("cmds:music.play.cancelled"));
 
-              return (response = await this.client.music.load(
-                results[i - 1].url
-              ));
+              return (response = await this.client.load(results[i - 1].url));
             })
             .catch(() => {
               return message.sem(message.t("cmds:music.play.cancelled"));
@@ -90,14 +95,11 @@ export default class extends Command {
         .catch(() => {
           return message.sem(message.t("cmds:music.play.quota"));
         });
-    } else response = await this.client.music.load(search);
+    } else response = await this.client.load(search);
     if (!response) return;
-
-    if (!message.guild.me.voice.channel)
-      await queue.player.join(message.member.voice.channel.id);
     else if (!In(message.member!))
       return message.sem(message.t("cmds:music.join"), {
-        type: "error"
+        type: "error",
       });
 
     let msg;
@@ -107,15 +109,14 @@ export default class extends Command {
         response.tracks![0].info.uri
       })`;
     } else if (response.loadType === "PLAYLIST_LOADED") {
-      await queue.add(...response.tracks.map(track => track.track));
+      await queue.add(...response.tracks.map((track) => track.track));
       msg = response.playlistInfo!.name;
     } else
       return message.sem(message.t("cmds:music.play.look"), {
-        type: "error"
+        type: "error",
       });
 
-    if (!queue.player.playing && !queue.player.paused)
-      await queue.start(message);
+    if (!queue.player.track) await queue.start(message);
     return message.sem(`Queued up **${msg}** :)`);
   }
 }

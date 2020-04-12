@@ -8,7 +8,7 @@ export default class LavalinkError extends Listener {
     });
   }
 
-  public async exec(error: Error) {
-    this.client.logger.warn(error);
+  public async exec(id: string, error: Error) {
+    this.client.logger.warn(error, id);
   }
 }
