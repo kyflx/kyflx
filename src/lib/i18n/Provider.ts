@@ -3,7 +3,7 @@ import { Collection } from "discord.js";
 import { get } from "dot-prop";
 import { existsSync } from "fs";
 import { join } from "path";
-import VorteClient from "../Client";
+import KyflxClient from "../Client";
 import Language from "./Language";
 
 export default class LanguageProvider {
@@ -13,7 +13,7 @@ export default class LanguageProvider {
    * Loads all the language files in the i18n folder
    * @param client - The discord client.
    */
-  public init(client: VorteClient): void {
+  public init(client: KyflxClient): void {
     if (existsSync(join(client.directory, "i18n"))) {
       for (const f of AkairoHandler.readdirRecursive(
         join(client.directory, "i18n")

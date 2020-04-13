@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import ms from "ms";
-import { Command, get, GithubCommits, VorteEmbed } from "../../../lib";
+import { Command, get, GithubCommits, KyflxEmbed } from "../../../lib";
 
 export default class BotInfoCommand extends Command {
   public constructor() {
@@ -11,7 +11,7 @@ export default class BotInfoCommand extends Command {
   }
 
   public async exec(message: Message) {
-    const emb = new VorteEmbed(message)
+    const emb = new KyflxEmbed(message)
       .setAuthor(
         `${this.client.user.username} Bot Info`,
         this.client.user.displayAvatarURL()
@@ -27,17 +27,17 @@ export default class BotInfoCommand extends Command {
               .size
           }`,
           `**Uptime:** ${ms(this.client.uptime, { long: true })}`,
-          `[Invite](http://bit.ly/VorteKore) • [Github](https://github.com/VorteKore/) • [Vote](https://top.gg/bot/634766962378932224)`
+          `[Invite](${await this.client.generateInvite(8)}) • [Github](https://github.com/kyflx/) • [Vote](https://top.gg/bot/634766962378932224)`
         ].join("\n")
       );
     const commits = await this.getCommits();
     if (commits) emb.addField("Github Commits", commits);
     return message.util.send(emb);
   }
-
+  
   private async getCommits() {
     const { data, error } = await get<Array<GithubCommits>>(
-      "https://api.github.com/repos/VorteKore/Core/commits"
+      "https://api.github.com/repos/kyflx/kyflx/commits"
     );
     let str = "";
     if (!data) {

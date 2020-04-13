@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 
-export default class VorteEmbed extends MessageEmbed {
+export default class KyflxEmbed extends MessageEmbed {
   public constructor(public message: Message) {
     super();
     this.setAuthor(
@@ -8,11 +8,11 @@ export default class VorteEmbed extends MessageEmbed {
       this.message.author.displayAvatarURL()
     )
       .setTimestamp()
-      .setFooter(`VorteKore`)
+      .setFooter(`Kyflx`)
       .setColor(
         this.message.guild
-          ? this.message._guild.embedColor || "#0c6dcf"
-          : "#0c6dcf"
+          ? this.message._guild.embedColor || "BLURPLE"
+          : "BLURPLE"
       );
   }
 

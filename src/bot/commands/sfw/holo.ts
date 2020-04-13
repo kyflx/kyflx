@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, get, Nekos, SFW_LINKS, VorteEmbed } from "../../../lib";
+import { Command, get, Nekos, SFW_LINKS, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -16,6 +16,6 @@ export default class extends Command {
       return message.sem(`Sorry, we ran into an error :(`, { type: "error" });
     }
 
-    return message.util.send(new VorteEmbed(message).setImage(data.url));
+    return message.util.send(new KyflxEmbed(message).setImage(data.url));
   }
 }

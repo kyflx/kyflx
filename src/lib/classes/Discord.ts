@@ -1,12 +1,12 @@
 import { Message, Structures } from "discord.js";
 import { UpdateResult } from "typeorm";
 import Queue from "./Queue";
-import VorteEmbed from "./VorteEmbed";
+import KyflxEmbed from "./KyflxEmbed";
 
 Structures.extend(
   "Message",
   (msg) =>
-    class VorteMessage extends msg {
+    class KyflxMessage extends msg {
       public get player() {
         if (!this.guild) return null;
 
@@ -27,7 +27,7 @@ Structures.extend(
         { type = "base", t = false, _new = false } = {},
         i: Record<string, any> = {}
       ): Promise<Message> {
-        const e = (new VorteEmbed(this) as any)[`${type}Embed`]();
+        const e = (new KyflxEmbed(this) as any)[`${type}Embed`]();
         e.setDescription(t ? this.t(content, i) : content);
         return this.util[_new ? "sendNew" : "send"](e);
       }

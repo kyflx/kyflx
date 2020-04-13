@@ -116,7 +116,7 @@ export function MafiaEmbed(content: string, settings?: GuildSettings) {
   return new MessageEmbed()
     .setColor(settings ? settings.embedColor : "#0c6dcf")
     .setDescription(content)
-    .setFooter("VorteKore Mafia (BETA)")
+    .setFooter("Kyflx Mafia (BETA)")
     .setTimestamp(new Date());
 }
 

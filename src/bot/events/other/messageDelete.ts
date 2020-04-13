@@ -1,5 +1,5 @@
 import { Message, TextChannel, Util } from "discord.js";
-import { Listener, log, VorteEmbed } from "../../../lib";
+import { Listener, log, KyflxEmbed } from "../../../lib";
 
 export default class MessageDeleteListener extends Listener {
   public constructor() {
@@ -21,7 +21,7 @@ export default class MessageDeleteListener extends Listener {
     const chan = message.guild.channels.resolve(channel) as TextChannel;
 
     return chan.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setTitle(`Event: Message Delete`)
         .setDescription(
           [

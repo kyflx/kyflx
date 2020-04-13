@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, paginate, ProfileEntity, VorteEmbed } from "../../../lib";
+import { Command, paginate, ProfileEntity, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -36,7 +36,7 @@ export default class extends Command {
     let index = (page - 1) * 10;
 
     if (mobile) {
-      const embed = new VorteEmbed(message)
+      const embed = new KyflxEmbed(message)
         .setAuthor("Leaderboard", message.author.displayAvatarURL())
         .setDescription(
           items
@@ -51,7 +51,7 @@ export default class extends Command {
       return message.util.send(embed);
     }
 
-    const leaderboardEmbed = new VorteEmbed(message)
+    const leaderboardEmbed = new KyflxEmbed(message)
       .setAuthor("Leaderboard", message.author.displayAvatarURL())
       .setDescription(
         `*TIP: for mobile you can do \`${message.util.parsed.prefix}lb -m\` to make it easier on your eyes*`
@@ -68,7 +68,7 @@ export default class extends Command {
         items.map(p => `**Level** ${p.level}`),
         true
       )
-      .setFooter(maxPage === page ? "VorteKore" : `Page #${page} / ${maxPage}`);
+      .setFooter(maxPage === page ? "Kyflx" : `Page #${page} / ${maxPage}`);
     return message.util.send(leaderboardEmbed);
   }
 }

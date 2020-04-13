@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, VorteEmbed, wordArr } from "../../../lib";
+import { Command, KyflxEmbed, wordArr } from "../../../lib";
 
 export default class TabooGameCommand extends Command {
   public constructor() {
@@ -22,7 +22,7 @@ export default class TabooGameCommand extends Command {
 
     message.author
       .send(
-        new VorteEmbed(message).setDescription(
+        new KyflxEmbed(message).setDescription(
           message.t("cmds:fun.tab.dm", { word })
         )
       )

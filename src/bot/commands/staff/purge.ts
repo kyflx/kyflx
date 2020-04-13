@@ -1,5 +1,5 @@
 import { Message, TextChannel } from "discord.js";
-import { CaseEntity, Command, confirm, VorteEmbed } from "../../../lib";
+import { CaseEntity, Command, confirm, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -90,7 +90,7 @@ export default class extends Command {
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 
     return logs.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setAuthor(
           `Purge [ Case ID: ${_case.id} ]`,
           message.author.displayAvatarURL()

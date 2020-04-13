@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import OSUtils, { NetStatMetrics } from "node-os-utils";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class StatsCommand extends Command {
   public constructor() {
@@ -12,7 +12,7 @@ export default class StatsCommand extends Command {
 
   public async exec(message: Message) {
     return message.util.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .addField(
           "General",
           [

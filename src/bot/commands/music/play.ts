@@ -3,7 +3,7 @@ import { Video } from "better-youtube-api";
 import { Argument } from "discord-akairo";
 import { Message } from "discord.js";
 import { parse } from "url";
-import { Command, In, searchYT, trunc, VorteEmbed } from "../../../lib";
+import { Command, In, searchYT, trunc, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -56,7 +56,7 @@ export default class extends Command {
     if (!["http:", "https:"].includes(parse(search).protocol!)) {
       await searchYT(search)
         .then(async (results) => {
-          const embed = new VorteEmbed(message).baseEmbed().setDescription(
+          const embed = new KyflxEmbed(message).baseEmbed().setDescription(
             results
               .slice(0, 5)
               .map(

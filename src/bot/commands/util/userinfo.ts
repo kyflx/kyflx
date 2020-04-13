@@ -1,5 +1,5 @@
 import { GuildMember, Message } from "discord.js";
-import { Command, presences, VorteEmbed } from "../../../lib";
+import { Command, presences, KyflxEmbed } from "../../../lib";
 
 export default class UserInfoCommand extends Command {
   public constructor() {
@@ -18,7 +18,7 @@ export default class UserInfoCommand extends Command {
   }
 
   public async exec(message: Message, { member }: { member: GuildMember }) {
-    const infoEmbed = new VorteEmbed(message)
+    const infoEmbed = new KyflxEmbed(message)
       .setDescription(
         [
           `**Name**: ${member.user.tag} (${member.id})`,

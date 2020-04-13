@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, get, Reddit, SFW_LINKS, VorteEmbed } from "../../../lib";
+import { Command, get, Reddit, SFW_LINKS, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -21,7 +21,7 @@ export default class extends Command {
       ),
       image = images[Math.floor(Math.random() * images.length)].data;
     return message.util.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setAuthor(image.author)
         .setTitle(image.title)
         .setURL(`https://reddit.com${image.permalink}`)

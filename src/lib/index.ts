@@ -5,7 +5,7 @@ import { UpdateResult } from "typeorm";
 import Database from "../bot/plugins/Database";
 import { Plugin, Queue } from "./classes";
 import "./classes/Discord";
-import VorteClient from "./Client";
+import KyflxClient from "./Client";
 import { GuildProvider, GuildSettings, ProfileEntity } from "./database";
 import { GameManager } from "./games";
 import { BassLevels } from "./typings";
@@ -13,7 +13,7 @@ import "./util/Logging";
 
 
 export * from "./classes";
-export { default as VorteClient } from "./Client";
+export { default as KyflxClient } from "./Client";
 export * from "./database";
 export * from "./games";
 export * from "./i18n";
@@ -39,7 +39,7 @@ declare global {
 
 declare module "discord.js" {
   interface Message {
-    client: VorteClient;
+    client: KyflxClient;
     _guild: GuildSettings;
     profile: ProfileEntity;
     player: ShoukakuPlayer;

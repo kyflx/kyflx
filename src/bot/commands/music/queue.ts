@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import ms = require("ms");
-import { Command, paginate, trunc, VorteEmbed } from "../../../lib";
+import { Command, paginate, trunc, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -43,7 +43,7 @@ export default class extends Command {
       : (upNext = ``);
     if (paginated.maxPage > 1) upNext += message.t("cmds:music.queue.page");
 
-    const queueEmbed = new VorteEmbed(message)
+    const queueEmbed = new KyflxEmbed(message)
       .baseEmbed()
       .setDescription(upNext)
       .addField(
@@ -52,7 +52,7 @@ export default class extends Command {
           Number(np.length)
         )}*`
       )
-      .setFooter(`Queue Length: ${ms(total)} | VorteKore`);
+      .setFooter(`Queue Length: ${ms(total)} | Kyflx`);
 
     return message.util.send(queueEmbed);
   }

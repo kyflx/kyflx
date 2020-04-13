@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import VorteClient from "../Client";
+import KyflxClient from "../Client";
 
 const SUBSCRIBED_EVENTS_SYMBOL = Symbol("SubscribedEvents");
 
@@ -12,9 +12,9 @@ interface SubscribedEvent {
 
 export default abstract class Plugin {
   public abstract name: string;
-  public client: VorteClient;
+  public client: KyflxClient;
 
-  public constructor(client: VorteClient) {
+  public constructor(client: KyflxClient) {
     this.client = client;
   }
 

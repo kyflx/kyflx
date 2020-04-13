@@ -3,10 +3,10 @@ import { WebhookClient } from "discord.js";
 import { config } from "dotenv";
 import { join } from "path";
 import { Counter, register } from "prom-client";
-import { Config, Stats, VorteClient } from "./lib";
+import { Config, Stats, KyflxClient } from "./lib";
 
 config({ path: join(process.cwd(), ".env") });
-const bot = new VorteClient(join(__dirname, "bot"));
+const bot = new KyflxClient(join(__dirname, "bot"));
 
 export const logs = new WebhookClient(
   Config.get("wh_logs"),

@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, mcEmotes, presences, VorteEmbed } from "../../../lib";
+import { Command, mcEmotes, presences, KyflxEmbed } from "../../../lib";
 
 export default class MemberCountCommand extends Command {
   public constructor() {
@@ -11,7 +11,7 @@ export default class MemberCountCommand extends Command {
 
   public async exec(message: Message) {
     const cache = message.guild.members.cache;
-    const embed = new VorteEmbed(message)
+    const embed = new KyflxEmbed(message)
       .setAuthor(
         message.guild.name,
         message.author.displayAvatarURL({ dynamic: true })

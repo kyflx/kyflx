@@ -1,5 +1,5 @@
 import { Message, TextChannel } from "discord.js";
-import { Listener, log, VorteEmbed } from "../../../lib";
+import { Listener, log, KyflxEmbed } from "../../../lib";
 
 export default class MessageUpdateListener extends Listener {
   public constructor() {
@@ -23,7 +23,7 @@ export default class MessageUpdateListener extends Listener {
     if (!ch) return;
 
     return ch.send(
-      new VorteEmbed(newMsg)
+      new KyflxEmbed(newMsg)
         .setTitle(`Event: Message Update`)
         .setDescription(
           [

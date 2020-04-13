@@ -1,6 +1,6 @@
 import { Flag } from "discord-akairo";
 import { Message } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class PunishmentsCommand extends Command {
   public constructor() {
@@ -11,7 +11,7 @@ export default class PunishmentsCommand extends Command {
       *args(_: Message) {
         const action = yield {
           type: [["remove", "del", "delete"], ["set", "add", "new"], "clear"],
-          otherwise: new VorteEmbed(_).setDescription(
+          otherwise: new KyflxEmbed(_).setDescription(
             _.t("cmds:conf.puns.curr", { _ })
           )
         };

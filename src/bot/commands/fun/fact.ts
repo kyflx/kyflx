@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, FUN_LINKS, get, VorteEmbed } from "../../../lib";
+import { Command, FUN_LINKS, get, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -16,6 +16,6 @@ export default class extends Command {
       return message.sem(answers[Math.floor(Math.random() * answers.length)]);
     }
 
-    return message.util.send(new VorteEmbed(message).setDescription(data.fact));
+    return message.util.send(new KyflxEmbed(message).setDescription(data.fact));
   }
 }

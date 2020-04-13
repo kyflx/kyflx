@@ -1,6 +1,6 @@
 import { Flag } from "discord-akairo";
 import { Message } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class MafiaCommand extends Command {
   public constructor() {
@@ -20,7 +20,7 @@ export default class MafiaCommand extends Command {
             "start",
             "wake"
           ],
-          otherwise: new VorteEmbed(message).setDescription(
+          otherwise: new KyflxEmbed(message).setDescription(
             message.t("cmds:games.maf.prompt")
           )
         };

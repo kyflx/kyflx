@@ -1,5 +1,5 @@
 import { Collection, TextChannel } from "discord.js";
-import { MafiaEmbed, VorteClient } from "../../../lib";
+import { MafiaEmbed, KyflxClient } from "../../../lib";
 import { GuildSettings } from "../../database";
 import { MafiaNight } from "./Night";
 import { MafiaPlayer } from "./Player";
@@ -17,7 +17,7 @@ export class MafiaGame {
   public started: boolean = false;
   public entry: GuildSettings;
 
-  public constructor(public client: VorteClient, public guild: string) {
+  public constructor(public client: KyflxClient, public guild: string) {
     let i = 0;
 
     this.entry = client.ensureGuild(guild);

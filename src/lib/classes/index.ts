@@ -8,4 +8,4 @@ export {
 export { default as Plugin, Subscribe } from "./Plugin";
 export { default as Queue, NowPlaying, Repeat } from "./Queue";
 export * from "./Route";
-export { default as VorteEmbed } from "./VorteEmbed";
+export { default as KyflxEmbed } from "./KyflxEmbed";

@@ -8,7 +8,7 @@ import {
 import { Guild, Message, Snowflake } from "discord.js";
 import { InsertResult, UpdateResult } from "typeorm";
 import { GuildEntityChannels, GuildLogsMap } from "..";
-import VorteClient from "../Client";
+import KyflxClient from "../Client";
 import { GuildSettings } from "../database";
 
 export type Translatable<T extends any> = (
@@ -27,7 +27,7 @@ interface ExtendedOptions extends CommandOptions {
 
 export class Command extends AkarioCommand {
   public logger: Logger = Logger.get(Command);
-  public client: VorteClient;
+  public client: KyflxClient;
 
   public constructor(id: string, options: ExtendedOptions = {}) {
     super(id, options);

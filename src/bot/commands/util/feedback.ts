@@ -1,5 +1,5 @@
 import { Message, TextChannel } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class FeedbackCommand extends Command {
   public constructor() {
@@ -19,7 +19,7 @@ export default class FeedbackCommand extends Command {
   }
 
   public async exec(message: Message, { feedback }: { feedback: string }) {
-    const embed = new VorteEmbed(message)
+    const embed = new KyflxEmbed(message)
       .setAuthor(message.author.tag, message.author.displayAvatarURL())
       .setDescription(feedback)
       .addField(

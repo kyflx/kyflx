@@ -4,7 +4,7 @@ import {
   confirm,
   getLanguageKeys,
   Language,
-  VorteEmbed
+  KyflxEmbed
 } from "../../../lib";
 
 export default class extends Command {
@@ -33,7 +33,7 @@ export default class extends Command {
 
   public async exec(message: Message, { lang }: { lang: Language }) {
     if (!lang) {
-      const embed = new VorteEmbed(message).baseEmbed();
+      const embed = new KyflxEmbed(message).baseEmbed();
       for (const language of message.client.i18n.languages.values())
         embed.addField(language.displayName, language.aliases.join(", "), true);
       return message.util.send(embed);

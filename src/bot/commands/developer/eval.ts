@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, isPromise, VorteEmbed } from "../../../lib";
+import { Command, isPromise, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -58,7 +58,7 @@ export default class extends Command {
       if (silent) return;
 
       return message.util.send(
-        new VorteEmbed(message)
+        new KyflxEmbed(message)
           .baseEmbed()
           .addField("Input", `\`\`\`js\n${code}\`\`\``)
           .addField("Output", `\`\`\`js\n${resulted.trunc(1000, true)}\`\`\``)
@@ -73,7 +73,7 @@ export default class extends Command {
     } catch (e) {
       this.logger.error(e, "eval");
       return message.util.send(
-        new VorteEmbed(message)
+        new KyflxEmbed(message)
           .errorEmbed()
           .addField("Input", `\`\`\`js\n${code}\`\`\``)
           .addField("Error", `\`\`\`js\n${e.name}: ${e.message}\`\`\``)

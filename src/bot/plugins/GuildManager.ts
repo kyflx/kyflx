@@ -10,7 +10,7 @@ import {
   ProfileEntity,
   ReactionMenu,
   Subscribe,
-  VorteEmbed
+  KyflxEmbed
 } from "../../lib";
 
 export default class GMP extends Plugin {
@@ -91,7 +91,7 @@ export default class GMP extends Plugin {
       const logs = (message._guild.channels.audit
           ? message.guild.channels.resolve(message._guild.channels.audit)
           : null) as Discord.TextChannel,
-        embed = new VorteEmbed(message)
+        embed = new KyflxEmbed(message)
           .setThumbnail(this.client.user.displayAvatarURL())
           .setDescription(
             [

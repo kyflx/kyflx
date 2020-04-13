@@ -1,5 +1,5 @@
 import { Collection, Snowflake } from "discord.js";
-import VorteClient from "../Client";
+import KyflxClient from "../Client";
 import { TabooGame } from "../games";
 import { MafiaGame } from "./mafia";
 
@@ -10,7 +10,7 @@ export interface GuildGames {
 
 export default class GameManager {
   public games: Collection<Snowflake, GuildGames> = new Collection();
-  public constructor(public client: VorteClient) {}
+  public constructor(public client: KyflxClient) {}
 
   public set(
     guild: Snowflake,

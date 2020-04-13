@@ -1,5 +1,5 @@
 import { Message, Role } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class ModeratorRole extends Command {
   public constructor() {
@@ -10,7 +10,7 @@ export default class ModeratorRole extends Command {
         {
           id: "moderator",
           otherwise: (_: Message) =>
-            new VorteEmbed(_).setDescription(_.t("cmds:conf.modr.cur", { _ })),
+            new KyflxEmbed(_).setDescription(_.t("cmds:conf.modr.cur", { _ })),
           type: "role"
         }
       ],

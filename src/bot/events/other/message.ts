@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { stats } from "../../..";
-import { Listener, VorteEmbed } from "../../../lib";
+import { Listener, KyflxEmbed } from "../../../lib";
 
 export default class MessageReceivedListener extends Listener {
   private readonly recently = new Set();
@@ -41,7 +41,7 @@ export default class MessageReceivedListener extends Listener {
                   message.t("evts:lvl_up", { level: profile.level })
                 );
               return message.channel.send(
-                new VorteEmbed(message).setDescription(
+                new KyflxEmbed(message).setDescription(
                   message.t("evts:lvl_up", { level: profile.level })
                 )
               );

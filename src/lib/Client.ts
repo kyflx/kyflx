@@ -9,7 +9,7 @@ import { join } from "path";
 import { LoadTrackResponse, Shoukaku } from "shoukaku";
 import Database from "../bot/plugins/Database";
 /* Custom Classes */
-import { CommandHandler, Plugin, VorteEmbed } from "./classes";
+import { CommandHandler, Plugin, KyflxEmbed } from "./classes";
 import {
   GuildProvider,
   GuildSettings,
@@ -20,7 +20,7 @@ import { GameManager } from "./games";
 import { LanguageProvider } from "./i18n";
 import { Config, developers } from "./util";
 
-export default class VorteClient extends AkairoClient {
+export default class KyflxClient extends AkairoClient {
   public plugins: Map<string, Plugin> = new Map();
   public games: GameManager = new GameManager(this);
   public database = new Database(this);
@@ -33,7 +33,7 @@ export default class VorteClient extends AkairoClient {
   public commands: CommandHandler;
   public events: ListenerHandler;
 
-  public logger: Logger = Logger.get(VorteClient);
+  public logger: Logger = Logger.get(KyflxClient);
   public music: Shoukaku = new Shoukaku(
     this,
     [
@@ -91,25 +91,25 @@ export default class VorteClient extends AkairoClient {
       argumentDefaults: {
         prompt: {
           modifyStart: (_: Message, p: string) =>
-            new VorteEmbed(_)
+            new KyflxEmbed(_)
               .errorEmbed()
               .setDescription(p)
               .setFooter(_.t("def:prompt_cancel")),
           modifyRetry: (_: Message, p: string) =>
-            new VorteEmbed(_)
+            new KyflxEmbed(_)
               .errorEmbed()
               .setDescription(p)
               .setFooter(_.t("def:prompt_cancel")),
           timeout: (_: Message) =>
-            new VorteEmbed(_)
+            new KyflxEmbed(_)
               .errorEmbed()
               .setDescription(_.t("def:prompt_timeout")),
           ended: (_: Message) =>
-            new VorteEmbed(_)
+            new KyflxEmbed(_)
               .errorEmbed()
               .setDescription(_.t("def:prompt_ended")),
           cancel: (_: Message) =>
-            new VorteEmbed(_)
+            new KyflxEmbed(_)
               .errorEmbed()
               .setDescription(_.t("def:prompt_cancelled")),
           retry: (_: Message) => _.t("def:prompt_retry"),

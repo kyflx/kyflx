@@ -1,5 +1,5 @@
 import { GuildMember, Message } from "discord.js";
-import { Command, get, Nekos, SFW_LINKS, VorteEmbed } from "../../../lib";
+import { Command, get, Nekos, SFW_LINKS, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -25,7 +25,7 @@ export default class extends Command {
     }
 
     return message.util.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setDescription(
           `***${message.author}** starts cuddling with **${member}***`
         )

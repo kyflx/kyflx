@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, get, ImgurHot, SFW_LINKS, VorteEmbed } from "../../../lib";
+import { Command, get, ImgurHot, SFW_LINKS, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -18,7 +18,7 @@ export default class extends Command {
 
     const image = data.data[Math.floor(Math.random() * data.data.length)];
     return message.util.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setAuthor(image.author)
         .setTitle(image.title)
         .setURL(`https://imgur.com/${image.hash}`)

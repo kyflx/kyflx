@@ -1,5 +1,5 @@
 import { GuildMember, Message, TextChannel } from "discord.js";
-import { Command, confirm, VorteEmbed } from "../../../lib";
+import { Command, confirm, KyflxEmbed } from "../../../lib";
 
 export default class UnmuteCommand extends Command {
   public constructor() {
@@ -95,7 +95,7 @@ export default class UnmuteCommand extends Command {
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 
     return logs.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setAuthor(`Unmute`, message.author.displayAvatarURL())
         .setThumbnail(this.client.user.displayAvatarURL())
         .setDescription(

@@ -181,7 +181,7 @@ export default class English extends Language {
           },
           "rps": {
             desc: {
-              content: "Play rock paper scisssors with VorteKore",
+              content: "Play rock paper scisssors with Kyflx",
               examples: ["v!rps rock", "v!rps scissors"],
               usage: "<rock|paper|scissors>"
             },
@@ -950,7 +950,7 @@ export default class English extends Language {
               `Successfully removed \`{{prefix}}\` from the list of prefixes.${
                 guild.prefixes.length > 0
                   ? ""
-                  : `\n*to use commands you need to mention the bot* @VorteKore ping`
+                  : `\n*to use commands you need to mention the bot* @Kyflx ping`
               }`
           },
           puns: {
@@ -1002,7 +1002,7 @@ export default class English extends Language {
           },
           bi: {
             desc: {
-              content: "Displays info on VorteKore"
+              content: "Displays info on Kyflx"
             },
             info: `Hello, I'm ${
               this.client.user!.username
@@ -1029,7 +1029,7 @@ export default class English extends Language {
           },
           help: {
             desc: {
-              content: "Shows all the commands VorteKore has to offer.",
+              content: "Shows all the commands Kyflx has to offer.",
               usage: "[command]",
               examples: ["v!help", "v!help ban"]
             }

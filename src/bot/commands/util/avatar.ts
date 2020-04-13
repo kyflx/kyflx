@@ -1,5 +1,5 @@
 import { Message, User } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -18,7 +18,7 @@ export default class extends Command {
 
   public async exec(message: Message, { user }: { user: User }) {
     return message.util.send(
-      new VorteEmbed(message).setImage(
+      new KyflxEmbed(message).setImage(
         user.displayAvatarURL({ dynamic: true, size: 2048 })
       )
     );

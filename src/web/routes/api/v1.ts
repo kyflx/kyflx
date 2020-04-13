@@ -70,7 +70,7 @@ export default class V1Router extends APIRouter {
       .setDescription(
         `${
           user ? `**${user}** \`(${req.body.user})\`` : req.body.user
-        } voted for VorteKore on [top.gg](https://top.gg/bot/634766962378932224/)!`
+        } voted for Kyflx on [top.gg](https://top.gg/bot/634766962378932224/)!`
       )
       .setFooter("VorteKore")
       .setTimestamp(new Date());
@@ -86,7 +86,7 @@ export default class V1Router extends APIRouter {
         .setColor("0c6dcf")
         .setTitle("botlist.space vote")
         .setDescription(
-          `<@${req.body.user.id}> \`(${req.body.user.id})\` voted for VorteKore on [botlist.space](https://botlist.space/bot/634766962378932224/)!`
+          `<@${req.body.user.id}> \`(${req.body.user.id})\` voted for Kyflx on [botlist.space](https://botlist.space/bot/634766962378932224/)!`
         )
         .setFooter("VorteKore")
         .setTimestamp(req.body.timestamp);

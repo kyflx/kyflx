@@ -1,5 +1,5 @@
 import { GuildMember, Message, Role, TextChannel } from "discord.js";
-import { CaseEntity, Command, VorteEmbed } from "../../../lib";
+import { CaseEntity, Command, KyflxEmbed } from "../../../lib";
 
 export default class AddRoleCommand extends Command {
   public constructor() {
@@ -86,7 +86,7 @@ export default class AddRoleCommand extends Command {
     const logs = message.guild.channels.resolve(channel) as TextChannel;
 
     return logs.send(
-      new VorteEmbed(message)
+      new KyflxEmbed(message)
         .setAuthor(
           `Role Add [ Case ID: ${_case.id} ]`,
           message.author.displayAvatarURL()

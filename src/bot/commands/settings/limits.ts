@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, MafiaRole, VorteEmbed } from "../../../lib";
+import { Command, MafiaRole, KyflxEmbed } from "../../../lib";
 
 export default class ModeratorRole extends Command {
   public constructor() {
@@ -9,7 +9,7 @@ export default class ModeratorRole extends Command {
       *args(message: Message) {
         const role = yield {
           type: ["detective", "doctor", "mafia", "villager"],
-          otherwise: new VorteEmbed(message).setDescription(
+          otherwise: new KyflxEmbed(message).setDescription(
             message.t("cmds:conf.lims.cur", { message })
           )
         };

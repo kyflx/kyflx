@@ -1,6 +1,6 @@
 import { Flag } from "discord-akairo";
 import { Message } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -13,7 +13,7 @@ export default class extends Command {
       *args(_: Message) {
         const method = yield {
           type: ["add", ["remove", "delete", "rm", "del"], ["clear", "reset"]],
-          otherwise: new VorteEmbed(_)
+          otherwise: new KyflxEmbed(_)
             .baseEmbed()
             .setDescription(_.t("cmds:conf.auto.curr", { message: _ }))
         };

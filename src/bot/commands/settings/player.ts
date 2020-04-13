@@ -1,5 +1,5 @@
 import { Message, Role } from "discord.js";
-import { Command, VorteEmbed } from "../../../lib";
+import { Command, KyflxEmbed } from "../../../lib";
 
 export default class PlayerRole extends Command {
   public constructor() {
@@ -11,7 +11,7 @@ export default class PlayerRole extends Command {
           id: "player",
           type: "role",
           otherwise: (_: Message) =>
-            new VorteEmbed(_).setDescription(_.t("cmds:conf.play.cur", { _ }))
+            new KyflxEmbed(_).setDescription(_.t("cmds:conf.play.cur", { _ }))
         }
       ],
       channel: "guild",

@@ -1,5 +1,5 @@
 import { Message, TextChannel } from "discord.js";
-import { Command, MafiaChannel, VorteEmbed } from "../../../lib";
+import { Command, MafiaChannel, KyflxEmbed } from "../../../lib";
 
 export default class SetupBot extends Command {
   public constructor() {
@@ -11,7 +11,7 @@ export default class SetupBot extends Command {
       *args(message: Message) {
         const id = yield {
           type: ["daytime", "detective", "doctor", "mafia"],
-          otherwise: new VorteEmbed(message).setDescription(
+          otherwise: new KyflxEmbed(message).setDescription(
             message.t("cmds:conf.chan.cur", { message })
           )
         };

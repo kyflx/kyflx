@@ -3,7 +3,7 @@ import {
   CategoryPredicate,
   Command,
   CommandDescription,
-  VorteEmbed
+  KyflxEmbed
 } from "../../../lib";
 
 export default class HelpCommand extends Command {
@@ -21,7 +21,7 @@ export default class HelpCommand extends Command {
   }
 
   public async exec(message: Message, { command }: { command: Command }) {
-    const helpEmbed = new VorteEmbed(message);
+    const helpEmbed = new KyflxEmbed(message);
 
     if (!command) {
       helpEmbed.setAuthor("All Commands", message.author.displayAvatarURL());

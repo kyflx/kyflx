@@ -1,6 +1,6 @@
 import { Argument } from "discord-akairo";
 import { Message } from "discord.js";
-import { Command, DJP, In, VorteEmbed } from "../../../lib";
+import { Command, DJP, In, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -14,7 +14,7 @@ export default class extends Command {
           id: "volume",
           type: Argument.range("number", 1, 101),
           otherwise: (_: Message) =>
-            new VorteEmbed(_).setDescription(_.t("cmds:music.vol.cur", { _ }))
+            new KyflxEmbed(_).setDescription(_.t("cmds:music.vol.cur", { _ }))
         }
       ]
     });

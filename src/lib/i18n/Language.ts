@@ -1,4 +1,4 @@
-import VorteClient from "../Client";
+import KyflxClient from "../Client";
 import LanguageProvider from "./Provider";
 
 export interface LanguageOptions {
@@ -12,7 +12,7 @@ export interface LanguageOptions {
  * @since i18n Update
  */
 export default abstract class Language {
-  public client: VorteClient;
+  public client: KyflxClient;
   public provider: LanguageProvider;
 
   public displayName: string;
@@ -35,7 +35,7 @@ export default abstract class Language {
    */
   public abstract get data(): Record<string, any>;
 
-  public _init(provider: LanguageProvider, client: VorteClient) {
+  public _init(provider: LanguageProvider, client: KyflxClient) {
     this.client = client;
     this.provider = provider;
   }

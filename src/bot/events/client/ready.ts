@@ -27,7 +27,7 @@ export default class BotReady extends Listener {
     setInterval(
       () =>
         client.user.setActivity(
-          `VorteKore | ${activities[i++ % activities.length]}`,
+          `Kyflx | ${activities[i++ % activities.length]}`,
           { type: "STREAMING", url: "https://twitch.tv/melike2d" }
         ),
       10000

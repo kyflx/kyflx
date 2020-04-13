@@ -1,7 +1,7 @@
 import { createCanvas, loadImage } from "canvas";
 import { Message, MessageAttachment } from "discord.js";
 import { join } from "path";
-import { Command, formatNumber, ProfileEntity, VorteEmbed } from "../../../lib";
+import { Command, formatNumber, ProfileEntity, KyflxEmbed } from "../../../lib";
 
 export default class extends Command {
   public constructor() {
@@ -83,7 +83,7 @@ export default class extends Command {
       canvas.toBuffer(),
       `RankCard-${message.author.username}.png`
     );
-    const embed = new VorteEmbed(message)
+    const embed = new KyflxEmbed(message)
       .setTitle(message.author.username)
       .addField(
         "Economy",
