@@ -1,6 +1,6 @@
 # Kyflx
 
-[![Discord](https://img.shields.io/discord/613347362705768461.svg?logo=discord&colorB=7289DA)](https://discord.gg/asjkfp8)
+[![Discord](https://img.shields.io/discord/696355996657909790.svg?logo=discord&colorB=7289DA)](https://discord.gg/BnQECNd)
 [![Discord Bots](https://top.gg/api/widget/servers/634766962378932224.svg)](https://top.gg/bot/634766962378932224)
 [![Discord Bots](https://top.gg/api/widget/upvotes/634766962378932224.svg)](https://top.gg/bot/634766962378932224)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/01635ad1a98743cab5184bb8467ec061)](https://www.codacy.com/gh/kyflx/kyflx?utm_source=github.com&utm_medium=referral&utm_content=kyflx/kyflx&utm_campaign=Badge_Grade)
@@ -8,7 +8,7 @@
 Kyflx is a multi-purpose discord bot focusing on Music and Staff (Moderation). Trusted by over 100,000 users and 400 guilds. You will find a bug-free and easy-to-use experience.
 
 - [Invite](https://discordapp.com/api/oauth2/authorize?client_id=634766962378932224&permissions=8&scope=bot)
-- [Support Server](8nqD2Qa)
+- [Support Server](https://discord.gg/BnQECNd)
 - [Source Code](https://github.com/kyflx/kyflx)
 
 ## Features

@@ -65,7 +65,7 @@ export default class V1Router extends APIRouter {
 
     const user = this.client.users.resolve(req.body.user);
     const embed = new MessageEmbed()
-      .setColor("0c6dcf")
+      .setColor("BLURPLE")
       .setTitle("top.gg vote")
       .setDescription(
         `${
@@ -83,7 +83,7 @@ export default class V1Router extends APIRouter {
   public async botlistSpaceVote(req: Request, res: Response) {
     if (req.headers.authorization === Config.get("bot_lists.botlist-space")) {
       const embed = new MessageEmbed()
-        .setColor("0c6dcf")
+        .setColor("BLURPLE")
         .setTitle("botlist.space vote")
         .setDescription(
           `<@${req.body.user.id}> \`(${req.body.user.id})\` voted for Kyflx on [botlist.space](https://botlist.space/bot/634766962378932224/)!`
