@@ -42,7 +42,7 @@
     "dotenv": "^8.2.0",
     "erlpack": "github:discordapp/erlpack",
     "express": "^4.17.1",
-    "express-session": "^1.17.0",
+    "express-session": "^1.17.1",
     "ms": "^2.1.2",
     "node-os-utils": "^1.2.2",
     "passport": "^0.4.1",
