@@ -1,0 +1,50 @@
+{
+  "name": "@kyflx-dev/core",
+  "version": "3.0.0-klasa",
+  "description": "A multi-purpose discord bot",
+  "main": "build/index.js",
+  "scripts": {
+    "prestart": "npm run build",
+    "build": "rimraf build & tsc",
+    "start": "node .",
+    "beta": "NODE_ENV=development npm start"
+  },
+  "keywords": [],
+  "author": "Kyflx Developments",
+  "license": "ISC",
+  "dependencies": {
+    "@ayanaware/errors": "^1.1.0",
+    "@kyflx-dev/jagtag": "^1.0.3",
+    "@kyflx-dev/util": "^1.0.5",
+    "@lavalink/encoding": "^0.1.1",
+    "@types/ioredis": "^4.16.1",
+    "common-tags": "^1.8.0",
+    "klasa": "github:kyflx/klasa",
+    "lavaclient": "^1.1.1",
+    "lavaclient-rest-plugin": "^1.0.11",
+    "pg": "^8.0.3",
+    "popyt": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/common-tags": "^1.8.0",
+    "@types/node": "^13.13.5",
+    "@types/node-fetch": "^2.5.7",
+    "@types/pg": "^7.14.3",
+    "@types/signale": "^1.4.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
+  },
+  "signale": {
+    "displayScope": true,
+    "displayBadge": true,
+    "displayDate": true,
+    "displayFilename": false,
+    "displayLabel": true,
+    "displayTimestamp": true,
+    "underlineLabel": true,
+    "underlineMessage": false,
+    "underlinePrefix": true,
+    "underlineSuffix": true,
+    "uppercaseLabel": false
+  }
+}

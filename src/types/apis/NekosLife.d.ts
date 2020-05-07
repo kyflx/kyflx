@@ -1,0 +1,17 @@
+type ImgTypes =
+  | "baka"
+  | "cuddle"
+  | "feed"
+  | "fox_girl"
+  | "holo"
+  | "hug"
+  | "kemonomimi"
+  | "kiss"
+  | "lizard"
+  | "neko"
+  | "ngif"
+  | "pat"
+  | "poke"
+  | "slap"
+  | "smug"
+  | "tickle";

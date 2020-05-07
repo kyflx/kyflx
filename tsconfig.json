@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "esModuleInterop": true,
+    "declaration": false,
+    "inlineSourceMap": true,
+    "skipLibCheck": true,
+    "newLine": "lf",
+    "pretty": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "disableSizeLimit": true,
+    "outDir": "build/",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es2019"],
+    "types": ["node"],
+    "removeComments": true
+  },
+  "exclude": ["./build/"]
+}

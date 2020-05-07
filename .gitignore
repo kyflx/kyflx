@@ -1,0 +1,9 @@
+# Build Files
+build/
+
+# NPM
+node_modules/
+package-lock.json
+
+# Configuration
+config.yml
