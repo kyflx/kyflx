@@ -37,7 +37,6 @@
   "signale": {
     "displayScope": true,
     "displayBadge": true,
-    "displayDate": true,
     "displayFilename": false,
     "displayLabel": true,
     "displayTimestamp": true,

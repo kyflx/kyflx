@@ -17,7 +17,7 @@ And more coming in the near future. To get notified when an update drops make su
 ## Issues
 
 If you come across a bug please make an issue in the github [issues tracker](https://github.com/kyflx/kyflx/issues) or join our support server.
-If you are having issues using the bot please join our support server so we can get it fixed. 
+If you are having issues using the bot please join our support server so we can get it fixed.
 
 ## Ackowledgements
 
