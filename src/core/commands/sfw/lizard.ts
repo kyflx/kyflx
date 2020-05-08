@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { Command, CommandOptions } from "klasa";
 import { Init } from "../../../lib";
 
-@Init<CommandOptions>({ description: (t) => t.get("cmds.sfw.lizard") })
+@Init<CommandOptions>({ description: (t) => t.get("sfw.lizard") })
 export default class BakaCommand extends Command {
   public async run(message: Message) {
     const image = await this.client.apis.api("nekos").lizard;

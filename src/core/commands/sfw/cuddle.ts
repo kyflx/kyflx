@@ -3,7 +3,7 @@ import { Command, CommandOptions } from "klasa";
 import { Init } from "../../../lib";
 
 @Init<CommandOptions>({
-  description: (t) => t.get("cmds.sfw.cuddle"),
+  description: (t) => t.get("sfw.cuddle"),
   usage: "[target:member]",
 })
 export default class BakaCommand extends Command {

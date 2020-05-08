@@ -8,7 +8,7 @@ import { Init } from "../../../lib";
 })
 export default class BakaCommand extends Command {
   public async run(message: Message, [target]: [GuildMember]) {
-    const image = await this.client.apis.api("nekos").cuddle;
+    const image = await this.client.apis.api("nekos").baka;
     if (!image) return message.reply("Sorry, I couldn't find anything.");
     
     return message.send(
