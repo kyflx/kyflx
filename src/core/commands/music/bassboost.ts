@@ -1,8 +1,7 @@
-import { Init } from "../../../lib";
-import { CommandOptions } from "klasa";
-import { Command } from "klasa";
-import { Message } from "discord.js";
 import { Util } from "@kyflx-dev/util";
+import { Message } from "discord.js";
+import { Command, CommandOptions } from "klasa";
+import { Init } from "../../../lib";
 
 @Init<CommandOptions>({
   runIn: ["text"],

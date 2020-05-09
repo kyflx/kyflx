@@ -6,25 +6,34 @@ import { Init, Playlist, Result, Song } from "../../../lib";
 @Init<CommandOptions>({ runIn: ["text"], usage: "<song:string>" })
 export default class PlayCommand extends Command {
   public async run(message: Message, [song]: [string]) {
-    // if (!ctx.player) {
-    //   if (!ctx.vc) return ctx.reply(ctx.t("cmds:music.join.vc"));
-    //   if (ctx.settings.vcLock && ctx.vc.id !== ctx.settings.vcLock)
-    //     return ctx.reply(ctx.t("cmds:music.vcl", { ctx }));
+    const channel = message.member.voice.channel,
+      settings = message.guildSettings;
+    if (!message.player) {
+      const vcLock = settings.get("vcLock");
 
-    //   const perms = ctx.vc.permissionsFor(ctx.client.user.id);
-    //   if (!perms.has(["SPEAK", "VIEW_CHANNEL"]))
-    //     return ctx.reply(ctx.t("cmds:music.join.perms"));
+      if (!channel) return message.reply(message.t("music.join.jvc"));
+      if (vcLock && channel.id !== vcLock) {
+        return message.reply(message.t("cmds:music.vcl", { message }));
+      }
 
-    //   await ctx.joinVc(ctx.vc);
-    // } else if (!ctx.inVc(ctx.guild.me))
-    //   return ctx.reply(ctx.t("cmds:music.mvc"));
+      const perms = channel.permissionsFor(message.client.user.id);
+      if (!perms.has(["SPEAK", "VIEW_CHANNEL"])) {
+        return message.reply(message.t("cmds:music.join.perms"));
+      }
 
-    if (message.queue.next.length >= message.guild.settings.get("queueLength"))
-      return message.reply(message.t("music.ql", { ctx: message }));
+      await this.client.music.join(
+        { channel: channel.id, guild: message.guild.id },
+        { deaf: true }
+      );
+    } else if (channel.id !== message.guild.me.voice.channelID) {
+      return message.reply(message.t("cmds:music.mvc"));
+    }
 
-    let res: Result<Song | Playlist> = await this.client.music.load(
-      song
-    );
+    if (message.queue.next.length >= settings.get("queueLength")) {
+      return message.reply(message.t("music.ql", message));
+    }
+
+    let res = await this.client.music.load(song);
     if (!res.result) res = await this.search(message, song);
     if (!res.result) return message.reply(message.t("music.play.nf"));
 
