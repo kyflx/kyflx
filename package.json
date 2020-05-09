@@ -19,6 +19,7 @@
     "@lavalink/encoding": "^0.1.1",
     "@types/ioredis": "^4.16.1",
     "common-tags": "^1.8.0",
+    "discord.js": "^12.2.0",
     "klasa": "github:kyflx/klasa",
     "lavaclient": "^1.1.1",
     "lavaclient-rest-plugin": "^1.0.11",

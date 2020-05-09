@@ -16,13 +16,16 @@ export class Kyflx extends KlasaClient {
   }
 
   public init() {
-    (global as any).config = Config.getInstance();
+    let g = global as any;
+    g.config = Config.getInstance();
+    g.when = (q: string, o: Record<string, Function>): any =>
+      o[q.toLowerCase()] ? o[q.toLowerCase()]() : void 0;
     return this;
   }
 
   public embed(message: Message): MessageEmbed {
     return new MessageEmbed()
-      .setColor("BLURPLE")
+      .setColor("#7289DA")
       .setAuthor(message.author.username, message.author.displayAvatarURL(), this.invite);
   }
 }

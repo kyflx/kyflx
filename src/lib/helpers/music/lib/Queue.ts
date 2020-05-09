@@ -1,12 +1,12 @@
+import { Message, MessageEmbed } from "discord.js";
 import { Player } from "lavaclient";
-import { decode } from "@lavalink/encoding";
-
+import { Util } from "../../../util/Util";
+import { DecodedSong } from "../Helper";
 import { Song } from "./Song";
-import { MessageEmbed, Message } from "discord.js";
 
 export interface NowPlaying {
   position?: number;
-  song?: Song;
+  song?: string;
 }
 
 export interface Repeat {
@@ -15,8 +15,8 @@ export interface Repeat {
 }
 
 export class Queue {
-  public next: Song[] = [];
-  public previous: Song[] = [];
+  public next: string[] = [];
+  public previous: string[] = [];
   public np: NowPlaying = { position: 0 };
   public repeat: Repeat = { track: false, queue: false };
   public ctx: Message;
@@ -34,8 +34,10 @@ export class Queue {
           }
 
           if (!this.np.song) return this.leave();
-          await this.player.play(this.np.song.track);
-          await this.announceNext();
+
+          const next = this.ctx.client.music.decodeSong(this.np.song);
+          await this.player.play(next.title);
+          await this.announceNext(next);
         }
       })
       .on("playerUpdate", (d: any) => (this.np.position = d.position));
@@ -46,9 +48,8 @@ export class Queue {
     this.np.song = this.next.shift();
   }
 
-  public async announceNext() {
+  public async announceNext(np: DecodedSong) {
     if (this.ctx.guild.settings.get("announceNext")) {
-      const np = this.np.song;
       await this.ctx.channel.send(
         new MessageEmbed()
           .setColor(np.extra.color)
@@ -67,11 +68,13 @@ export class Queue {
   public async start(ctx: Message): Promise<boolean> {
     this.ctx = ctx;
     if (!this.np.song) await this._next();
-    return this.player.play(this.np.song.track);
+    return this.player.play(ctx.client.music.decodeSong(this.np.song).track);
   }
 
-  public async add(...items: Song[]): Promise<number> {
-    this.next.push(...items);
+  public async add(...items: (Song | string)[]): Promise<number> {
+    this.next.push(
+      ...items.map((s) => (typeof s !== "string" ? Util.encodeSong(s) : s))
+    );
     return this.next.length;
   }
 
@@ -87,5 +90,4 @@ export class Queue {
     this.previous = [];
     this.np = { song: null, position: 0 };
   }
-
 }
