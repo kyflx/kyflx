@@ -1,8 +1,8 @@
 import { APIWrapper, APIWrapperOptions } from "@kyflx-dev/util";
-import { Init } from "../../lib";
 import fetch, { RequestInit } from "node-fetch";
 import { URLSearchParams } from "url";
-import { Subreddit, Imgur } from "../../types/apis/Imgdit";
+import { Init } from "../../lib";
+import { Imgur, Subreddit } from "../../types";
 
 type FilterTypes = "hot" | "new" | "top" | "front";
 
@@ -18,7 +18,9 @@ export default class RedditAPI extends APIWrapper {
     { limit = 100 }: SubredditOptions = {}
   ): Promise<Imgur[]> {
     return this.request(
-      `https://imgur.com/r/${name}/hot.json?${new URLSearchParams({ limit: limit.toString() })}`
+      `https://imgur.com/r/${name}/hot.json?${new URLSearchParams({
+        limit: limit.toString(),
+      })}`
     )
       .then((res) => res.json())
       .then((res) => res.data)
@@ -31,7 +33,9 @@ export default class RedditAPI extends APIWrapper {
   ): Promise<Subreddit[]> {
     const end = filter === `front` ? `${name}.json` : `${name}/${filter}.json`;
     return this.request(
-      `https://reddit.com/r/${end}?${new URLSearchParams({ limit: limit.toString() })}`
+      `https://reddit.com/r/${end}?${new URLSearchParams({
+        limit: limit.toString(),
+      })}`
     )
       .then((res) => res.json())
       .then((res) => res.data.children)
