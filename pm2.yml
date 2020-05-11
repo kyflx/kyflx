@@ -1,0 +1,13 @@
+apps:
+  - name: kyflx-beta
+    script: node
+    args: "."
+    max_memory_restart: 1G
+    env:
+      NODE_ENV: development
+  # - name: kyflx-production
+  #   script: "npm"
+  #   args: "run start"
+  #   max_memory_restart: 4G
+  #   env:
+  #     NODE_ENV: production
