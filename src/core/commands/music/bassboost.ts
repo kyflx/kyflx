@@ -1,12 +1,12 @@
-import { Util } from "@kyflx-dev/util";
 import { Message } from "discord.js";
-import { Command, CommandOptions } from "klasa";
-import { Init } from "../../../lib";
+import { Command } from "klasa";
+import { GuildCommand, Util } from "../../../lib";
 
-@Init<CommandOptions>({
-  runIn: ["text"],
+@GuildCommand({
   usage: "[earrape|extreme|hard|soft|off]",
   usageDelim: "|",
+  extendedHelp: (t) => t.get("music.bassboost.ext-help"),
+  aliases: ["bb"],
 })
 export default class BassboostCommand extends Command {
   public async run(
@@ -15,6 +15,8 @@ export default class BassboostCommand extends Command {
   ) {
     if (!message.player) return message.reply(message.t("music.nope"));
     if (!level) return message.reply(message.t("music.bassboost.cur", message));
+    if (!message.inVc(message.guild.me))
+      return message.reply(message.t("music.myvc"));
 
     const set = (...bands: Array<number>) =>
       message.player.equalizer.bind(message.player, Util.ArrToBands(bands));
@@ -25,6 +27,8 @@ export default class BassboostCommand extends Command {
       soft: set(0.25, 0.15),
       off: set(0, 0),
     });
+
+    message.player.bass = level;
 
     return message.reply(message.t("music.bassboost.res", level));
   }

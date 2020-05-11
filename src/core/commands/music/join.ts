@@ -1,8 +1,8 @@
 import { Message } from "discord.js";
-import { Command, CommandOptions } from "klasa";
-import { Init } from "../../../lib";
+import { Command } from "klasa";
+import { GuildCommand } from "../../../lib";
 
-@Init<CommandOptions>({ runIn: ["text"] })
+@GuildCommand()
 export default class JoinCommand extends Command {
   public async run(message: Message) {
     if (message.player) return message.reply(message.t("music.join.alr"));

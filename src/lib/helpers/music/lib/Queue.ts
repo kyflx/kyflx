@@ -11,21 +11,21 @@ export interface NowPlaying {
 
 export interface Repeat {
   queue: boolean;
-  track: boolean;
+  song: boolean;
 }
 
 export class Queue {
   public next: string[] = [];
   public previous: string[] = [];
   public np: NowPlaying = { position: 0 };
-  public repeat: Repeat = { track: false, queue: false };
+  public repeat: Repeat = { song: false, queue: false };
   public ctx: Message;
 
   public constructor(public player: Player) {
     this.player
       .on("end", async (d) => {
-        if (!["REPLACED", "STOPPED"].includes(d.reason)) {
-          if (!this.repeat.track) await this._next();
+        if (!["REPLACED"].includes(d.reason)) {
+          if (!this.repeat.song) await this._next();
           if (this.repeat.queue && !this.np.song) {
             const previous = this.previous.reverse();
             await this.clear();
@@ -36,7 +36,7 @@ export class Queue {
           if (!this.np.song) return this.leave();
 
           const next = this.ctx.client.music.decodeSong(this.np.song);
-          await this.player.play(next.title);
+          await this.player.play(next.track);
           await this.announceNext(next);
         }
       })

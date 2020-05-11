@@ -46,7 +46,7 @@ export class MusicHelper extends Manager {
         return;
       },
       player: class KyflxPlayer extends Player {
-        public queue = new Queue(this);
+        public queue: Queue = new Queue(this);
       },
     });
 
@@ -75,7 +75,10 @@ export class MusicHelper extends Manager {
   public async tracks(
     identifier: string
   ): Promise<
-    (Track & { searchResult: boolean }) | typeof SongSource | boolean
+    | (Track & { searchResult: boolean })
+    | typeof SongSource
+    | Result<unknown>
+    | boolean
   > {
     const source = this.sources.find((s) => s.find(identifier));
     if (source) return source;
@@ -87,7 +90,11 @@ export class MusicHelper extends Manager {
       ["LOAD_FAILED", "NO_MATCHES"].includes(res.loadType) ||
       !res.tracks.length
     )
-      return res.loadType !== "LOAD_FAILED";
+      return new Result().setError(
+        res.loadType === "NO_MATCHES"
+          ? `No matches`
+          : `${res.exception.severity}: ${res.exception.message}`
+      );
 
     const songs = res.tracks as any;
     songs.searchResult = res.loadType === "SEARCH_RESULT";
@@ -98,6 +105,8 @@ export class MusicHelper extends Manager {
     identifier: string
   ): Promise<Result<T>> {
     const _ = (await this.tracks(identifier)) as any;
+    if (_ instanceof Result) return _;
+
     if (_ && Object.getPrototypeOf(_) === SongSource) {
       return Result.provide(await _.load(this.kyflx, identifier));
     }

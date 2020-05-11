@@ -1,9 +1,13 @@
 import { Message } from "discord.js";
-import { Command, CommandOptions } from "klasa";
+import { Command } from "klasa";
 import { Video } from "popyt";
-import { Init, Playlist, Result, Song } from "../../../lib";
+import { GuildCommand, Playlist, Result, Song } from "../../../lib";
 
-@Init<CommandOptions>({ runIn: ["text"], usage: "<song:string>" })
+@GuildCommand({
+  usage: "<song:string>",
+  extendedHelp: (t) => t.get("music.play.help"),
+  aliases: ["p"]
+})
 export default class PlayCommand extends Command {
   public async run(message: Message, [song]: [string]) {
     const channel = message.member.voice.channel,
@@ -13,12 +17,12 @@ export default class PlayCommand extends Command {
 
       if (!channel) return message.reply(message.t("music.join.jvc"));
       if (vcLock && channel.id !== vcLock) {
-        return message.reply(message.t("cmds:music.vcl", { message }));
+        return message.reply(message.t("music.vcl", { message }));
       }
 
       const perms = channel.permissionsFor(message.client.user.id);
       if (!perms.has(["SPEAK", "VIEW_CHANNEL"])) {
-        return message.reply(message.t("cmds:music.join.perms"));
+        return message.reply(message.t("music.join.perms"));
       }
 
       await this.client.music.join(
@@ -26,16 +30,19 @@ export default class PlayCommand extends Command {
         { deaf: true }
       );
     } else if (channel.id !== message.guild.me.voice.channelID) {
-      return message.reply(message.t("cmds:music.mvc"));
+      return message.reply(message.t("music.myvc"));
     }
 
     if (message.queue.next.length >= settings.get("queueLength")) {
-      return message.reply(message.t("music.ql", message));
+      return message.reply(
+        message.t("music.play.ql", settings.get("queueLength"))
+      );
     }
 
     let res = await this.client.music.load(song);
     if (!res.result) res = await this.search(message, song);
-    if (!res.result) return message.reply(message.t("music.play.nf"));
+    if (res.error || !res.result)
+      return message.reply(message.t("music.play.nf", res.error));
 
     if (res.result instanceof Song) {
       message.queue.add(res.result);
@@ -67,39 +74,42 @@ export default class PlayCommand extends Command {
       .api("youtube")
       .search<Video>(query, 5)
       .then<Result<Song>>(async (results) => {
-        const embed = this.client.embed(message).setDescription(
-          results
-            .slice(0, 5)
-            .map(
-              (r, i) =>
-                `${++i}. **[${r.title.trunc(50)}](${r.url}) (${
-                  r.constructor.name
-                })**`
-            )
-            .join("\n")
-        );
+        try {
+          const embed = this.client.embed(message).setDescription(
+            results
+              .slice(0, 5)
+              .map(
+                (r, i) =>
+                  `${++i}. **[${r.title.trunc(50)}](${r.url}) (${
+                    r.constructor.name
+                  })**`
+              )
+              .join("\n")
+          );
 
-        await message.send(embed);
-        return message.channel
-          .awaitMessages((m) => m.author.id === message.author.id, {
-            max: 1,
-            errors: ["time"],
-            time: 10000,
-          })
-          .then(async (collected) => {
-            const m = collected.first();
+          await message.send(embed);
+          return message.channel
+            .awaitMessages((m) => m.author.id === message.author.id, {
+              max: 1,
+              errors: ["time"],
+              time: 10000,
+            })
+            .then(async (collected) => {
+              const m = collected.first();
 
-            if (m.deletable) await m.delete();
-            if (m.content.ignoreCase("cancel") || !m)
-              return message.reply(message.t("music.play.cancelled"));
+              if (m.deletable) await m.delete();
+              if (m.content.ignoreCase("cancel") || !m)
+                return message.reply(message.t("music.play.cancelled"));
 
-            const i = parseInt(m.content);
-            if (!i || !results[i - 1])
-              return message.reply(message.t("music.play.cancelled"));
+              const i = parseInt(m.content);
+              if (!i || !results[i - 1])
+                return message.reply(message.t("music.play.cancelled"));
 
-            return await message.client.music.load(results[i - 1].url);
-          }) as any;
-      })
-      .catch(() => message.reply(message.t("music.play.quota"))) as any;
+              return await message.client.music.load(results[i - 1].url);
+            }) as any;
+        } catch (error) {
+          return new Result().setError(error);
+        }
+      });
   }
 }

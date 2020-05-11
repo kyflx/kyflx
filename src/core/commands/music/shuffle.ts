@@ -1,10 +1,16 @@
 import { Message } from "discord.js";
-import { Command, CommandOptions } from "klasa";
-import { Init } from "../../../lib";
+import { Command } from "klasa";
+import { GuildCommand } from "../../../lib";
 
-@Init<CommandOptions>({ description: (t) => t.get("music.shu.desc") })
+@GuildCommand()
 export default class LeaveCommand extends Command {
   public async run(message: Message) {
-    return message.reply("lol");
+    if (!message.player) return message.reply(message.t("music.nope"));
+    if (!message.inVc(message.guild.me))
+      return message.reply(message.t("music.myvc"));
+
+    await message.queue.shuffle();
+
+    return message.reply(message.t("music.shuffle.res"));
   }
 }
