@@ -9,8 +9,9 @@ export * from "./helpers";
 export * from "./util";
 
 declare module "lavaclient" {
-  interface Plugin {
+  interface Player {
     queue: Queue;
+    bass: string;
   }
 }
 

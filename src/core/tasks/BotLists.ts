@@ -4,6 +4,7 @@ import { Init } from "../../lib";
 @Init<TaskOptions>({ name: "bot-lists" })
 export default class BotListsTask extends Task {
   public async run() {
+    return true;
     const apis = this.client.apis;
     Promise.all([
       apis.api("dbl").postStats(this.client.guilds.cache.size),
@@ -15,7 +16,5 @@ export default class BotListsTask extends Task {
 
   public async init() {
     if (process.env.NODE_ENV === "development") return this.unload();
-    this.client.schedule.create("bot-lists", "*/5 * * * *", { catchUp: true });
-    this.client.logger.note("Stats are getting posted every 5 minutes.");
   }
 }

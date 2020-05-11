@@ -12,7 +12,9 @@ export default class HelpCommand extends Command {
         .setDescription(message.t("description"));
 
       const fn = (id: string) => (c: Command) => c.category === id;
-      new Set([...this.store.map((c) => c.category)]).forEach((id) =>
+      new Set([
+        ...this.store.map((c) => c.category).filter(this.filter(message)),
+      ]).forEach((id) =>
         embed.addField(
           `• ${id.capitalize()} (${this.store.filter(fn(id)).size})`,
           this.store
@@ -31,18 +33,47 @@ export default class HelpCommand extends Command {
         .setAuthor(`${command.name} ${command.usageString.replace(rgx, "")}`)
         .setDescription(this.findDescription(message, command))
         .addField(
-          "\u200b", 
+          "**•** Help",
           stripIndents`
           • **Category**: ${command.category}
-          • **Cooldown**: ${command.cooldown}
+          • **Cooldown**: ${command.cooldown} seconds
           `
-        )
+        );
+
+    if (command.extendedHelp)
+      embed.addField(
+        "\u200b",
+        typeof command.extendedHelp === "function"
+          ? command
+              .extendedHelp(message.language)
+              .includes("COMMAND_HELP_NO_EXTENDED")
+            ? message.t("util.help.extended")
+            : command.extendedHelp(message.language)
+          : command.extendedHelp
+      );
+
+    return message.send(embed);
+  }
+
+  private filter(message: Message) {
+    return (category: string) =>
+      ![
+        ...(this.client.owners.has(message.author)
+          ? []
+          : message.member.hasPermission("MANAGE_GUILD")
+          ? ["owner"]
+          : ["staff", "settings", "owner"]),
+      ].includes(category);
   }
 
   private findDescription(message: Message, command: Command): string {
-    return command.description ??
-      typeof message.t(`cmds.${command.category}.${command.name}`) === "string"
-      ? message.t(`cmds.${command.category}.${command.name}`)
-      : message.t(`cmds.${command.category}.${command.name}.desc`);
+    const data = message.language.language;
+    return command.description
+      ? typeof command.description === "function"
+        ? command.description(message.language)
+        : command.description
+      : typeof data[command.category][command.name] === "string"
+      ? data[command.category][command.name]
+      : data[command.category][command.name].desc;
   }
 }

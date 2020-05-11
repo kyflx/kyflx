@@ -18,8 +18,10 @@ export const KlasaConfig: KlasaClientOptions = {
     },
   },
   // TODO: User premium permission levels.
+  // TODO: DJ Role.
   permissionLevels: new PermissionLevels()
     .add(0, () => true)
+    .add(5, (message) => message.member.roles.cache.has("709219717663162448"))
     .add(6, (message) => message.member.hasPermission("MANAGE_GUILD"))
     .add(7, (message) => message.guild.ownerID === message.author.id)
     .add(9, ({ author, client }) => client.owners.has(author), { break: true })

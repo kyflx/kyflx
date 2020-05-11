@@ -1,13 +1,13 @@
-// @ts-nocheck
-import { Message, MessageAdditions, MessageOptions } from "discord.js";
+import { GuildMember, Message, MessageAdditions, MessageOptions, VoiceChannel } from "discord.js";
 import { Extendable, KlasaMessage } from "klasa";
 import { Player } from "lavaclient";
-
-import { Kyflx, Queue } from "../../lib";
+import { Kyflx, Queue, Util } from "../../lib";
 
 export default class MessageExtendable extends Extendable {
+  // @ts-ignore
   public constructor(...args) {
-    super(...args, { appliesTo: [Message] });
+    // @ts-ignore
+    super(...args, { appliesTo: [Message], name: "message-ext" });
   }
 
   public get player(this: Message) {
@@ -27,9 +27,22 @@ export default class MessageExtendable extends Extendable {
     content: string,
     options?: MessageOptions | MessageAdditions
   ) {
-    return this.channel.send(
-      this.client.embed(this).setDescription(content),
-      options
+    return this.send(this.client.embed(this).setDescription(content), options);
+  }
+
+  public inVc(
+    this: Message,
+    value: string | VoiceChannel | GuildMember
+  ): boolean {
+    const vc = this.member.voice.channel;
+    return Boolean(
+      vc
+        ? Util.testInstance(value, [
+            ["string", (v) => vc.id === v],
+            [VoiceChannel, (v) => vc.id === v.id],
+            [GuildMember, (v) => vc.members.has(v.id)],
+          ])
+        : false
     );
   }
 }
@@ -40,6 +53,7 @@ declare module "discord.js" {
     player: Player;
     queue: Queue;
     t(path: string, ...args: any[]): string;
+    inVc(vc?: string | GuildMember | VoiceChannel): boolean;
     reply(
       content: string,
       options?: MessageOptions | MessageAdditions

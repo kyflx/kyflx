@@ -1,40 +1,170 @@
 import { Language } from "klasa";
 import { Util } from "../../lib/util/Util";
+import { table, DecodedSong } from "../../lib";
+import { Message } from "discord.js";
 
 export default class EnglishLanguage extends Language {
   get language() {
     return {
       ...this.DEFAULTS,
-      cmds: {
-        util: {
-          ping: {
-            res: (client: number) => `Pong! My ping is *${client}ms*`,
-          },
+      description:
+        "Kyflx is a multi-purpose focused on usability and quality. Trusted by over **350** servers and **150,000** users.",
+      util: {
+        ping: {
+          res: (client: number) => `Pong! My ping is *${client}ms*`,
         },
-        
-        sfw: {
-          baka: ""
-        }
+        help: {
+          extended:
+            "No extended help. If you do require more help please join our [support server](https://discord.gg/BnQECNd) and ask for more help there :)",
+        },
+      },
+
+      sfw: {
+        baka: "",
+        cat: "",
+        cuddle: "",
+        dog: "",
+        duck: "",
+        feed: "",
+        fox: "",
+        foxGirl: "",
+        holo: "",
+        hug: "",
+        kemonomimi: "",
+        kiss: "",
+        lizard: "",
+        meme: "",
+        neko: "",
+        nekoGif: "",
+        owl: "",
+        panda: "",
+        pat: "",
+        penguin: "",
+        poke: "",
+        slap: "",
+        smug: "",
+        tickle: "",
+        wolf: "",
       },
       music: {
         nope: "What? I dont have a player for this guild...",
+        myvc: "You need to join the voice channel I am in to use this command.",
+        bassboost: {
+          desc: "Applys specfic levels of bassboost to the player.",
+          "ext-help": [
+            "```asciicoc",
+            "Gain amount for each bass level:",
+            "",
+            table([
+              {
+                level: "Earrape",
+                bands: Util.ArrToBands([1.0, 0.75]),
+              },
+              {
+                level: "Extreme",
+                bands: Util.ArrToBands([0.75, 0.5]),
+              },
+              {
+                level: "Hard",
+                bands: Util.ArrToBands([0.5, 0.25]),
+              },
+              {
+                level: "Soft",
+                bands: Util.ArrToBands([0.25, 0.15]),
+              },
+            ]),
+            "```",
+          ].join("\n"),
+          res: (level: string) => `Set the bassboost level to **${level}**`,
+          cur: ({ player }: Message) =>
+            !player.bass || player.bass === "off"
+              ? "Bassboost is currently off."
+              : `Bassboost is currently set at **${player.bass}**`,
+        },
         join: {
           alr: "I am already in a voice channel.",
           jvc: "Please join a voice channel.",
           perms: "I need perms to `Speak` and `Connect`",
           summoned: `Okay I joined your voice channel!`,
         },
+        leave: {
+          desc: "Leaves the voice channel the bot is currently in.",
+          res: "Okay! I left the voice channel I was in.",
+        },
+        loop: {
+          desc: "Loops the track or queue.",
+          done: (type: string, v: boolean) =>
+            `Okay! I **${v ? "enabled" : "disabled"}** ${type} repeat.`,
+        },
+        np: {
+          desc: "Displays the currently playing song.",
+          not: "There isn't anything playing...",
+        },
         pause: {
           desc: "Pause any currently playing music.",
-          res: "Okay, I paused the player."
+          res: "Okay, I paused the player.",
         },
         play: {
-
+          desc: "Play a spotify/youtube/soundcloud songs in your voice channel.",
+          ql: (max: number) =>
+            `You've reached the max amount of songs \`(${max})\` in your queue.`,
+          nf: (error: Error) =>
+            error
+              ? `Something broke while trying to find what you were looking for. Please report this in our [support server](https://discord.gg/BnQECNd)\n\`\`\`js\n${error.message}\`\`\``
+              : "Sorry, I couldn't find what you were looking for :/",
+          cancelled: "I cancelled the track selection.",
+          help: [
+            "```md",
+            "**Youtube**:",
+            "play Travis Scott - THE SCOTTS",
+            "play https://www.youtube.com/watch?v=kmvDIBeW4VM",
+            "play https://www.youtube.com/playlist?list=PLOzDu-MXXLliO9fBNZOQTBDddoA3FzZUo",
+            "",
+            "",
+            "**Spotify**:",
+            "play spotify:track:3Z8FwOEN59mRMxDCtb8N0A",
+            "play https://open.spotify.com/track/3Z8FwOEN59mRMxDCtb8N0A",
+            "",
+            "**Soundcloud**:",
+            "play https://soundcloud.com/atlas/sunshine",
+            "```"
+          ]
+        },
+        queue: {
+          desc: "Displays the current queue if any.",
+          empty:
+            "The queue is empty... Use `play <query>` to fill it back up :)",
+          paginate: (page: number, maxPage: number) =>
+            `Page ${page}/**${maxPage}**. Use \`queue <page>\` to browse.`,
+        },
+        remove: {
+          invalid: (i: number) => `There is no song at index **${i}**.`,
+          rm: (song: DecodedSong) =>
+            `Successfully removed [\`${song.title}\`](${song.url}) from the queue.`,
         },
         resume: {
           desc: "Resume any currently paused music.",
-          res: "Okay, I resumed the player."
-        }
+          res: "Okay, I resumed the player.",
+        },
+        seek: {
+          desc: "Seek to a position in the current song.",
+          res: (pos: number) => `Okay I seeked to \`${Util.formatTime(pos)}\``,
+        },
+        shuffle: {
+          desc: "Shuffles the queue.",
+          res: "Okay, I shuffled the queue.",
+        },
+        skip: "Skips the current song in the queue.",
+        volume: {
+          desc: "Manage the player's volume.",
+          cur: ({ player }: Message) =>
+            `The current player volume is **${player.volume}%**`,
+          set: (volume: number) => `Okay! I set the volume to **${volume}%**`,
+        },
+      },
+      owner: {
+        eval: "Evaluates javascript code within bot context.",
+        reload: "Reload pieces and stores.",
       },
     };
   }
@@ -79,6 +209,8 @@ export default class EnglishLanguage extends Language {
       RESOLVER_INVALID_DATE: (name: any) => `${name} must be a valid date.`,
       RESOLVER_INVALID_DURATION: (name: any) =>
         `${name} must be a valid duration string.`,
+      RESOLVER_INVALID_MS_DURATION: (name: any) =>
+        `${name} must be a valid ms duration. Example: \`2:20\`, \`2 minutes 20 seconds\``,
       RESOLVER_INVALID_EMOJI: (name: any) =>
         `${name} must be a custom emoji tag or valid emoji id.`,
       RESOLVER_INVALID_FLOAT: (name: any) => `${name} must be a valid number.`,
