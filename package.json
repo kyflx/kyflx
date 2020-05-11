@@ -23,11 +23,14 @@
     "klasa": "github:kyflx/klasa",
     "lavaclient": "^1.1.1",
     "lavaclient-rest-plugin": "^1.0.11",
+    "ms": "^2.1.2",
     "pg": "^8.0.3",
-    "popyt": "^3.1.0"
+    "popyt": "^3.1.0",
+    "printable-characters": "^1.0.42"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.0",
+    "@types/ms": "^0.7.31",
     "@types/node": "^13.13.5",
     "@types/node-fetch": "^2.5.7",
     "@types/pg": "^7.14.3",
