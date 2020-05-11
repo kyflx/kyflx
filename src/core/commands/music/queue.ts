@@ -15,7 +15,12 @@ export default class LeaveCommand extends Command {
       embed = this.client.embed(message);
     let i = (page - 1) * 10;
 
-    const str = items.map((s) => `**#${++i}.** **[\`${s.title}\`](${s.url})**`);
+    const str = items.map(
+      (s) =>
+        `**#${++i}.** **[\`${s.title}\`](${s.url})** *${Util.formatTime(
+          s.length
+        )}*`
+    );
 
     embed
       .addField(`• Current:`, `**[\`${np.title}\`](${np.url})**`)
