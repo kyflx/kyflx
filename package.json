@@ -6,34 +6,30 @@
   "scripts": {
     "prestart": "npm run build",
     "build": "rimraf build & tsc",
-    "start": "node .",
-    "beta": "NODE_ENV=development npm start"
+    "start": "node ."
   },
   "keywords": [],
   "author": "Kyflx Developments",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@ayanaware/errors": "^1.1.0",
     "@kyflx-dev/jagtag": "^1.0.3",
     "@kyflx-dev/util": "^1.0.5",
-    "@lavalink/encoding": "^0.1.1",
-    "@types/ioredis": "^4.16.1",
     "common-tags": "^1.8.0",
     "discord.js": "^12.2.0",
     "klasa": "github:kyflx/klasa",
     "lavaclient": "^1.1.1",
     "lavaclient-rest-plugin": "^1.0.11",
     "ms": "^2.1.2",
-    "pg": "^8.0.3",
     "popyt": "^3.1.0",
-    "printable-characters": "^1.0.42"
+    "printable-characters": "^1.0.42",
+    "rethinkdb-ts": "^2.4.2"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.0",
     "@types/ms": "^0.7.31",
     "@types/node": "^13.13.5",
     "@types/node-fetch": "^2.5.7",
-    "@types/pg": "^7.14.3",
     "@types/signale": "^1.4.1",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
