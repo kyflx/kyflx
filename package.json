@@ -37,7 +37,7 @@
     "connect-pg-simple": "^6.1.0",
     "dblapi.js": "^2.4.0",
     "discord-akairo": "^8.0.0",
-    "discord.js": "^12.1.1",
+    "discord.js": "^12.2.0",
     "dot-prop": "^5.2.0",
     "dotenv": "^8.2.0",
     "erlpack": "github:discordapp/erlpack",
