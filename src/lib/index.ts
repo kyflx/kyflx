@@ -1,8 +1,7 @@
 import { APIWrapperOptions, APIWrapperStore } from "@kyflx-dev/util";
 import { Message, MessageEmbed } from "discord.js";
-
 import { Wrappers } from "../core";
-import { Queue, MusicHelper } from "./helpers";
+import { MusicHelper, Queue, REST } from "./helpers";
 
 export * from "./Client";
 export * from "./helpers";
@@ -13,6 +12,10 @@ declare module "lavaclient" {
     queue: Queue;
     bass: string;
   }
+
+  interface Socket {
+    rest: REST;
+  }
 }
 
 declare module "klasa" {
@@ -20,6 +23,10 @@ declare module "klasa" {
     music: MusicHelper;
     apis: APIWrapperStore<Wrappers>;
     embed(message: Message): MessageEmbed;
+  }
+
+  interface GatewayDriver {
+    infractions: Gateway;
   }
 
   interface PieceDefaults {

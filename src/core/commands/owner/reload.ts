@@ -22,7 +22,7 @@ export default class extends Command {
       } else if (toReload === "all") {
         stopwatch.start();
         await Promise.all(
-          this.client.pieceStores.map((s) => s.map((p) => p.reload()))
+          this.client.pieceStores.map((s) => s.map((p: Piece) => p.reload()))
         );
         return message.reply(`Reloaded all pieces in *${stopwatch.stop()}*`);
       } else {

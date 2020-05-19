@@ -14,4 +14,5 @@ type ImgTypes =
   | "poke"
   | "slap"
   | "smug"
-  | "tickle";
+  | "tickle"
+  | "fact";

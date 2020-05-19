@@ -3,6 +3,7 @@ import { Player } from "lavaclient";
 import { Util } from "../../../util/Util";
 import { DecodedSong } from "../Helper";
 import { Song } from "./Song";
+import { stripIndents } from "common-tags";
 
 export interface NowPlaying {
   position?: number;
@@ -39,8 +40,27 @@ export class Queue {
           await this.player.play(next.track);
           await this.announceNext(next);
         }
+        ``;
       })
-      .on("playerUpdate", (d: any) => (this.np.position = d.position));
+      .on("playerUpdate", (d: any) => (this.np.position = d.position))
+      .on("error", (error) => {
+        this.ctx.client.logger.error(
+          typeof error === "string"
+            ? error
+            : `${error.severity}${error.cause ? `-${error.cause}` : ""}: ${
+                error.message
+              }`
+        );
+
+        return this.ctx.reply(stripIndents`
+        Oh no! I ran into an error, please report this to the developers at our [support server](https://discord.gg/BnQECNd)
+        \`\`\`js\n${
+          typeof error === "string"
+            ? error
+            : `${error.severity} ${error.message}`
+        }\`\`\`
+        `);
+      });
   }
 
   private _next(): void {
@@ -62,7 +82,7 @@ export class Queue {
 
   public async leave() {
     await this.ctx.client.music.leave(this.ctx.guild.id);
-    return this.ctx.reply(this.ctx.t("cmds:music.empty"));
+    return this.ctx.reply(this.ctx.t("music.empty"));
   }
 
   public async start(ctx: Message): Promise<boolean> {

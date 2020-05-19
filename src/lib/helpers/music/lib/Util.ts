@@ -1,4 +1,4 @@
-import { TrackInfo } from "@lavalink/encoding";
+import { TrackInfo } from "@kyflx-dev/lavalink-types";
 
 export type SourceType = "http" | "youtube" | "twitch" | "soundcloud" | "mixer";
 export type PlaylistInfo = { identifier?: string; source?: "youtube" };

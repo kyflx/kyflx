@@ -17,7 +17,7 @@ export class SpotifySongSource extends SongSource {
     const video = await SongSource.closestTitle(client, `${track.artists[0].name} - ${track.name}`);
     if (video) {
       try {
-        const res = await client.music.resolve(video.id);
+        const res = await client.music.ideal[0].rest.resolve(video.id);
         return new SpotifySong(res.tracks[0], track, track.album)
       } catch (error) {
         SpotifySongSource.Logger.error(error);

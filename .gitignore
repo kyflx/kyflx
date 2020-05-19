@@ -1,6 +1,9 @@
 # Build Files
 build/
 
+# DB
+rethinkdb_data/
+
 # NPM
 node_modules/
 package-lock.json

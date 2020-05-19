@@ -6,14 +6,14 @@ import { GuildCommand, Playlist, Result, Song } from "../../../lib";
 @GuildCommand({
   usage: "<song:string>",
   extendedHelp: (t) => t.get("music.play.help"),
-  aliases: ["p"]
+  aliases: ["p"],
 })
 export default class PlayCommand extends Command {
   public async run(message: Message, [song]: [string]) {
-    const channel = message.member.voice.channel,
-      settings = message.guildSettings;
+    const channel = message.member.voice.channel;
+    const settings = message.guildSettings;
     if (!message.player) {
-      const vcLock = settings.get("vcLock");
+      const vcLock = settings.get("channels.vc");
 
       if (!channel) return message.reply(message.t("music.join.jvc"));
       if (vcLock && channel.id !== vcLock) {

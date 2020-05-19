@@ -1,15 +1,23 @@
 import { Message } from "discord.js";
-import { Command, CommandOptions } from "klasa";
-import { Init } from "../../../lib";
+import { Command } from "klasa";
+import { r } from "rethinkdb-ts";
 
-@Init<CommandOptions>({
-  name: "ping",
-  description: (t) => t.get("cmds.ping.desc"),
-})
 export default class PingCommand extends Command {
+  // @ts-ignore
   public async run(message: Message) {
-    return message.reply(
-      message.language.get("cmds.util.ping.res", this.client.ws.ping)
-    );
+    const now = Date.now();
+    const dbping = (await r.now().run()).getTime() - now;
+
+    return message
+      .reply(message.t("util.ping.to-edit", dbping))
+      .then((m) =>
+        m.edit(
+          message.t(
+            "util.ping.res",
+            dbping,
+            m.createdTimestamp - message.createdTimestamp
+          )
+        )
+      );
   }
 }

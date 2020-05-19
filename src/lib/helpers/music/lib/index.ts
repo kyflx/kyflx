@@ -4,3 +4,4 @@ export * from "./Song";
 export * from "./Source";
 export * from "./Util";
 export * from "./Queue";
+export * from "./REST";

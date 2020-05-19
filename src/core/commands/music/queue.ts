@@ -10,9 +10,9 @@ export default class LeaveCommand extends Command {
     const decoded = message.queue.next.map((s) => Util.decodeSong(s));
     if (!decoded.length) return message.reply(message.t("music.queue.empty"));
 
-    const { items, maxPage, page } = Util.paginate(decoded, selected),
-      np = Util.decodeSong(message.queue.np.song),
-      embed = this.client.embed(message);
+    const { items, maxPage, page } = Util.paginate(decoded, selected);
+    const np = Util.decodeSong(message.queue.np.song);
+    const embed = this.client.embed(message);
     let i = (page - 1) * 10;
 
     const str = items.map(

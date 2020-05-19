@@ -1,7 +1,7 @@
 import { Language } from "klasa";
-import { Util } from "../../lib/util/Util";
-import { table, DecodedSong } from "../../lib";
-import { Message } from "discord.js";
+import { table, DecodedSong, Util } from "../../lib";
+import { Message, MessageEmbed } from "discord.js";
+import { Settings } from "klasa";
 
 export default class EnglishLanguage extends Language {
   get language() {
@@ -11,11 +11,51 @@ export default class EnglishLanguage extends Language {
         "Kyflx is a multi-purpose focused on usability and quality. Trusted by over **350** servers and **150,000** users.",
       util: {
         ping: {
-          res: (client: number) => `Pong! My ping is *${client}ms*`,
+          "to-edit": (db: number) => [
+            `💓 **•** Shard Heartbeat: *${Math.round(this.client.ws.ping)}ms*`,
+            `🗃️ **•** Database Roundtrip: *${Math.round(db)}ms*`,
+          ],
+          res: (db: number, api: number) => [
+            `💓 **• Shard Heartbeat:** ${Math.round(this.client.ws.ping)}ms`,
+            `🗃️ **• Database Roundtrip:** ${Math.round(db)}ms`,
+            `📡 **• Discord Roundtrip:** ${Math.round(api)}ms`,
+          ],
         },
         help: {
           extended:
             "No extended help. If you do require more help please join our [support server](https://discord.gg/BnQECNd) and ask for more help there :)",
+        },
+      },
+      settings: {
+        an: {
+          desc: "Toggles the next song embed when playing music.",
+          cur: (toggled: boolean) =>
+            `I am ${toggled ? "currently" : "not"} announcing the next song.`,
+          toggled: (toggled: boolean) =>
+            `Okay, I am now ${
+              toggled ? "announcing" : "silencing"
+            } the next playing track`,
+        },
+        prefixes: {
+          desc: "Manage guild prefixes.",
+          cur: (settings: Settings) =>
+            `The prefix${
+              Array.isArray(settings.get("prefix"))
+                ? `es for this guild are: \`@${this.client.user.tag}\`${settings
+                    .get<string[]>("prefix")
+                    .map((pre) => `, \`${pre}\``)
+                    .join("")}`
+                : ` in this guild is set to: \`${settings.get("prefix")}\``
+            }`,
+          max:
+            "You've reached the max amount of prefixes `(10)`. Please remove some before adding another.",
+          giv: "Please provide a prefix that is **1-5** characters in length.",
+          add: (prefix: string) =>
+            `Okay I added \`${prefix}\` to the guild prefixes.`,
+          "!exists": (prefix: string) =>
+            `The prefix \`${prefix}\` doesn't exist.`,
+          remove: (prefix: string) =>
+            `Okay! I removed \`${prefix}\` from the guild prefixes.`,
         },
       },
 
@@ -45,6 +85,14 @@ export default class EnglishLanguage extends Language {
         smug: "",
         tickle: "",
         wolf: "",
+      },
+      fun: {
+        rps: {
+          desc: "Play rock paper scissors with me.",
+          tie: (bot: string) => `I picked **${bot}**, It's a tie!`,
+          win: (bot: string) => `I picked **${bot}**, you lost! muhahah`,
+          lost: (bot: string) => `I picked **${bot}**... you won... 😭`,
+        },
       },
       music: {
         nope: "What? I dont have a player for this guild...",
@@ -105,7 +153,8 @@ export default class EnglishLanguage extends Language {
           res: "Okay, I paused the player.",
         },
         play: {
-          desc: "Play a spotify/youtube/soundcloud songs in your voice channel.",
+          desc:
+            "Play a spotify/youtube/soundcloud songs in your voice channel.",
           ql: (max: number) =>
             `You've reached the max amount of songs \`(${max})\` in your queue.`,
           nf: (error: Error) =>
@@ -127,8 +176,8 @@ export default class EnglishLanguage extends Language {
             "",
             "**Soundcloud**:",
             "play https://soundcloud.com/atlas/sunshine",
-            "```"
-          ]
+            "```",
+          ],
         },
         queue: {
           desc: "Displays the current queue if any.",
@@ -174,13 +223,17 @@ export default class EnglishLanguage extends Language {
       DEFAULT: (key: any) => `\`${key}\` has not been localized for en-US yet.`,
       DEFAULT_LANGUAGE: "Default Language",
       PREFIX_REMINDER: (prefix = `@${this.client.user.tag}`) =>
-        `The prefix${
-          Array.isArray(prefix)
-            ? `es for this guild are: ${prefix
-                .map((pre) => `\`${pre}\``)
-                .join(", ")}`
-            : ` in this guild is set to: \`${prefix}\``
-        }`,
+        new MessageEmbed()
+          .setColor("BLURPLE")
+          .setDescription(
+            `The prefix${
+              Array.isArray(prefix)
+                ? `es for this guild are: ${prefix
+                    .map((pre) => `\`${pre}\``)
+                    .join(", ")}`
+                : ` in this guild is set to: \`${prefix}\``
+            }`
+          ),
       SETTING_GATEWAY_EXPECTS_GUILD:
         "The parameter <Guild> expects either a Guild or a Guild Object.",
       SETTING_GATEWAY_VALUE_FOR_KEY_NOEXT: (data: any, key: any) =>

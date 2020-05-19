@@ -11,7 +11,6 @@ export default class extends Command {
       this.client
         .embed(message)
         .setDescription(feedback)
-        .addField("• Info", `**Guild**: ${message.guild.name} \`(${message.guild.id})\``)
     );
 
     return message.reply(message.t("util.feedback.sent"));

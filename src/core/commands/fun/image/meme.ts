@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 import { Command, CommandOptions } from "klasa";
-import { Init } from "../../../lib";
+import { Init } from "../../../../lib";
 
 @Init<CommandOptions>({ description: (t) => t.get("sfw.meme") })
 export default class CatCommand extends Command {

@@ -1,6 +1,7 @@
 import { APIWrapper, APIWrapperOptions } from "@kyflx-dev/util";
 import { Init } from "../../lib";
 import fetch from "node-fetch";
+import { URLSearchParams } from "url";
 
 const types = ["baka", "cuddle", "feed", "fox_girl", "holo", "hug", "kemonomimi", "kiss", "lizard", "neko", "ngif", "pat", "poke", "slap", "smug", "tickle"]
 
@@ -19,14 +20,37 @@ export default class NekosLifeAPI extends APIWrapper {
     });
   }
 
+  public owoify(text: string): Promise<string> {
+    return this.request(`/owoify?${new URLSearchParams({ text })}`)
+      .then((res) => res.json())
+      .then((res) => res.owo)
+      .catch((err) => this.logger.error(err));
+  }
+
+  public get fact(): Promise<string> {
+    return this.request(`/fact`)
+      .then((res) => res.json())
+      .then((res) => res.fact)
+      .catch((error) => this.logger.error(error));
+  }
+
+  public get "8ball"(): Promise<{ response: string; url: string }> {
+    return this.request("/8ball")
+      .then((res) => res.json())
+      .catch((error) => this.logger.error(error));
+  }
+
   private request(endpoint: string) {
     return fetch(`${this.BASE_URL}${endpoint}`, {
       headers: {
-        "User-Agent": "Kyflx Discord Bot (NodeJS, v3.0.0)",
+        "User-Agent": "Kyflx Discord Bot [github.com/kyflx] (NodeJS, v3.0.0)",
         "Content-Type": "application/json",
       },
     });
   }
 }
 
-export interface NekosLife extends Record<ImgTypes, string> {}
+export interface NekosLife extends Record<ImgTypes, string> {
+  owoify(text: string): Promise<string>;
+  "8ball": Promise<{ response: string; url: string }>;
+}
