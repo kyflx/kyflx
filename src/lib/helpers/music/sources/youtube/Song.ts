@@ -1,10 +1,10 @@
 import { Track } from "@kyflx-dev/lavalink-types";
-
-import { Song } from "../../lib";
 import { YTAPI } from "../../../../../core";
+import { Song } from "../../lib";
 
 export class YoutubeSong extends Song {
   public extra: { likes: number; dislikes: number; views: number };
+
   public constructor(data: Track) {
     super(data);
   }
@@ -12,9 +12,7 @@ export class YoutubeSong extends Song {
   public async load(api: YTAPI) {
     const video = await api.video(this.identifier);
     if (video) {
-      const { likes, dislikes, views, thumbnails } = video;
-      this.extra = Object.assign(this.extra, { likes, dislikes, views });
-      this.artwork = bestThumbnail(thumbnails);
+      this.artwork = bestThumbnail(video.snippet.thumbnails);
     }
 
     return this;

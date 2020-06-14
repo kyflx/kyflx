@@ -1,4 +1,4 @@
-import { Tracks, ExternalUrls, Image } from ".";
+import { ExternalUrls, Image, Tracks } from ".";
 import { Artist } from "./Artist";
 
 export interface Album {

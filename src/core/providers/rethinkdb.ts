@@ -3,7 +3,7 @@ import { MasterPool, r, R } from "rethinkdb-ts";
 
 type Statement =
   | SettingsUpdateResultEntry[]
-  | [string, any][]
+  | [ string, any ][]
   | Record<string, any>;
 
 export default class extends Provider {

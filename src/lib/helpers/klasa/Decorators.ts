@@ -1,5 +1,4 @@
-import { Piece, PieceOptions } from "klasa";
-import { CommandOptions } from "klasa";
+import { CommandOptions, Piece, PieceOptions } from "klasa";
 
 const BuildDecorator = (options: any) => {
   return function <T extends new (...args: any[]) => Piece>(constructor: T) {
@@ -16,13 +15,13 @@ export function Init<O extends PieceOptions>(options: O) {
 }
 
 export function GuildCommand(options: CommandOptions = {}) {
-  return BuildDecorator({ ...options, runIn: ["text"] });
+  return BuildDecorator({ ...options, runIn: [ "text" ] });
 }
 
 export function DJCommand(options: CommandOptions = {}) {
   return BuildDecorator({
     ...options,
-    runIn: ["text"],
+    runIn: [ "text" ],
     permissionLevel: 5,
   })
 }

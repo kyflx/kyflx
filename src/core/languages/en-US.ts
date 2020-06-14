@@ -1,7 +1,6 @@
-import { Language } from "klasa";
-import { table, DecodedSong, Util } from "../../lib";
+import { Language, Settings } from "klasa";
+import { DecodedSong, Util } from "../../lib";
 import { Message, MessageEmbed } from "discord.js";
-import { Settings } from "klasa";
 
 export default class EnglishLanguage extends Language {
   get language() {
@@ -42,9 +41,9 @@ export default class EnglishLanguage extends Language {
             `The prefix${
               Array.isArray(settings.get("prefix"))
                 ? `es for this guild are: \`@${this.client.user.tag}\`${settings
-                    .get<string[]>("prefix")
-                    .map((pre) => `, \`${pre}\``)
-                    .join("")}`
+                  .get<string[]>("prefix")
+                  .map((pre) => `, \`${pre}\``)
+                  .join("")}`
                 : ` in this guild is set to: \`${settings.get("prefix")}\``
             }`,
           max:
@@ -99,30 +98,6 @@ export default class EnglishLanguage extends Language {
         myvc: "You need to join the voice channel I am in to use this command.",
         bassboost: {
           desc: "Applys specfic levels of bassboost to the player.",
-          "ext-help": [
-            "```asciicoc",
-            "Gain amount for each bass level:",
-            "",
-            table([
-              {
-                level: "Earrape",
-                bands: Util.ArrToBands([1.0, 0.75]),
-              },
-              {
-                level: "Extreme",
-                bands: Util.ArrToBands([0.75, 0.5]),
-              },
-              {
-                level: "Hard",
-                bands: Util.ArrToBands([0.5, 0.25]),
-              },
-              {
-                level: "Soft",
-                bands: Util.ArrToBands([0.25, 0.15]),
-              },
-            ]),
-            "```",
-          ].join("\n"),
           res: (level: string) => `Set the bassboost level to **${level}**`,
           cur: ({ player }: Message) =>
             !player.bass || player.bass === "off"
@@ -229,8 +204,8 @@ export default class EnglishLanguage extends Language {
             `The prefix${
               Array.isArray(prefix)
                 ? `es for this guild are: ${prefix
-                    .map((pre) => `\`${pre}\``)
-                    .join(", ")}`
+                  .map((pre) => `\`${pre}\``)
+                  .join(", ")}`
                 : ` in this guild is set to: \`${prefix}\``
             }`
           ),
@@ -353,7 +328,7 @@ export default class EnglishLanguage extends Language {
       COMMAND_STATS_DESCRIPTION:
         "Provides some details about the bot and stats.",
       MESSAGE_PROMPT_TIMEOUT: "The prompt has timed out.",
-      TEXT_PROMPT_ABORT_OPTIONS: ["abort", "stop", "cancel"],
+      TEXT_PROMPT_ABORT_OPTIONS: [ "abort", "stop", "cancel" ],
     };
   }
 }

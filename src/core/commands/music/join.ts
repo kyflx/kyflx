@@ -9,7 +9,7 @@ export default class JoinCommand extends Command {
 
     const channel = message.member.voice.channel;
     if (!channel) return message.reply(message.t("music.join.jvc"));
-    if (!channel.permissionsFor(message.guild.me).has(["SPEAK", "CONNECT"]))
+    if (!channel.permissionsFor(message.guild.me).has([ "SPEAK", "CONNECT" ]))
       return message.reply(message.t("music.join.perms"));
 
     await this.client.music.join(

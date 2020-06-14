@@ -14,7 +14,7 @@ export default class BlacklistCommand extends Command {
     "guildsRemoved",
   ];
 
-  public async run(message: Message, [type, ...params]: [string, any]) {
+  public async run(message: Message, [ type, ...params ]: [ string, any ]) {
     switch (type) {
       case "add":
         return this.add(message, params);
@@ -24,8 +24,8 @@ export default class BlacklistCommand extends Command {
   }
 
   public async add(message: Message, adding: any[]) {
-    const changes: string[][] = [[], [], [], []];
-    const queries: string[][] = [[], []];
+    const changes: string[][] = [ [], [], [], [] ];
+    const queries: string[][] = [ [], [] ];
 
     for (const toAdd of new Set(adding)) {
       const type = toAdd instanceof User ? "user" : "guild";
@@ -42,8 +42,8 @@ export default class BlacklistCommand extends Command {
     }
 
     const { errors } = await this.client.settings.update([
-      ["userBlacklist", queries[0]],
-      ["guildBlacklist", queries[1]],
+      [ "userBlacklist", queries[0] ],
+      [ "guildBlacklist", queries[1] ],
     ]);
     if (errors.length) throw String(errors[0]);
 

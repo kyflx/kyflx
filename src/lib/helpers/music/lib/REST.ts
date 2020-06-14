@@ -1,19 +1,13 @@
 import * as Lava from "@kyflx-dev/lavalink-types";
-import axios, { AxiosInstance } from "axios";
 import { Manager, Socket } from "lavaclient";
+import fetch, { RequestInit } from "node-fetch";
+import { URLSearchParams } from "url";
 
 export class REST {
-  #axios: AxiosInstance;
   public manager: Manager;
 
   public constructor(public socket: Socket) {
     this.manager = socket.manager;
-    this.#axios = axios.create({
-      baseURL: `http://${socket.host}:${socket.port}`,
-      headers: {
-        authorization: socket.password,
-      },
-    });
   }
 
   /**
@@ -21,10 +15,9 @@ export class REST {
    * @param identifier - Search identifier.
    */
   public resolve(identifier: string): Promise<Lava.LoadTrackResponse> {
-    return this.#axios
-      .get("/loadtracks", { params: { identifier } })
-      .then((r) => r.data)
-      .catch((e) => this.manager.emit("error", e, this.socket.name));
+    return this.make(`/loadtracks?${new URLSearchParams({ identifier })}`)
+      .then((r) => r.json())
+      .catch((e) => this.manager.emit("error", e, this.socket.id));
   }
 
   /**
@@ -33,10 +26,9 @@ export class REST {
    * @since Lavalink v1
    */
   public decode(track: string): Promise<Lava.TrackInfo> {
-    return this.#axios
-      .get("/decodetrack", { params: { track } })
-      .then((r) => r.data)
-      .catch((e) => this.manager.emit("error", e, this.socket.name));
+    return this.make(`/decodetrack?${new URLSearchParams({ track })}`)
+      .then((r) => r.json())
+      .catch((e) => this.manager.emit("error", e, this.socket.id));
   }
 
   /**
@@ -44,10 +36,9 @@ export class REST {
    * @since Lavalink v3.2.2
    */
   public routePlannerStatus(): Promise<Lava.RoutePlanner> {
-    return this.#axios
-      .get("/routeplanner/status")
-      .then((r) => r.data)
-      .catch((e) => this.manager.emit("error", e, this.socket.name));
+    return this.make("/routeplanner/status")
+      .then((r) => r.json())
+      .catch((e) => this.manager.emit("error", e, this.socket.id));
   }
 
   /**
@@ -56,10 +47,12 @@ export class REST {
    * @since Lavalink v3.2.2
    */
   public unmarkFailingAddress(address: string): Promise<void> {
-    return this.#axios
-      .post("/routeplanner/free/address", { address })
-      .then((r) => r.data)
-      .catch((e) => this.manager.emit("error", e, this.socket.name));
+    return this.make("/routeplanner/free/address", {
+      method: "post",
+      body: JSON.stringify({ address }),
+    })
+      .then((r) => r.json())
+      .catch((e) => this.manager.emit("error", e, this.socket.id));
   }
 
   /**
@@ -67,9 +60,17 @@ export class REST {
    * @since v3.2.2
    */
   public unmarkAllFailingAddresses(): Promise<void> {
-    return this.#axios
-      .post("/routeplanner/free/all")
-      .then((r) => r.data)
-      .catch((e) => this.manager.emit("error", e, this.socket.name));
+    return this.make("/routeplanner/free/all", { method: "post" })
+      .then((r) => r.json())
+      .catch((e) => this.manager.emit("error", e, this.socket.id));
+  }
+
+  private make(endpoint: string, options: RequestInit = {}) {
+    return fetch(`http://${this.socket.host}:${this.socket.port}${endpoint}`, {
+      ...options,
+      headers: {
+        Authorization: this.socket.password,
+      },
+    });
   }
 }

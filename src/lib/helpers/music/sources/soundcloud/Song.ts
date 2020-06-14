@@ -4,6 +4,7 @@ import { Song } from "../../lib";
 
 export class SoundcloudSong extends Song {
   public extra = { color: 0xff8800 };
+
   public constructor(data: Track) {
     super(data);
   }

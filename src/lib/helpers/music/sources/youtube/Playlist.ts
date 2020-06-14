@@ -1,8 +1,9 @@
 import { Track } from "@kyflx-dev/lavalink-types";
 
-import { Playlist, PlaylistInfo } from "../../lib";
+import { Playlist } from "../../lib";
 import { YoutubeSong } from "./Song";
 import { YTAPI } from "../../../../../core/";
+import { PlaylistInfo } from "../../../../util";
 
 export class YoutubePlaylist extends Playlist {
   public uri: string;
@@ -18,11 +19,11 @@ export class YoutubePlaylist extends Playlist {
       this.tracks.map((t) => new YoutubeSong(t).load(api))
     );
 
-    const playlist = await api.playlist(this.identifier, false);
+    const playlist = await api.playlist(this.identifier);
     if (playlist) {
       this.title = playlist.title;
       this.description = playlist.description;
-      this.artwork = this.artwork;
+      this.artwork = playlist.artwork;
     }
 
     return this;

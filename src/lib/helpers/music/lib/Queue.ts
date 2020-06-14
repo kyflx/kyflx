@@ -3,7 +3,6 @@ import { Player } from "lavaclient";
 import { Util } from "../../../util/Util";
 import { DecodedSong } from "../Helper";
 import { Song } from "./Song";
-import { stripIndents } from "common-tags";
 
 export interface NowPlaying {
   position?: number;
@@ -25,7 +24,7 @@ export class Queue {
   public constructor(public player: Player) {
     this.player
       .on("end", async (d) => {
-        if (!["REPLACED"].includes(d.reason)) {
+        if (![ "REPLACED" ].includes(d.reason)) {
           if (!this.repeat.song) await this._next();
           if (this.repeat.queue && !this.np.song) {
             const previous = this.previous.reverse();
@@ -48,24 +47,21 @@ export class Queue {
           typeof error === "string"
             ? error
             : `${error.severity}${error.cause ? `-${error.cause}` : ""}: ${
-                error.message
-              }`
+              error.message
+            }`
         );
 
-        return this.ctx.reply(stripIndents`
-        Oh no! I ran into an error, please report this to the developers at our [support server](https://discord.gg/BnQECNd)
-        \`\`\`js\n${
-          typeof error === "string"
-            ? error
-            : `${error.severity} ${error.message}`
-        }\`\`\`
-        `);
+        return this.ctx.reply(
+          [
+            `Oh no! I ran into an error, please report this to the developers at our [support server](https://discord.gg/BnQECNd)`,
+            `\`\`\`js\n${
+              typeof error === "string"
+                ? error
+                : `${error.severity} ${error.message}`
+            }\`\`\``,
+          ].join("\n")
+        );
       });
-  }
-
-  private _next(): void {
-    if (this.np.song) this.previous.unshift(this.np.song);
-    this.np.song = this.next.shift();
   }
 
   public async announceNext(np: DecodedSong) {
@@ -101,7 +97,7 @@ export class Queue {
   public async shuffle() {
     for (let i = this.next.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [this.next[i], this.next[j]] = [this.next[j], this.next[i]];
+      [ this.next[i], this.next[j] ] = [ this.next[j], this.next[i] ];
     }
   }
 
@@ -109,5 +105,10 @@ export class Queue {
     this.next = [];
     this.previous = [];
     this.np = { song: null, position: 0 };
+  }
+
+  private _next(): void {
+    if (this.np.song) this.previous.unshift(this.np.song);
+    this.np.song = this.next.shift();
   }
 }

@@ -4,7 +4,7 @@ import { GuildCommand, Util } from "../../../lib";
 
 @GuildCommand({ usage: "[page:number]" })
 export default class LeaveCommand extends Command {
-  public async run(message: Message, [selected]: [number]) {
+  public async run(message: Message, [ selected ]: [ number ]) {
     if (!message.player) return message.reply(message.t("music.nope"));
 
     const decoded = message.queue.next.map((s) => Util.decodeSong(s));

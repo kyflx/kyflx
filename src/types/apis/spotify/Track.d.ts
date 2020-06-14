@@ -1,5 +1,5 @@
 import { Artist } from "./Artist";
-import { ExternalUrls, Image, ExternalIDS } from ".";
+import { ExternalIDS, ExternalUrls, Image } from ".";
 
 export interface Track {
   album: Album;

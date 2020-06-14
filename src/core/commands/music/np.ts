@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { Command } from "klasa";
 import { GuildCommand, Util } from "../../../lib";
 
-@GuildCommand({ aliases: ["nowplaying"] })
+@GuildCommand({ aliases: [ "nowplaying" ] })
 export default class LeaveCommand extends Command {
   public async run(message: Message) {
     if (!message.player) return message.reply(message.t("music.nope"));

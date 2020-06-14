@@ -4,7 +4,7 @@ import { GuildCommand } from "../../../lib";
 
 @GuildCommand({ usage: "[song|queue]" })
 export default class LeaveCommand extends Command {
-  public async run(message: Message, [type = "song"]: ["song" | "queue"]) {
+  public async run(message: Message, [ type = "song" ]: [ "song" | "queue" ]) {
     if (!message.player) return message.reply(message.t("music.nope"));
     if (!message.inVc(message.guild.me))
       return message.reply(message.t("music.myvc"));

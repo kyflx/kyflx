@@ -1,4 +1,4 @@
-import { Message, GuildMember } from "discord.js";
+import { GuildMember, Message } from "discord.js";
 import { Command, CommandOptions } from "klasa";
 import { Init } from "../../../lib";
 
@@ -7,10 +7,10 @@ import { Init } from "../../../lib";
   usage: "[target:member]",
 })
 export default class BakaCommand extends Command {
-  public async run(message: Message, [target]: [GuildMember]) {
+  public async run(message: Message, [ target ]: [ GuildMember ]) {
     const image = await this.client.apis.api("nekos").baka;
     if (!image) return message.reply("Sorry, I couldn't find anything.");
-    
+
     return message.send(
       this.client
         .embed(message)

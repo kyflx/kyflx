@@ -149,7 +149,8 @@ interface Gildings {
   gid_1: number;
 }
 
-interface MediaEmbed {}
+interface MediaEmbed {
+}
 
 interface Preview {
   images: Image[];

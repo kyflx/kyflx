@@ -1,5 +1,5 @@
 import { APIWrapperStore, Config } from "@kyflx-dev/util";
-import { MessageEmbed, Message } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import { KlasaClient } from "klasa";
 
 import { Wrappers } from "../core";

@@ -1,4 +1,4 @@
-import { Followers, ExternalUrls, Image } from ".";
+import { ExternalUrls, Followers, Image } from ".";
 
 export interface Artist {
   external_urls: ExternalUrls;

@@ -3,7 +3,7 @@ import { Command, CommandOptions } from "klasa";
 import { Init } from "../../../lib";
 
 @Init<CommandOptions>({
-  aliases: ["kitty"],
+  aliases: [ "kitty" ],
   description: (t) => t.get("sfw.cat"),
 })
 export default class CatCommand extends Command {

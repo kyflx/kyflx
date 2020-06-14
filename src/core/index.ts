@@ -3,7 +3,6 @@ import GithubAPI from "./apis/github";
 import CovidAPI from "./apis/covid";
 import SpotifyAPI from "./apis/spotify";
 import YTAPI from "./apis/youtube";
-import VultrexAPI from "./apis/vultrex";
 import { NekosLife } from "./apis/nekos.life";
 import RedditAPI from "./apis/reddit";
 
@@ -16,7 +15,6 @@ export interface Wrappers extends Record<string, any> {
   covid: CovidAPI;
   spotify: SpotifyAPI;
   youtube: YTAPI;
-  vultrex: VultrexAPI;
   nekos: NekosLife;
   imgdit: RedditAPI;
 }

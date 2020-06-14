@@ -4,7 +4,7 @@ import { join } from "path";
 
 export const KlasaConfig: KlasaClientOptions = {
   directory: join(process.cwd(), "build/core"),
-  disabledCorePieces: ["commands"],
+  disabledCorePieces: [ "commands" ],
   prefix: Config.getInstance().get("bot.prefixes"),
   commandEditing: true,
   pieceDefaults: {
@@ -26,11 +26,11 @@ export const KlasaConfig: KlasaClientOptions = {
     guilds: {
       schema: new Schema()
         .add("autoRoles", "role", { array: true, default: [] })
-        .add("prefix", "string", { array: true, default: ["ky!"] })
+        .add("prefix", "string", { array: true, default: [ "ky!" ] })
         .add("disabledCommands", "command", { array: true })
         .add("queueLength", "number", { default: 250 })
         .add("announceNext", "boolean", { default: true })
-        .add("cases", "number",  { default: 0 })
+        .add("cases", "number", { default: 0 })
         .add("inviteFilter", (folder) => folder
           .add("enabled", "boolean", { default: false })
           .add("whitelist", "string", { array: true })

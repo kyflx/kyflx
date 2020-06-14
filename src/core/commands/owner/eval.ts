@@ -1,5 +1,5 @@
 import { Util } from "@kyflx-dev/util";
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 import { Command, CommandOptions } from "klasa";
 import { Init } from "../../../lib";
 
@@ -7,7 +7,7 @@ import { Init } from "../../../lib";
 export default class EvalCommand extends Command {
   public async run(
     message: Message,
-    [code]: [string],
+    [ code ]: [ string ],
     { async, depth, silent } = message.flagArgs
   ) {
     try {
@@ -56,8 +56,8 @@ export default class EvalCommand extends Command {
         return value === null
           ? "null"
           : value.constructor
-          ? value.constructor.name
-          : "any";
+            ? value.constructor.name
+            : "any";
       case "function":
         return `${value.constructor.name}(${value.length}-arity)`;
       case "undefined":

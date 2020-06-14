@@ -1,7 +1,7 @@
 import fetch, { RequestInit, Response } from "node-fetch";
 import { APIWrapper, APIWrapperOptions } from "@kyflx-dev/util";
 
-import { Track, Album, Playlist, Artist } from "../../types";
+import { Album, Artist, Playlist, Track } from "../../types";
 import { URLSearchParams } from "url";
 import { Init } from "../../lib";
 
@@ -14,10 +14,32 @@ interface Token {
 
 @Init<APIWrapperOptions>({ url: "https://api.spotify.com/v1" })
 export default class SpotifyAPI extends APIWrapper {
-  #token: Token;
-
   public ratelimited = false;
   public retryAfter: number = 0;
+  #token: Token;
+
+  private get tokenExpired() {
+    // @ts-ignore
+    return this.#token ? this.#token.expiresAt - new Date() <= 0 : true;
+  }
+
+  private get headers() {
+    return this.#token
+      ? {
+        Authorization: `${this.#token.tokenType} ${this.#token.accessToken}`,
+      }
+      : {};
+  }
+
+  private get credentialHeaders() {
+    const credential = Buffer.from(
+      `${config.get("apis.spotify.id")}:${config.get("apis.spotify.secret")}`
+    ).toString("base64");
+    return {
+      Authorization: `Basic ${credential}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+  }
 
   public async init() {
     await this.getToken();
@@ -91,7 +113,7 @@ export default class SpotifyAPI extends APIWrapper {
   }
 
   /**
-   * Fetch a Spotify 
+   * Fetch a Spotify
    * @param id - The artists id.
    */
   public artist(id: string): Promise<Artist> {
@@ -101,7 +123,7 @@ export default class SpotifyAPI extends APIWrapper {
   }
 
   /**
-   * Fetch a 
+   * Fetch a
    * @param id - The album ID.
    */
   public album(id: string): Promise<Album> {
@@ -113,7 +135,7 @@ export default class SpotifyAPI extends APIWrapper {
   public artistAlbums(
     id: string,
     limit = 50,
-    include = ["album", "single"]
+    include = [ "album", "single" ]
   ): Promise<Album[]> {
     const params = new URLSearchParams({
       limit: limit.toString(),
@@ -182,28 +204,5 @@ export default class SpotifyAPI extends APIWrapper {
           ),
         };
       });
-  }
-
-  private get tokenExpired() {
-    // @ts-ignore
-    return this.#token ? this.#token.expiresAt - new Date() <= 0 : true;
-  }
-
-  private get headers() {
-    return this.#token
-      ? {
-          Authorization: `${this.#token.tokenType} ${this.#token.accessToken}`,
-        }
-      : {};
-  }
-
-  private get credentialHeaders() {
-    const credential = Buffer.from(
-      `${config.get("apis.spotify.id")}:${config.get("apis.spotify.secret")}`
-    ).toString("base64");
-    return {
-      Authorization: `Basic ${credential}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
   }
 }

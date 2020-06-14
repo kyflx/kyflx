@@ -7,7 +7,7 @@ export default class MessageExtendable extends Extendable {
   // @ts-ignore
   public constructor(...args) {
     // @ts-ignore
-    super(...args, { appliesTo: [Message], name: "message-ext" });
+    super(...args, { appliesTo: [ Message ], name: "message-ext" });
   }
 
   public get player(this: Message) {
@@ -38,10 +38,10 @@ export default class MessageExtendable extends Extendable {
     return Boolean(
       vc
         ? Util.testInstance(value, [
-            ["string", (v) => vc.id === v],
-            [VoiceChannel, (v) => vc.id === v.id],
-            [GuildMember, (v) => vc.members.has(v.id)],
-          ])
+          [ "string", (v) => vc.id === v ],
+          [ VoiceChannel, (v) => vc.id === v.id ],
+          [ GuildMember, (v) => vc.members.has(v.id) ],
+        ])
         : false
     );
   }
@@ -52,8 +52,11 @@ declare module "discord.js" {
     client: Kyflx;
     player: Player;
     queue: Queue;
+
     t(path: string, ...args: any[]): string;
+
     inVc(vc?: string | GuildMember | VoiceChannel): boolean;
+
     reply(
       content: string,
       options?: MessageOptions | MessageAdditions

@@ -2,7 +2,7 @@ import { Message } from "discord.js";
 import { Monitor, MonitorOptions } from "klasa";
 import { Init } from "../../lib";
 
-const REGEX = /(?:https?:\/\/)?(?:www\.)?(?:discord\.(?:gg|li|me|io)|(?:discordapp|discord)\.com\/invite)\/(?<invite>.+)/;
+const REGEX = /(?:https?:\/\/)?(?:www\.)?(?:discord\.(?:gg|li|me|io)|(?:discordapp|discord)\.com\/invite)\/(.+)/;
 
 interface InviteFilter {
   enabled: boolean;
@@ -25,10 +25,10 @@ export default class extends Monitor {
     if (!filter.enabled) return null;
     if (!REGEX.test(message.content)) return null;
 
-    const [, invite] = REGEX.exec(message.content);
+    const [ , invite ] = REGEX.exec(message.content);
 
     if (filter.whitelist && filter.whitelist.includes(invite)) return null;
-    if (!filter.blacklist || filter.blacklist.length !> 0) return message.delete();
+    if (!filter.blacklist || filter.blacklist.length ! > 0) return message.delete();
     if (filter.blacklist.includes(invite)) return message.delete();
 
     return null;

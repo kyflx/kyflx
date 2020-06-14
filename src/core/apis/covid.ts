@@ -3,7 +3,17 @@ import { APIWrapper, APIWrapperOptions } from "@kyflx-dev/util";
 import { URLSearchParams } from "url";
 import { Init } from "../../lib";
 
-type SortType = "cases" | "todayCases" | "deaths" | "todayDeaths" | "recovered" | "active" | "critical" | "casesPerOneMillion" | "deathsPerOneMillion";
+type SortType =
+  "cases"
+  | "todayCases"
+  | "deaths"
+  | "todayDeaths"
+  | "recovered"
+  | "active"
+  | "critical"
+  | "casesPerOneMillion"
+  | "deathsPerOneMillion";
+
 interface FetchCountriesOptions {
   yesterday?: boolean;
   sort?: SortType;

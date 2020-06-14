@@ -62,6 +62,7 @@ export interface User {
   created_at: string;
   updated_at: string;
 }
+
 export interface Commit {
   sha: string;
   node_id: string;

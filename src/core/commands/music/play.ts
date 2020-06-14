@@ -1,15 +1,15 @@
 import { Message } from "discord.js";
 import { Command } from "klasa";
-import { Video } from "popyt";
 import { GuildCommand, Playlist, Result, Song } from "../../../lib";
+import { YoutubePlaylist, YoutubeVideo } from "../../../types/apis/youtube";
 
 @GuildCommand({
   usage: "<song:string>",
   extendedHelp: (t) => t.get("music.play.help"),
-  aliases: ["p"],
+  aliases: [ "p" ],
 })
 export default class PlayCommand extends Command {
-  public async run(message: Message, [song]: [string]) {
+  public async run(message: Message, [ song ]: [ string ]) {
     const channel = message.member.voice.channel;
     const settings = message.guildSettings;
     if (!message.player) {
@@ -21,7 +21,7 @@ export default class PlayCommand extends Command {
       }
 
       const perms = channel.permissionsFor(message.client.user.id);
-      if (!perms.has(["SPEAK", "VIEW_CHANNEL"])) {
+      if (!perms.has([ "SPEAK", "VIEW_CHANNEL" ])) {
         return message.reply(message.t("music.join.perms"));
       }
 
@@ -72,17 +72,17 @@ export default class PlayCommand extends Command {
   public search(message: Message, query: string): Promise<Result<Song>> {
     return message.client.apis
       .api("youtube")
-      .search<Video>(query, 5)
-      .then<Result<Song>>(async (results) => {
+      .search(query, 5)
+      .then<Result<Song>>(async ({ items }) => {
         try {
           const embed = this.client.embed(message).setDescription(
-            results
+            items
               .slice(0, 5)
               .map(
                 (r, i) =>
-                  `${++i}. **[${r.title.trunc(50)}](${r.url}) (${
-                    r.constructor.name
-                  })**`
+                  `${++i}. **[${r.snippet.title.trunc(50)}](${getUrl(
+                    r as any
+                  )}) (${r.kind.includes("video") ? "Video" : "Playlist"})**`
               )
               .join("\n")
           );
@@ -91,7 +91,7 @@ export default class PlayCommand extends Command {
           return message.channel
             .awaitMessages((m) => m.author.id === message.author.id, {
               max: 1,
-              errors: ["time"],
+              errors: [ "time" ],
               time: 10000,
             })
             .then(async (collected) => {
@@ -102,14 +102,22 @@ export default class PlayCommand extends Command {
                 return message.reply(message.t("music.play.cancelled"));
 
               const i = parseInt(m.content);
-              if (!i || !results[i - 1])
+              if (!i || !items[i - 1])
                 return message.reply(message.t("music.play.cancelled"));
 
-              return await message.client.music.load(results[i - 1].url);
+              return await message.client.music.load(
+                getUrl(items[i - 1] as any)
+              );
             }) as any;
         } catch (error) {
           return new Result().setError(error);
         }
       });
   }
+}
+
+function getUrl(result: YoutubePlaylist | YoutubeVideo) {
+  if (result.kind.includes("playlist"))
+    return `https://www.youtube.com/playlist?list=${result.id}`;
+  else return `https://www.youtube.com/watch?v=${result.id}`;
 }

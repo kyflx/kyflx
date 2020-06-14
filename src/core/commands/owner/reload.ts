@@ -1,13 +1,12 @@
 import { Message } from "discord.js";
-import { Command, CommandOptions, Piece, Store } from "klasa";
+import { Command, CommandOptions, Piece, Stopwatch, Store } from "klasa";
 import { Init } from "../../../lib";
-import { Stopwatch } from "klasa";
 
 @Init<CommandOptions>({ usage: "<store:store|piece:piece|all>" })
 export default class extends Command {
   public async run(
     message: Message,
-    [toReload]: [Store<string, Piece> | Piece | "all"]
+    [ toReload ]: [ Store<string, Piece> | Piece | "all" ]
   ) {
     const stopwatch = new Stopwatch();
     try {

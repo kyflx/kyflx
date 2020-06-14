@@ -1,4 +1,4 @@
-import { Kyflx, KlasaConfig } from "./lib";
+import { KlasaConfig, Kyflx } from "./lib";
 import { Schema } from "klasa";
 
 const kyflx = new Kyflx(KlasaConfig).init();

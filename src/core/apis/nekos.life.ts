@@ -3,10 +3,23 @@ import { Init } from "../../lib";
 import fetch from "node-fetch";
 import { URLSearchParams } from "url";
 
-const types = ["baka", "cuddle", "feed", "fox_girl", "holo", "hug", "kemonomimi", "kiss", "lizard", "neko", "ngif", "pat", "poke", "slap", "smug", "tickle"]
+const types = [ "baka", "cuddle", "feed", "fox_girl", "holo", "hug", "kemonomimi", "kiss", "lizard", "neko", "ngif", "pat", "poke", "slap", "smug", "tickle" ]
 
 @Init<APIWrapperOptions>({ url: "https://nekos.life/api/v2", name: "nekos" })
 export default class NekosLifeAPI extends APIWrapper {
+  public get fact(): Promise<string> {
+    return this.request(`/fact`)
+      .then((res) => res.json())
+      .then((res) => res.fact)
+      .catch((error) => this.logger.error(error));
+  }
+
+  public get "8ball"(): Promise<{ response: string; url: string }> {
+    return this.request("/8ball")
+      .then((res) => res.json())
+      .catch((error) => this.logger.error(error));
+  }
+
   public async init() {
     types.forEach((type) => {
       Object.defineProperty(this, type, {
@@ -27,19 +40,6 @@ export default class NekosLifeAPI extends APIWrapper {
       .catch((err) => this.logger.error(err));
   }
 
-  public get fact(): Promise<string> {
-    return this.request(`/fact`)
-      .then((res) => res.json())
-      .then((res) => res.fact)
-      .catch((error) => this.logger.error(error));
-  }
-
-  public get "8ball"(): Promise<{ response: string; url: string }> {
-    return this.request("/8ball")
-      .then((res) => res.json())
-      .catch((error) => this.logger.error(error));
-  }
-
   private request(endpoint: string) {
     return fetch(`${this.BASE_URL}${endpoint}`, {
       headers: {
@@ -51,6 +51,7 @@ export default class NekosLifeAPI extends APIWrapper {
 }
 
 export interface NekosLife extends Record<ImgTypes, string> {
-  owoify(text: string): Promise<string>;
   "8ball": Promise<{ response: string; url: string }>;
+
+  owoify(text: string): Promise<string>;
 }

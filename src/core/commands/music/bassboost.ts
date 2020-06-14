@@ -6,20 +6,21 @@ import { GuildCommand, Util } from "../../../lib";
   usage: "[earrape|extreme|hard|soft|off]",
   usageDelim: "|",
   extendedHelp: (t) => t.get("music.bassboost.ext-help"),
-  aliases: ["bb"],
+  aliases: [ "bb" ],
 })
 export default class BassboostCommand extends Command {
   public async run(
     message: Message,
-    [level]: ["earrape" | "extreme" | "hard" | "soft" | "off"]
+    [ level ]: [ "earrape" | "extreme" | "hard" | "soft" | "off" ]
   ) {
     if (!message.player) return message.reply(message.t("music.nope"));
     if (!level) return message.reply(message.t("music.bassboost.cur", message));
     if (!message.inVc(message.guild.me))
       return message.reply(message.t("music.myvc"));
 
+    const player = message.player;
     const set = (...bands: Array<number>) =>
-      message.player.equalizer.bind(message.player, Util.ArrToBands(bands));
+      player.filter.bind(player, "equalizer", Util.ArrToBands(bands));
     await when(level, {
       earrape: set(1, 0.75),
       extreme: set(0.75, 0.5),
@@ -28,7 +29,7 @@ export default class BassboostCommand extends Command {
       off: set(0, 0),
     });
 
-    message.player.bass = level;
+    player.bass = level;
 
     return message.reply(message.t("music.bassboost.res", level));
   }

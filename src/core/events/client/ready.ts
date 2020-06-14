@@ -1,6 +1,5 @@
-import { Event } from "klasa";
+import { Event, EventOptions } from "klasa";
 import { Init } from "../../../lib";
-import { EventOptions } from "klasa";
 
 @Init<EventOptions>({ event: "ready" })
 export default class ReadyListener extends Event {

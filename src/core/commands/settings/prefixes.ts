@@ -16,8 +16,8 @@ export default class PrefixesCommand extends Command {
     );
   }
 
-  public async add(message: Message, prefix: [string]) {
-    if (message.guild.settings.get("prefix").length >= 10)
+  public async add(message: Message, prefix: [ string ]) {
+    if (message.guildSettings.get("prefix").length >= 10)
       return message.reply(message.t("settings.prefixes.max"));
 
     if (!prefix[0]) return message.reply(message.t("settings.prefixes.giv"));
@@ -26,7 +26,7 @@ export default class PrefixesCommand extends Command {
     return message.reply(message.t(`settings.prefixes.add`, prefix[0]));
   }
 
-  public async remove(message: Message, prefix: [string]) {
+  public async remove(message: Message, prefix: [ string ]) {
     if (!message.guild.settings.get("prefix").includes(prefix[0]))
       return message.reply(message.t("settings.prefixes.!exists", prefix[0]));
 
